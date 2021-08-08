@@ -56,6 +56,7 @@ flutter:
     - assets/borda.png
     - assets/audience.png
     - assets/thermometer.png
+    - assets/thermometer2.png
     - assets/temperature.png
     - assets/hum.png
     - assets/kitchen.png

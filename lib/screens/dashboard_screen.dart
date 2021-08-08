@@ -15,7 +15,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -94,7 +93,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     Column(
                       children: <Widget>[
-                        Image(image: AssetImage("assets/temperature.png")),
+
+                          Image(
+                                image: AssetImage("assets/thermometer2.png")),
+
                         SizedBox(
                           height: 5,
                         ),
@@ -208,32 +210,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SpeedDialChild(
                 child: Icon(Icons.event),
                 label: "Create Event",
-                onTap: () => print("tıklandı")
-            ),
+                onTap: () => print("tıklandı")),
             SpeedDialChild(
-
-              child: Icon(Icons.meeting_room),
-              label: "Meeting Room Reservation",
-              onTap: () => print("tıklandı")
-            ),
-
+                child: Icon(Icons.meeting_room),
+                label: "Meeting Room Reservation",
+                onTap: () => print("tıklandı")),
             SpeedDialChild(
                 child: Icon(Icons.desktop_mac),
                 label: "Hot Desk Reservation",
-                onTap: () => print("tıklandı")
-            ),
+                onTap: () => print("tıklandı")),
             SpeedDialChild(
                 child: Icon(Icons.announcement_outlined),
                 label: "Inform Reservation",
-                onTap: () {Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => InformResScreen()));}
-
-    ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InformResScreen()));
+                }),
           ],
-        )
-
-    );
+        ));
   }
-
-
 }
