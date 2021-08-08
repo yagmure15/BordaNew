@@ -23,6 +23,11 @@ class _InformResScreen extends State {
       DateRangePickerController();
   bool isPetBrought = false;
   String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
+  List<String> dateArr = [];
+  List<String> oneDayArr = [];
+  String chooseOnlyOneDay = "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
+  String chooseAnOffice = "Please, Choose an Office";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,25 +36,26 @@ class _InformResScreen extends State {
         backgroundColor: Color(HexColor.toHexCode("#24343b")),
       ),
       body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        color: Color(HexColor.toHexCode("#2a4449")),
-        child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(height: 470, width: 350, child: _getBooking()),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-
-                        child: Image(image: AssetImage("assets/informbg.png"),height: 120,width: 250,)),
-                  ],
-                ),
-              ],
-            )
-
-      ),
+          height: double.infinity,
+          width: double.infinity,
+          color: Color(HexColor.toHexCode("#2a4449")),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(height: 470, width: 350, child: _getBooking()),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                      child: Image(
+                    image: AssetImage("assets/informbg.png"),
+                    height: 120,
+                    width: 250,
+                  )),
+                ],
+              ),
+            ],
+          )),
     );
   }
 
@@ -57,7 +63,8 @@ class _InformResScreen extends State {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
 
-  Widget _ReservationSearhButton(){
+  Widget _ReservationSearhButton() {
+    GlobalKey _key = GlobalKey();
     return Container(
       margin: EdgeInsets.fromLTRB(0, 30, 0, 10),
       child: MaterialButton(
@@ -67,15 +74,17 @@ class _InformResScreen extends State {
               fontSize: 16,
               color: Colors.white,
               fontWeight: FontWeight.w500,
-
             )),
-        onPressed: () {  },
-
+        key: _key,
+        onPressed: ()
+        {
+          _SentInformRequest();
+         },
       ),
     );
   }
-  Widget _PetQuery(){
 
+  Widget _PetQuery() {
     return Container(
         margin: EdgeInsets.only(top: 10),
         alignment: Alignment.centerLeft,
@@ -85,7 +94,7 @@ class _InformResScreen extends State {
             const Text('Will you bring pet to the office?',
                 style: TextStyle(color: Colors.grey, fontSize: 10)),
             Padding(
-              padding: const EdgeInsets.only(top : 15),
+              padding: const EdgeInsets.only(top: 15),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -93,7 +102,6 @@ class _InformResScreen extends State {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-
                       )),
                   SizedBox(
                     width: 10,
@@ -101,29 +109,21 @@ class _InformResScreen extends State {
                   Container(
                     height: 20,
                     child: Checkbox(
-
                         value: isPetBrought,
                         activeColor: Color(HexColor.toHexCode("#ff5a00")),
-                        onChanged: (value)
-                    {
-                      setState(() {
-                        isPetBrought = value!;
-                      });
-
-                      _showToast(isPetBrought.toString());
-                    }),
+                        onChanged: (value) {
+                          setState(() {
+                            isPetBrought = value!;
+                          });
+                        }),
                   )
-
-
-
-
                 ],
               ),
             ),
-
           ],
         ));
   }
+
   Widget _GuestQuestion() {
     return Container(
         margin: EdgeInsets.only(top: 10),
@@ -133,73 +133,71 @@ class _InformResScreen extends State {
           children: <Widget>[
             const Text('Will your guest come?',
                 style: TextStyle(color: Colors.grey, fontSize: 10)),
-          Padding(
-            padding: const EdgeInsets.only(top : 15),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text("Number of Guests",
-                          style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-
-                        )),
-                    SizedBox(
-                      width: 40,
+            Padding(
+              padding: const EdgeInsets.only(top: 15),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text("Number of Guests",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                  SizedBox(
+                    width: 40,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (guestCount <= 10 && guestCount > 0) {
+                        setState(() {
+                          guestCount -= 1;
+                        });
+                      }
+                    },
+                    child: Container(
+                      height: 20,
+                      child: Icon(
+                        Icons.remove,
+                        size: 20,
+                        color: Color(HexColor.toHexCode("#ff5a00")),
+                      ),
                     ),
-                    GestureDetector(
-                      onTap: (){
-                        if(guestCount <= 10 && guestCount > 0) {
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 20,
+                    child: Text(guestCount.toString(),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        if (guestCount < 10 && guestCount >= 0) {
                           setState(() {
-                            guestCount -=1;
+                            guestCount += 1;
                           });
                         }
                       },
                       child: Container(
-                        height: 20,
-                        child:Icon(Icons.remove,size: 20,color: Color(HexColor.toHexCode("#ff5a00")),),
-
-
-                      ),
-                    ),
-
-
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      width: 20,
-                      child: Text(guestCount.toString(),
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500)),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                          onTap: (){
-                            if(guestCount < 10 && guestCount >= 0) {
-                              setState(() {
-                                guestCount +=1;
-                              });
-                            }
-                          },
-                          child: Container(
-                              height: 20,
-                              child: Icon(Icons.add, size: 20,color:Color(HexColor.toHexCode("#ff5a00")),))),
-
-
-
-
-
-                  ],
-                ),
-          ),
-
+                          height: 20,
+                          child: Icon(
+                            Icons.add,
+                            size: 20,
+                            color: Color(HexColor.toHexCode("#ff5a00")),
+                          ))),
+                ],
+              ),
+            ),
           ],
         ));
   }
+
   Widget _SelectOffice() {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -238,6 +236,7 @@ class _InformResScreen extends State {
       ),
     );
   }
+
   Widget _Divider() {
     return Padding(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -247,6 +246,7 @@ class _InformResScreen extends State {
           thickness: 0.5,
         ));
   }
+
   Widget _DatePicker() {
     return Container(
       margin: EdgeInsets.all(20),
@@ -259,59 +259,15 @@ class _InformResScreen extends State {
         controller: _dateRangePickerController,
         monthFormat: "MMMM",
         onSubmit: (Object val) {
-          //bu değişkenleri global tanımlamak gerek
-          //her onSubmin ve onCancel işlemimde listeyi boşaltım tekrar doldurmak gerekiyor.!!
-          List<String> dateArr = [];
-          List<String> oneDayArr = [];
-
-          String str = val.toString();
-          str = str.replaceAll("[", "");
-          str = str.replaceAll("]", "");
-          str.split(",").forEach((element) {
-            dateArr.add(element);
-          });
-
-          Navigator.of(context).pop(_dateRangePickerController);
-
-          if (dateArr.length == 1) {
-            String oneDay = dateArr[0].toString();
-            oneDay = oneDay.replaceAll("[", "");
-            oneDay = oneDay.replaceAll("]", "");
-            oneDay.split(" ").forEach((element) {
-              oneDayArr.add(element);
-            });
-            String getDateformat = oneDayArr[0].toString();
-            getDateformat = DateFormat("dd MMMM yyyy, EEEE")
-                .format(DateTime.parse(getDateformat));
-            _showToast(getDateformat);
-            setState(() {
-              firstDate = getDateformat;
-            });
-          }
-
-          if (dateArr.length > 1) {
-            setState(() {
-              int i = dateArr.length;
-
-              firstDate = i.toString() + " days selected!";
-            });
-          }
-          if (dateArr.length == 0) {
-            firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
-          }
-
-          _showToast(dateArr[0]);
+          _onSubmitController(val);
         },
         onCancel: () {
-          _dateRangePickerController.selectedDates = null;
-          Navigator.of(context).pop(_dateRangePickerController);
-          setState(() {
-            firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
-          });
+          _onCancelController();
         },
       ),
     );
   }
+
   Widget _DateArea() {
     return GestureDetector(
       onTap: () {
@@ -341,6 +297,7 @@ class _InformResScreen extends State {
           )),
     );
   }
+
   void _onSelectionChanged(
       DateRangePickerSelectionChangedArgs
           dateRangePickerSelectionChangedArgs) {}
@@ -372,6 +329,7 @@ class _InformResScreen extends State {
             _Divider(),
             _PetQuery(),
             _ReservationSearhButton(),
+
           ],
         ),
       ),
@@ -392,17 +350,128 @@ class _InformResScreen extends State {
 
   _buildDateDialogChild(BuildContext context) => Container(
         color: Colors.white,
-        height: 400,
+        height: 350,
         width: 350,
         child: Column(
           children: <Widget>[
-            Image.asset(
+           /* Image.asset(
               'assets/temperature.png',
               height: 50,
               width: 50,
-            ),
+            ), */
             _DatePicker(),
           ],
         ),
       );
+
+  void _SentInformRequest() {
+    if(selectedOffice == null){
+      _showSnackBar(context,chooseAnOffice);
+
+    }else {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+
+      if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
+        _showSnackBar(context,chooseOnlyOneDay);
+      }
+
+      if (dateArr.length == 1) {
+        final String formatted =
+        formatter.format(DateTime.parse(dateArr[0].toString()));
+       // _showToast(formatted);
+      }
+      if (dateArr.length == 0) {
+        final String formatted = formatter.format(DateTime.now());
+        //_showToast(formatted);
+      }
+      if (dateArr.length > 1) {
+        for (int i = 0; i < dateArr.length; i++) {
+          if (i > 0) {
+            dateArr[i] = dateArr[i].toString().replaceFirst(RegExp(' '), '');
+          }
+          dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
+
+        }
+        //_showToast(dateArr.toString());
+
+      }
+
+      /*
+
+      //verileri gönderme işlemini burada yap!
+
+      */
+    }
+
+  }
+
+  void _onSubmitController(Object val) {
+    //dateArr ve oneDayArr listelerinde backend için düzenleme yapmak gerekebilir.
+    // Tarih listesini nasıl almak istiyorlarsa ona göre formata çevirmeliyiz.
+    dateArr.clear();
+
+    String str = val.toString();
+    str = str.replaceAll("[", "");
+    str = str.replaceAll("]", "");
+    str.split(",").forEach((element) {
+      dateArr.add(element);
+    });
+
+    Navigator.of(context).pop(_dateRangePickerController);
+
+    if (dateArr.length == 1 && val.toString() != "[]") {
+      setState(() {
+        firstDate = DateFormat("dd MMMM yyyy, EEEE")
+            .format(DateTime.parse(dateArr[0].toString()));
+      });
+    } else if (dateArr.length == 1 && val.toString() == "[]") {
+      dateArr.clear();
+      setState(() {
+        firstDate = DateFormat("dd MMMM yyyy, EEEE").format(DateTime.now());
+      });
+    }
+
+    if (dateArr.length > 1) {
+      setState(() {
+        int i = dateArr.length;
+        firstDate = i.toString() + " days selected!";
+      });
+    }
+    if (dateArr.length == 0) {
+      firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
+    }
+  }
+  void _onCancelController() {
+    dateArr.clear();
+    //listede backend için düzenleme yapmak gerekebilir.
+    // Tarih listesini nasıl almak istiyorlarsa ona göre formata çevirmeliyiz.
+    dateArr.add(DateTime.now().toString());
+    _dateRangePickerController.selectedDates = [DateTime.now()];
+    Navigator.of(context).pop(_dateRangePickerController);
+    setState(() {
+      firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
+    });
+  }
+  _showSnackBar(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            msg,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          action: SnackBarAction(
+            label: "OK",
+            textColor: Colors.white,
+            disabledTextColor: Colors.deepPurple,
+            onPressed: () {
+            },
+          ),
+          backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+        ));
+  }
 }
