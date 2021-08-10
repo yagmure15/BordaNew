@@ -192,123 +192,116 @@ class _HotdeskScreen extends State {
     );
   }
 
-
-
   Widget _GuestAndPetQuestion() {
     return Container(
-        margin: EdgeInsets.only(top: 5),
-        alignment: Alignment.centerLeft,
-        child:  Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      margin: EdgeInsets.only(top: 5),
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text('Will you bring a guest/pet to the office?',
+              style: TextStyle(color: Colors.grey, fontSize: 10)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: Row(
               children: <Widget>[
-                const Text('Will you bring a guest/pet to the office?',
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
-                Container(
-                  margin: EdgeInsets.only(top: 15),
-                  child: Row(
-
-                    children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text("Number of Guests",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            )),
-                        Container(
-                          margin: EdgeInsets.only(top:10),
-                          child: Row(
-                            children: <Widget>[
-
-                              GestureDetector(
-                                onTap: () {
-                                  if (guestCount <= 10 && guestCount > 0) {
-                                    setState(() {
-                                      guestCount -= 1;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  height: 20,
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 20,
-                                    color: Color(HexColor.toHexCode("#ff5a00")),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                width: 20,
-                                child: Text(guestCount.toString(),
-                                    style: const TextStyle(
-                                        fontSize: 16, fontWeight: FontWeight.w500)),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              GestureDetector(
-                                  onTap: () {
-                                    if (guestCount < 10 && guestCount >= 0) {
-                                      setState(() {
-                                        guestCount += 1;
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                      height: 20,
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 20,
-                                        color: Color(HexColor.toHexCode("#ff5a00")),
-                                      ))),
-                            ],
-                          ),
-                        ),
-
-                      ],
-                    ),
-                    SizedBox(
-                      width: 40,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Number of Guests",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        )),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Row(
                         children: <Widget>[
-                          Text("Pet",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              )),
+                          GestureDetector(
+                            onTap: () {
+                              if (guestCount <= 10 && guestCount > 0) {
+                                setState(() {
+                                  guestCount -= 1;
+                                });
+                              }
+                            },
+                            child: Container(
+                              height: 20,
+                              child: Icon(
+                                Icons.remove,
+                                size: 20,
+                                color: Color(HexColor.toHexCode("#ff5a00")),
+                              ),
+                            ),
+                          ),
                           SizedBox(
-                            height: 10,
+                            width: 20,
                           ),
                           Container(
-                            height: 20,
-                            child: Checkbox(
-                                value: isPetBrought,
-                                activeColor: Color(HexColor.toHexCode("#ff5a00")),
-                                onChanged: (value) {
+                            alignment: Alignment.center,
+                            width: 20,
+                            child: Text(guestCount.toString(),
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500)),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          GestureDetector(
+                              onTap: () {
+                                if (guestCount < 10 && guestCount >= 0) {
                                   setState(() {
-                                    isPetBrought = value!;
+                                    guestCount += 1;
                                   });
-                                }),
-                          )
+                                }
+                              },
+                              child: Container(
+                                  height: 20,
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 20,
+                                    color: Color(HexColor.toHexCode("#ff5a00")),
+                                  ))),
                         ],
                       ),
                     ),
-                  ],),
-                )
+                  ],
+                ),
+                SizedBox(
+                  width: 40,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Pet",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          )),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 20,
+                        child: Checkbox(
+                            value: isPetBrought,
+                            activeColor: Color(HexColor.toHexCode("#ff5a00")),
+                            onChanged: (value) {
+                              setState(() {
+                                isPetBrought = value!;
+                              });
+                            }),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
-
-
-
-        );
+          )
+        ],
+      ),
+    );
   }
 
   Widget _Divider() {
