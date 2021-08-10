@@ -1,7 +1,6 @@
-import 'package:bordatech/screens/drawer_screen.dart';
 import 'package:flutter/material.dart';
 
-class EventCalendarScreen extends StatefulWidget{
+class EventCalendarScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -9,7 +8,7 @@ class EventCalendarScreen extends StatefulWidget{
   }
 }
 
-class _EventCalendarScreenState extends State{
+class _EventCalendarScreenState extends State {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -23,7 +22,3 @@ class _EventCalendarScreenState extends State{
     );
   }
 }
-
-
-
-
