@@ -5,21 +5,35 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class HotdeskScreen extends StatefulWidget {
+class MeetingRoomScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _HotdeskScreen();
+    return _MeetingRoomScreen();
   }
 }
 
-class _HotdeskScreen extends State {
+class _MeetingRoomScreen extends State {
+  TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
+    minute: 0,
+    hour: TimeOfDay.now().hour+1,);
+  TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
+    minute: 0,
+    hour: TimeOfDay.now().hour+2,);
   String? selectedOffice;
   String? selectedDate;
-  String? selectedDesk;
+  String? selectedMeetingRoom;
+  TimeOfDay startTime = TimeOfDay.now();
+  TimeOfDay? time;
+  TimeOfDay endTime = TimeOfDay.now();
+  String bitis = (TimeOfDay.now().hour +2).toString()+":00";
+  String baslangic = (TimeOfDay.now().hour +1).toString()+":00";
+
   List listDesks = ["No available desk"];
   List listOffice = ["İTÜ Arı 3 -  İstanbul", "IYTE Campus, Teknopark - Izmir"];
-  List gun1 = ["Masa1", "masa 2"];
+  List listMeetingRoom = ["A","B","C","D"];
+
+  List gun1 = ["Masa1","masa 2"];
   List gun2 = ["Masa 5", "Masa 8", "Masa 9"];
 
   DateTime _startDate = DateTime.now();
@@ -31,15 +45,14 @@ class _HotdeskScreen extends State {
   String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
   List<String> dateArr = [];
   List<String> oneDayArr = [];
-  String chooseOnlyOneDay =
-      "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
+  String chooseOnlyOneDay = "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hot Desk Reservation"),
+        title: Text("Meeting Room Reservation"),
         backgroundColor: Color(HexColor.toHexCode("#24343b")),
       ),
       body: Container(
@@ -55,7 +68,7 @@ class _HotdeskScreen extends State {
                 children: [
                   Container(
                       child: Image(
-                    image: AssetImage("assets/hotdesk.png"),
+                    image: AssetImage("assets/meeting2.png"),
                     height: 120,
                     width: 250,
                   )),
@@ -68,6 +81,56 @@ class _HotdeskScreen extends State {
 
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
+  }
+
+  String getTimeString(TimeOfDay date) {
+    if (date == null) {
+      return "oömadı";
+    } else {
+      final hours = date.hour.toString().padLeft(2,"0");
+      final minute = date.minute.toString().padLeft(2,"0");
+
+      return '$hours:$minute';
+
+    }
+  }
+  Future<void> _openTimePickerStart(BuildContext context) async {
+    final TimeOfDay? t =
+    await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: _dateTimeStart.hour, minute: 00),
+        builder: (context, Widget? child){
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child!);
+        }
+
+    );
+    if (t != null) {
+      setState(() {
+        _dateTimeStart = t;
+      });
+
+    }
+  }
+  Future<void> _openTimePickerEnd(BuildContext context) async {
+    final TimeOfDay? t =
+    await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: _dateTimeEnd.hour, minute: 00),
+        builder: (context, Widget? child){
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child!);
+        }
+
+    );
+    if (t != null) {
+      setState(() {
+        _dateTimeEnd = t;
+      });
+
+    }
   }
 
   Widget _SelectOffice() {
@@ -95,12 +158,50 @@ class _HotdeskScreen extends State {
                 padding: EdgeInsets.only(left: 0),
                 child: Text("Choose an Office",
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
             itemHeight: 48,
             value: selectedOffice,
             onChanged: (newValue) {
               setState(() {
                 selectedOffice = newValue as String?;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _SelectMeetingRoom() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Which Meeting Room do you want to res to?',
+            style: TextStyle(color: Colors.grey, fontSize: 10),
+          ),
+          DropdownButton(
+            items: listMeetingRoom.map((valueItem) {
+              return DropdownMenuItem(
+                  value: valueItem,
+                  child: Container(
+                    child: Text(valueItem,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  ));
+            }).toList(),
+            isExpanded: true,
+            hint: Container(
+                padding: EdgeInsets.only(left: 0),
+                child: Text("Choose an Office",
+                    style:
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+            itemHeight: 48,
+            value: selectedMeetingRoom,
+            onChanged: (newValue) {
+              setState(() {
+                selectedMeetingRoom = newValue as String?;
               });
             },
           ),
@@ -132,45 +233,6 @@ class _HotdeskScreen extends State {
     );
   }
 
-  Widget _SelectDesk() {
-    return Container(
-      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Choose one of the available desks!',
-            style: TextStyle(color: Colors.grey, fontSize: 10),
-          ),
-          DropdownButton(
-            items: listDesks.map((valueItem) {
-              return DropdownMenuItem(
-                  value: valueItem,
-                  child: Container(
-                    child: Text(valueItem,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
-                  ));
-            }).toList(),
-            isExpanded: true,
-            hint: Container(
-                padding: EdgeInsets.only(left: 0),
-                child: Text(selectedDesk.toString(),
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
-            itemHeight: 48,
-            onChanged: (newValue) {
-              setState(() {
-                selectedDesk = newValue as String?;
-                _showToast(selectedDesk);
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _ReservationSearhButton() {
     GlobalKey _key = GlobalKey();
     return Container(
@@ -184,123 +246,82 @@ class _HotdeskScreen extends State {
               fontWeight: FontWeight.w500,
             )),
         key: _key,
-        onPressed: () {
-          _showToast(selectedDesk);
+        onPressed: ()
+        {
+          pickTime(context);
           _SentInformRequest();
-        },
+         },
       ),
     );
   }
 
 
 
-  Widget _GuestAndPetQuestion() {
+  Widget _HoursArea() {
     return Container(
         margin: EdgeInsets.only(top: 5),
         alignment: Alignment.centerLeft,
         child:  Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text('Will you bring a guest/pet to the office?',
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+
                 Container(
-                  margin: EdgeInsets.only(top: 15),
+
                   child: Row(
-
                     children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text("Number of Guests",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            )),
-                        Container(
-                          margin: EdgeInsets.only(top:10),
-                          child: Row(
-                            children: <Widget>[
+                    Expanded(
 
-                              GestureDetector(
-                                onTap: () {
-                                  if (guestCount <= 10 && guestCount > 0) {
-                                    setState(() {
-                                      guestCount -= 1;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  height: 20,
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 20,
-                                    color: Color(HexColor.toHexCode("#ff5a00")),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                width: 20,
-                                child: Text(guestCount.toString(),
-                                    style: const TextStyle(
-                                        fontSize: 16, fontWeight: FontWeight.w500)),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              GestureDetector(
-                                  onTap: () {
-                                    if (guestCount < 10 && guestCount >= 0) {
-                                      setState(() {
-                                        guestCount += 1;
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                      height: 20,
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 20,
-                                        color: Color(HexColor.toHexCode("#ff5a00")),
-                                      ))),
+                      child: GestureDetector(
+                        onTap: (){
+                          _openTimePickerStart(context);
+
+                        },
+                        child: Column(
+
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('Starting Time',
+                                style: TextStyle(color: Colors.grey, fontSize: 10)),
+                            SizedBox(height: 10,),
+                            Text(getTimeString(_dateTimeStart),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                )),
+
+
+                          ],
+                        ),
+                      ),
+                      flex: 4,
+                    ),
+
+                      Expanded(
+                        child:
+                        GestureDetector(
+                          onTap: (){
+                          _openTimePickerEnd(context);
+                          },
+                          child: Column(
+
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text('Ending Time',
+                                  style: TextStyle(color: Colors.grey, fontSize: 10)),
+                              SizedBox(height: 10,),
+                              Text(getTimeString(_dateTimeEnd),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  )),
+
+
                             ],
                           ),
                         ),
-
-                      ],
-                    ),
-                    SizedBox(
-                      width: 40,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Pet",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              )),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 20,
-                            child: Checkbox(
-                                value: isPetBrought,
-                                activeColor: Color(HexColor.toHexCode("#ff5a00")),
-                                onChanged: (value) {
-                                  setState(() {
-                                    isPetBrought = value!;
-                                  });
-                                }),
-                          )
-                        ],
+                        flex: 4,
                       ),
-                    ),
+
                   ],),
                 )
               ],
@@ -310,6 +331,8 @@ class _HotdeskScreen extends State {
 
         );
   }
+
+
 
   Widget _Divider() {
     return Padding(
@@ -322,6 +345,7 @@ class _HotdeskScreen extends State {
   }
 
   Widget _DatePicker() {
+
     return Container(
       margin: EdgeInsets.all(20),
       child: SfDateRangePicker(
@@ -343,6 +367,25 @@ class _HotdeskScreen extends State {
     );
   }
 
+  Future pickTime(BuildContext context) async {
+
+
+     final initialTime = TimeOfDay(hour: startTime.hour.toInt()+1, minute: 00);
+     final newTime = await showTimePicker(
+       context: context,
+       initialTime: time ?? initialTime,
+
+     );
+     if(newTime == null) return;
+
+     setState(() {
+       time = newTime;
+     });
+
+  }
+
+
+
   void _onSelectionChanged(
       DateRangePickerSelectionChangedArgs
           dateRangePickerSelectionChangedArgs) {}
@@ -359,7 +402,7 @@ class _HotdeskScreen extends State {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 5),
               child: Text(
-                'Book a Desk',
+                'Book a Meeting Room',
                 style: TextStyle(
                     color: Colors.black87,
                     backgroundColor: Colors.transparent,
@@ -370,9 +413,10 @@ class _HotdeskScreen extends State {
             _SelectOffice(),
             _DateArea(),
             _Divider(),
-            _SelectDesk(),
-            _GuestAndPetQuestion(),
+            _SelectMeetingRoom(),
+            _HoursArea(),
             _ReservationSearhButton(),
+
           ],
         ),
       ),
@@ -397,7 +441,7 @@ class _HotdeskScreen extends State {
         width: 350,
         child: Column(
           children: <Widget>[
-            /* Image.asset(
+           /* Image.asset(
               'assets/temperature.png',
               height: 50,
               width: 50,
@@ -408,19 +452,21 @@ class _HotdeskScreen extends State {
       );
 
   void _SentInformRequest() {
-    if (selectedOffice == null) {
-      _showSnackBar(context, chooseAnOffice);
-    } else {
+    if(selectedOffice == null){
+      _showSnackBar(context,chooseAnOffice);
+
+    }else {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
+
       if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
-        _showSnackBar(context, chooseOnlyOneDay);
+        _showSnackBar(context,chooseOnlyOneDay);
       }
 
       if (dateArr.length == 1) {
         final String formatted =
-            formatter.format(DateTime.parse(dateArr[0].toString()));
-        // _showToast(formatted);
+        formatter.format(DateTime.parse(dateArr[0].toString()));
+       // _showToast(formatted);
       }
       if (dateArr.length == 0) {
         final String formatted = formatter.format(DateTime.now());
@@ -432,6 +478,7 @@ class _HotdeskScreen extends State {
             dateArr[i] = dateArr[i].toString().replaceFirst(RegExp(' '), '');
           }
           dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
+
         }
         //_showToast(dateArr.toString());
 
@@ -443,47 +490,27 @@ class _HotdeskScreen extends State {
 
       */
     }
+
   }
 
   void _onSubmitController(Object val) {
-    setState(() {
-      selectedDate = val.toString();
-      firstDate = DateFormat('dd MMMM yyyy, EEEE')
-          .format(DateTime.parse(selectedDate.toString()));
-    });
 
-    if (selectedDate == "2021-08-13 00:00:00.000") {
-      setState(() {
-        selectedDesk == null;
-        listDesks = gun1;
-      });
-    }
-    if (selectedDate == "2021-08-14 00:00:00.000") {
-      setState(() {
-        selectedDesk == "asd";
-        listDesks = gun2;
-      });
-    }
-    if (selectedDate == "2021-08-15 00:00:00.000") {
-      setState(() {
-        selectedDesk == "null";
+        setState(() {
+          selectedDate = val.toString();
+          firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.parse(selectedDate.toString()));
+        });
 
-        listDesks = ["a0", "sasd", "asdasdasd"];
-      });
-    }
-    if (selectedDate == "2021-08-16 00:00:00.000") {
-      setState(() {
-        selectedDesk == "null";
-        listDesks = gun2;
-      });
-    }
 
-    _showToast(selectedDate);
-    print(selectedDate);
+
+
+       _showToast(selectedDate);
+        print(selectedDate);
     Navigator.of(context).pop(_dateRangePickerController);
-  }
 
+
+  }
   void _onCancelController() {
+
     Navigator.of(context).pop(_dateRangePickerController);
 
     setState(() {
@@ -491,24 +518,27 @@ class _HotdeskScreen extends State {
     });
     selectedDate = firstDate;
   }
-
   _showSnackBar(BuildContext context, String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        msg,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-        textAlign: TextAlign.left,
-      ),
-      action: SnackBarAction(
-        label: "OK",
-        textColor: Colors.white,
-        disabledTextColor: Colors.deepPurple,
-        onPressed: () {},
-      ),
-      backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            msg,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          action: SnackBarAction(
+            label: "OK",
+            textColor: Colors.white,
+            disabledTextColor: Colors.deepPurple,
+            onPressed: () {
+            },
+          ),
+          backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+        ));
   }
+
+
 }
