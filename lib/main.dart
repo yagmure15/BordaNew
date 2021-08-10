@@ -1,5 +1,4 @@
 import 'package:bordatech/screens/dashboard_screen.dart';
-import 'package:bordatech/screens/signin.dart';
 import 'package:flutter/material.dart';
 
 void main() {
