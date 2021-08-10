@@ -43,7 +43,7 @@ class _CreateEvent extends State {
 
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
-  String chooseAnOffice = "Please, Choose an Office";
+  String chooseAnOffice = "Please, Choose an Office!";
 
   @override
   Widget build(BuildContext context) {
