@@ -356,6 +356,30 @@ class _HotdeskScreen extends State {
                         }),
                   )
                 ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text("Pet",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    height: 20,
+                    child: Checkbox(
+                        value: isPetBrought,
+                        activeColor: Color(HexColor.toHexCode("#ff5a00")),
+                        onChanged: (value) {
+                          setState(() {
+                            isPetBrought = value!;
+                          });
+                        }),
+                  )
+                ],
               )
             ],)
 
