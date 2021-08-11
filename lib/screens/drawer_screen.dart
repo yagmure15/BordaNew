@@ -3,7 +3,7 @@ import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' show launch;
 
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({Key? key}) : super(key: key);
