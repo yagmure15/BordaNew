@@ -1,5 +1,6 @@
 import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
+import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   "Weather",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
-                onTap: null,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WeatherScreen(),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: Icon(Icons.food_bank_outlined),

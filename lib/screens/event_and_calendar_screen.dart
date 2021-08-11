@@ -9,7 +9,7 @@ class EventCalendarScreen extends StatefulWidget {
   }
 }
 
-class _EventCalendarScreenState extends State {
+class _EventCalendarScreenState extends State<EventCalendarScreen> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

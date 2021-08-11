@@ -34,7 +34,9 @@ dependencies:
   url_launcher: ^6.0.9
   syncfusion_flutter_datepicker: ^19.1.57-beta
   intl: ^0.17.0
-  flutter_time_picker_spinner: ^2.0.0  
+  flutter_time_picker_spinner: ^2.0.0
+  http: ^0.13.3
+  font_awesome_flutter: ^9.1.0
 
 dev_dependencies:
   flutter_test:
