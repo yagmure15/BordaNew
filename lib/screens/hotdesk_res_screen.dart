@@ -36,14 +36,20 @@ class _HotdeskScreen extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
-        title: Text("Hot Desk Reservation"),
+        leading: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Image.asset('assets/return.png')),
+        title: Text('Hot Desk Reservation'),
         backgroundColor: bordaGreen,
+        centerTitle: true,
       ),
       body: Container(
           height: double.infinity,
           width: double.infinity,
-          color: Color(HexColor.toHexCode("#2a4449")),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -144,8 +150,10 @@ class _HotdeskScreen extends State {
             )),
         key: _key,
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HotDeskSelectionScreen()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HotDeskSelectionScreen()));
           _SentInformRequest();
         },
       ),
@@ -359,9 +367,7 @@ class _HotdeskScreen extends State {
         ),
       );
 
-  void _SentInformRequest() {
-
-  }
+  void _SentInformRequest() {}
 
   void _onSubmitController(Object val) {
     setState(() {

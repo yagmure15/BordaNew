@@ -14,22 +14,20 @@ class _HotDeskSelectionScreenState extends State {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
-        title: Text("Choosing Desk"),
+        leading: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Image.asset('assets/return.png')),
+        title: Text('Hot Desk Selection'),
         backgroundColor: bordaGreen,
+        centerTitle: true,
       ),
       body: Center(
-        child: Text("Event and Calendar Screen"),
+        child: Text("Hot Desk Selection Screen"),
       ),
     );
   }
-
-  
-
-
-
-
-
-
-
 }

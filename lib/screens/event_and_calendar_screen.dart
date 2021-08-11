@@ -21,11 +21,7 @@ class _EventCalendarScreenState extends State {
               Navigator.pop(context);
             },
             child: Image.asset('assets/return.png')),
-        title: Image.asset(
-          "assets/borda.png",
-          fit: BoxFit.contain,
-          height: 30,
-        ),
+        title: Text('Events and Calendar'),
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),

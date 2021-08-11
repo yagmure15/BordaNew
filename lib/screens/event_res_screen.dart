@@ -49,14 +49,21 @@ class _CreateEvent extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
-        title: Text("Create an Event"),
-        backgroundColor: Color(HexColor.toHexCode("#24343b")),
+        leading: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Image.asset('assets/return.png')),
+        title: Text('Create Event'),
+        backgroundColor: bordaGreen,
+        centerTitle: true,
       ),
       body: Container(
           height: double.infinity,
           width: double.infinity,
-          color: Color(HexColor.toHexCode("#2a4449")),
+          color: bordaSoftGreen,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -170,7 +177,7 @@ class _CreateEvent extends State {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: MaterialButton(
-        color: Color(HexColor.toHexCode("#ff5a00")),
+        color: bordaOrange,
         child: Text("Create",
             style: const TextStyle(
               fontSize: 16,

@@ -32,14 +32,20 @@ class _InformResScreen extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
-        title: Text("Inform Reservation"),
+        leading: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Image.asset('assets/return.png')),
+        title: Text('Notify Participation'),
         backgroundColor: bordaGreen,
+        centerTitle: true,
       ),
       body: Container(
           height: double.infinity,
           width: double.infinity,
-          color: Color(HexColor.toHexCode("#2a4449")),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

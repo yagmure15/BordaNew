@@ -16,24 +16,26 @@ class MeetingRoomScreen extends StatefulWidget {
 class _MeetingRoomScreen extends State {
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour+1,);
+    hour: TimeOfDay.now().hour + 1,
+  );
   TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour+2,);
+    hour: TimeOfDay.now().hour + 2,
+  );
   String? selectedOffice;
   String? selectedDate;
   String? selectedMeetingRoom;
   TimeOfDay startTime = TimeOfDay.now();
   TimeOfDay? time;
   TimeOfDay endTime = TimeOfDay.now();
-  String bitis = (TimeOfDay.now().hour +2).toString()+":00";
-  String baslangic = (TimeOfDay.now().hour +1).toString()+":00";
+  String bitis = (TimeOfDay.now().hour + 2).toString() + ":00";
+  String baslangic = (TimeOfDay.now().hour + 1).toString() + ":00";
 
   List listDesks = ["No available desk"];
   List listOffice = ["İTÜ Arı 3 -  İstanbul", "IYTE Campus, Teknopark - Izmir"];
-  List listMeetingRoom = ["A","B","C","D"];
+  List listMeetingRoom = ["A", "B", "C", "D"];
 
-  List gun1 = ["Masa1","masa 2"];
+  List gun1 = ["Masa1", "masa 2"];
   List gun2 = ["Masa 5", "Masa 8", "Masa 9"];
 
   DateTime _startDate = DateTime.now();
@@ -45,20 +47,27 @@ class _MeetingRoomScreen extends State {
   String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
   List<String> dateArr = [];
   List<String> oneDayArr = [];
-  String chooseOnlyOneDay = "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
+  String chooseOnlyOneDay =
+      "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
-        title: Text("Meeting Room Reservation"),
-        backgroundColor: Color(HexColor.toHexCode("#24343b")),
+        leading: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Image.asset('assets/return.png')),
+        title: Text('Meeting Room Reservation'),
+        backgroundColor: bordaGreen,
+        centerTitle: true,
       ),
       body: Container(
           height: double.infinity,
           width: double.infinity,
-          color: Color(HexColor.toHexCode("#2a4449")),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -87,49 +96,44 @@ class _MeetingRoomScreen extends State {
     if (date == null) {
       return "oömadı";
     } else {
-      final hours = date.hour.toString().padLeft(2,"0");
-      final minute = date.minute.toString().padLeft(2,"0");
+      final hours = date.hour.toString().padLeft(2, "0");
+      final minute = date.minute.toString().padLeft(2, "0");
 
       return '$hours:$minute';
-
     }
   }
+
   Future<void> _openTimePickerStart(BuildContext context) async {
-    final TimeOfDay? t =
-    await showTimePicker(
+    final TimeOfDay? t = await showTimePicker(
         context: context,
         initialTime: TimeOfDay(hour: _dateTimeStart.hour, minute: 00),
-        builder: (context, Widget? child){
+        builder: (context, Widget? child) {
           return MediaQuery(
-              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
               child: child!);
-        }
-
-    );
+        });
     if (t != null) {
       setState(() {
         _dateTimeStart = t;
       });
-
     }
   }
+
   Future<void> _openTimePickerEnd(BuildContext context) async {
-    final TimeOfDay? t =
-    await showTimePicker(
+    final TimeOfDay? t = await showTimePicker(
         context: context,
         initialTime: TimeOfDay(hour: _dateTimeEnd.hour, minute: 00),
-        builder: (context, Widget? child){
+        builder: (context, Widget? child) {
           return MediaQuery(
-              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
               child: child!);
-        }
-
-    );
+        });
     if (t != null) {
       setState(() {
         _dateTimeEnd = t;
       });
-
     }
   }
 
@@ -158,7 +162,7 @@ class _MeetingRoomScreen extends State {
                 padding: EdgeInsets.only(left: 0),
                 child: Text("Choose an Office",
                     style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
             itemHeight: 48,
             value: selectedOffice,
             onChanged: (newValue) {
@@ -171,6 +175,7 @@ class _MeetingRoomScreen extends State {
       ),
     );
   }
+
   Widget _SelectMeetingRoom() {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -196,7 +201,7 @@ class _MeetingRoomScreen extends State {
                 padding: EdgeInsets.only(left: 0),
                 child: Text("Choose an Office",
                     style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
             itemHeight: 48,
             value: selectedMeetingRoom,
             onChanged: (newValue) {
@@ -246,93 +251,77 @@ class _MeetingRoomScreen extends State {
               fontWeight: FontWeight.w500,
             )),
         key: _key,
-        onPressed: ()
-        {
+        onPressed: () {
           pickTime(context);
           _SentInformRequest();
-         },
+        },
       ),
     );
   }
 
-
-
   Widget _HoursArea() {
     return Container(
-        margin: EdgeInsets.only(top: 5),
-        alignment: Alignment.centerLeft,
-        child:  Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      margin: EdgeInsets.only(top: 5),
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Row(
               children: <Widget>[
-
-                Container(
-
-                  child: Row(
-                    children: <Widget>[
-                    Expanded(
-
-                      child: GestureDetector(
-                        onTap: (){
-                          _openTimePickerStart(context);
-
-                        },
-                        child: Column(
-
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('Starting Time',
-                                style: TextStyle(color: Colors.grey, fontSize: 10)),
-                            SizedBox(height: 10,),
-                            Text(getTimeString(_dateTimeStart),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                )),
-
-
-                          ],
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      _openTimePickerStart(context);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Starting Time',
+                            style: TextStyle(color: Colors.grey, fontSize: 10)),
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      flex: 4,
+                        Text(getTimeString(_dateTimeStart),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                      ],
                     ),
-
-                      Expanded(
-                        child:
-                        GestureDetector(
-                          onTap: (){
-                          _openTimePickerEnd(context);
-                          },
-                          child: Column(
-
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text('Ending Time',
-                                  style: TextStyle(color: Colors.grey, fontSize: 10)),
-                              SizedBox(height: 10,),
-                              Text(getTimeString(_dateTimeEnd),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-
-
-                            ],
-                          ),
+                  ),
+                  flex: 4,
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      _openTimePickerEnd(context);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Ending Time',
+                            style: TextStyle(color: Colors.grey, fontSize: 10)),
+                        SizedBox(
+                          height: 10,
                         ),
-                        flex: 4,
-                      ),
-
-                  ],),
-                )
+                        Text(getTimeString(_dateTimeEnd),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                      ],
+                    ),
+                  ),
+                  flex: 4,
+                ),
               ],
             ),
-
-
-
-        );
+          )
+        ],
+      ),
+    );
   }
-
-
 
   Widget _Divider() {
     return Padding(
@@ -345,7 +334,6 @@ class _MeetingRoomScreen extends State {
   }
 
   Widget _DatePicker() {
-
     return Container(
       margin: EdgeInsets.all(20),
       child: SfDateRangePicker(
@@ -368,23 +356,17 @@ class _MeetingRoomScreen extends State {
   }
 
   Future pickTime(BuildContext context) async {
+    final initialTime = TimeOfDay(hour: startTime.hour.toInt() + 1, minute: 00);
+    final newTime = await showTimePicker(
+      context: context,
+      initialTime: time ?? initialTime,
+    );
+    if (newTime == null) return;
 
-
-     final initialTime = TimeOfDay(hour: startTime.hour.toInt()+1, minute: 00);
-     final newTime = await showTimePicker(
-       context: context,
-       initialTime: time ?? initialTime,
-
-     );
-     if(newTime == null) return;
-
-     setState(() {
-       time = newTime;
-     });
-
+    setState(() {
+      time = newTime;
+    });
   }
-
-
 
   void _onSelectionChanged(
       DateRangePickerSelectionChangedArgs
@@ -416,7 +398,6 @@ class _MeetingRoomScreen extends State {
             _SelectMeetingRoom(),
             _HoursArea(),
             _ReservationSearhButton(),
-
           ],
         ),
       ),
@@ -441,7 +422,7 @@ class _MeetingRoomScreen extends State {
         width: 350,
         child: Column(
           children: <Widget>[
-           /* Image.asset(
+            /* Image.asset(
               'assets/temperature.png',
               height: 50,
               width: 50,
@@ -452,21 +433,19 @@ class _MeetingRoomScreen extends State {
       );
 
   void _SentInformRequest() {
-    if(selectedOffice == null){
-      _showSnackBar(context,chooseAnOffice);
-
-    }else {
+    if (selectedOffice == null) {
+      _showSnackBar(context, chooseAnOffice);
+    } else {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-
       if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
-        _showSnackBar(context,chooseOnlyOneDay);
+        _showSnackBar(context, chooseOnlyOneDay);
       }
 
       if (dateArr.length == 1) {
         final String formatted =
-        formatter.format(DateTime.parse(dateArr[0].toString()));
-       // _showToast(formatted);
+            formatter.format(DateTime.parse(dateArr[0].toString()));
+        // _showToast(formatted);
       }
       if (dateArr.length == 0) {
         final String formatted = formatter.format(DateTime.now());
@@ -478,7 +457,6 @@ class _MeetingRoomScreen extends State {
             dateArr[i] = dateArr[i].toString().replaceFirst(RegExp(' '), '');
           }
           dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
-
         }
         //_showToast(dateArr.toString());
 
@@ -490,27 +468,21 @@ class _MeetingRoomScreen extends State {
 
       */
     }
-
   }
 
   void _onSubmitController(Object val) {
+    setState(() {
+      selectedDate = val.toString();
+      firstDate = DateFormat('dd MMMM yyyy, EEEE')
+          .format(DateTime.parse(selectedDate.toString()));
+    });
 
-        setState(() {
-          selectedDate = val.toString();
-          firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.parse(selectedDate.toString()));
-        });
-
-
-
-
-       _showToast(selectedDate);
-        print(selectedDate);
+    _showToast(selectedDate);
+    print(selectedDate);
     Navigator.of(context).pop(_dateRangePickerController);
-
-
   }
-  void _onCancelController() {
 
+  void _onCancelController() {
     Navigator.of(context).pop(_dateRangePickerController);
 
     setState(() {
@@ -518,27 +490,24 @@ class _MeetingRoomScreen extends State {
     });
     selectedDate = firstDate;
   }
+
   _showSnackBar(BuildContext context, String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            msg,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          action: SnackBarAction(
-            label: "OK",
-            textColor: Colors.white,
-            disabledTextColor: Colors.deepPurple,
-            onPressed: () {
-            },
-          ),
-          backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
-        ));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        msg,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        textAlign: TextAlign.left,
+      ),
+      action: SnackBarAction(
+        label: "OK",
+        textColor: Colors.white,
+        disabledTextColor: Colors.deepPurple,
+        onPressed: () {},
+      ),
+      backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+    ));
   }
-
-
 }
