@@ -42,7 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       drawer: DrawerScreen(),
-      backgroundColor: Color(HexColor.toHexCode("#2a4449")),
+      backgroundColor: bordaLightGreen,
       body: _dashboardBody(),
       floatingActionButton: _animatedFloatingButton(),
     );

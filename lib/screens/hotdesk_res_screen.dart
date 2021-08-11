@@ -1,3 +1,4 @@
+import 'package:bordatech/screens/hotdesk_selection_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,15 +23,12 @@ class _HotdeskScreen extends State {
   List gun1 = ["Masa1", "masa 2"];
   List gun2 = ["Masa 5", "Masa 8", "Masa 9"];
 
-  DateTime _startDate = DateTime.now();
   int guestCount = 0;
   DateTime? neyDateformat;
   DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
   bool isPetBrought = false;
   String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
-  List<String> dateArr = [];
-  List<String> oneDayArr = [];
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
@@ -40,7 +38,7 @@ class _HotdeskScreen extends State {
     return Scaffold(
       appBar: AppBar(
         title: Text("Hot Desk Reservation"),
-        backgroundColor: Color(HexColor.toHexCode("#24343b")),
+        backgroundColor: bordaGreen,
       ),
       body: Container(
           height: double.infinity,
@@ -49,7 +47,7 @@ class _HotdeskScreen extends State {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(height: 470, width: 350, child: _getBooking()),
+              Container(height: 420, width: 350, child: _getBooking()),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -132,52 +130,13 @@ class _HotdeskScreen extends State {
     );
   }
 
-  Widget _SelectDesk() {
-    return Container(
-      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Choose one of the available desks!',
-            style: TextStyle(color: Colors.grey, fontSize: 10),
-          ),
-          DropdownButton(
-            items: listDesks.map((valueItem) {
-              return DropdownMenuItem(
-                  value: valueItem,
-                  child: Container(
-                    child: Text(valueItem,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
-                  ));
-            }).toList(),
-            isExpanded: true,
-            hint: Container(
-                padding: EdgeInsets.only(left: 0),
-                child: Text(selectedDesk.toString(),
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
-            itemHeight: 48,
-            onChanged: (newValue) {
-              setState(() {
-                selectedDesk = newValue as String?;
-                _showToast(selectedDesk);
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _ReservationSearhButton() {
     GlobalKey _key = GlobalKey();
     return Container(
       margin: EdgeInsets.fromLTRB(0, 30, 0, 10),
       child: MaterialButton(
-        color: Color(HexColor.toHexCode("#ff5a00")),
-        child: Text("Search",
+        color: bordaOrange,
+        child: Text("Next",
             style: const TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -185,7 +144,8 @@ class _HotdeskScreen extends State {
             )),
         key: _key,
         onPressed: () {
-          _showToast(selectedDesk);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HotDeskSelectionScreen()));
           _SentInformRequest();
         },
       ),
@@ -194,7 +154,7 @@ class _HotdeskScreen extends State {
 
   Widget _GuestAndPetQuestion() {
     return Container(
-      margin: EdgeInsets.only(top: 5),
+      margin: EdgeInsets.only(top: 10),
       alignment: Alignment.centerLeft,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +190,7 @@ class _HotdeskScreen extends State {
                               child: Icon(
                                 Icons.remove,
                                 size: 20,
-                                color: Color(HexColor.toHexCode("#ff5a00")),
+                                color: bordaOrange,
                               ),
                             ),
                           ),
@@ -260,7 +220,7 @@ class _HotdeskScreen extends State {
                                   child: Icon(
                                     Icons.add,
                                     size: 20,
-                                    color: Color(HexColor.toHexCode("#ff5a00")),
+                                    color: bordaOrange,
                                   ))),
                         ],
                       ),
@@ -363,7 +323,6 @@ class _HotdeskScreen extends State {
             _SelectOffice(),
             _DateArea(),
             _Divider(),
-            _SelectDesk(),
             _GuestAndPetQuestion(),
             _ReservationSearhButton(),
           ],
@@ -401,41 +360,7 @@ class _HotdeskScreen extends State {
       );
 
   void _SentInformRequest() {
-    if (selectedOffice == null) {
-      _showSnackBar(context, chooseAnOffice);
-    } else {
-      final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-      if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
-        _showSnackBar(context, chooseOnlyOneDay);
-      }
-
-      if (dateArr.length == 1) {
-        final String formatted =
-            formatter.format(DateTime.parse(dateArr[0].toString()));
-        // _showToast(formatted);
-      }
-      if (dateArr.length == 0) {
-        final String formatted = formatter.format(DateTime.now());
-        //_showToast(formatted);
-      }
-      if (dateArr.length > 1) {
-        for (int i = 0; i < dateArr.length; i++) {
-          if (i > 0) {
-            dateArr[i] = dateArr[i].toString().replaceFirst(RegExp(' '), '');
-          }
-          dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
-        }
-        //_showToast(dateArr.toString());
-
-      }
-
-      /*
-
-      //verileri gönderme işlemini burada yap!
-
-      */
-    }
   }
 
   void _onSubmitController(Object val) {

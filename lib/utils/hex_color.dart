@@ -11,3 +11,4 @@ class HexColor {
 
 var bordaGreen = Color(HexColor.toHexCode("#24343b"));
 var bordaOrange = Color(HexColor.toHexCode("#f0542d"));
+var bordaLightGreen = Color(HexColor.toHexCode("#2a4449"));
