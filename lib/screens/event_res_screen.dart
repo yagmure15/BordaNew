@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 
 class CreateEvent extends StatefulWidget {
   @override
@@ -19,10 +18,12 @@ class _CreateEvent extends State {
   String? _eventTitle;
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour+1,);
+    hour: TimeOfDay.now().hour + 1,
+  );
   TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour+2,);
+    hour: TimeOfDay.now().hour + 2,
+  );
   String? selectedOffice;
   String? selectedDate;
   String? selectedMeetingRoom;
@@ -79,7 +80,6 @@ class _CreateEvent extends State {
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
-
 
   Widget _EventTitleArea() {
     return Container(
@@ -197,7 +197,7 @@ class _CreateEvent extends State {
               children: <Widget>[
                 Expanded(
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       _openTimePickerStart(context);
                     },
                     child: Column(
@@ -222,7 +222,6 @@ class _CreateEvent extends State {
                   child: GestureDetector(
                     onTap: () {
                       _openTimePickerEnd(context);
-
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,49 +253,44 @@ class _CreateEvent extends State {
     if (date == null) {
       return "oömadı";
     } else {
-      final hours = date.hour.toString().padLeft(2,"0");
-      final minute = date.minute.toString().padLeft(2,"0");
+      final hours = date.hour.toString().padLeft(2, "0");
+      final minute = date.minute.toString().padLeft(2, "0");
 
-        return '$hours:$minute';
-
+      return '$hours:$minute';
     }
   }
-  Future<void> _openTimePickerStart(BuildContext context) async {
-    final TimeOfDay? t =
-        await showTimePicker(
-            context: context,
-            initialTime: TimeOfDay(hour: _dateTimeStart.hour, minute: 00),
-            builder: (context, Widget? child){
-              return MediaQuery(
-                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                  child: child!);
-            }
 
-        );
+  Future<void> _openTimePickerStart(BuildContext context) async {
+    final TimeOfDay? t = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: _dateTimeStart.hour, minute: 00),
+        builder: (context, Widget? child) {
+          return MediaQuery(
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child!);
+        });
     if (t != null) {
       setState(() {
         _dateTimeStart = t;
       });
-
     }
   }
+
   Future<void> _openTimePickerEnd(BuildContext context) async {
-    final TimeOfDay? t =
-    await showTimePicker(
+    final TimeOfDay? t = await showTimePicker(
         context: context,
         initialTime: TimeOfDay(hour: _dateTimeEnd.hour, minute: 00),
-        builder: (context, Widget? child){
+        builder: (context, Widget? child) {
           return MediaQuery(
-              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
               child: child!);
-        }
-
-    );
+        });
     if (t != null) {
       setState(() {
         _dateTimeEnd = t;
       });
-
     }
   }
 
@@ -381,7 +375,6 @@ class _CreateEvent extends State {
             ));
   }
 
-
   _buildDateDialogChild(BuildContext context) => Container(
         color: Colors.white,
         height: 350,
@@ -398,9 +391,7 @@ class _CreateEvent extends State {
         ),
       );
 
-  void _SentInformRequest() {
-
-  }
+  void _SentInformRequest() {}
 
   void _onSubmitController(Object val) {
     setState(() {
@@ -442,8 +433,6 @@ class _CreateEvent extends State {
       backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
     ));
   }
-
-
 
   String _validateEventTitle(String value) {
     if (value.isEmpty) {

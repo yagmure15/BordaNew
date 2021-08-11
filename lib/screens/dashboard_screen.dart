@@ -5,7 +5,7 @@ import 'package:bordatech/screens/meeting_room_res_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'inform_res_screen.dart';
+import 'package:bordatech/screens/inform_res_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -42,7 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       drawer: DrawerScreen(),
-      backgroundColor: bordaLightGreen,
+      backgroundColor: bordaSoftGreen,
       body: _dashboardBody(),
       floatingActionButton: _animatedFloatingButton(),
     );
@@ -229,20 +229,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Icon(Icons.event),
             label: "Create Event",
             onTap: () {
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CreateEvent()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CreateEvent()));
             }),
         SpeedDialChild(
             child: Icon(Icons.meeting_room),
             label: "Meeting Room Reservation",
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MeetingRoomScreen()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeetingRoomScreen()));
             }),
         SpeedDialChild(
             child: Icon(Icons.desktop_mac),
