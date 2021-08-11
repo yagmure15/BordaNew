@@ -1,4 +1,5 @@
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/terms_privacy_screen.dart';
 import 'package:bordatech/screens/login_screen.dart';
@@ -64,14 +65,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               child: Container(
                 child: Text(
                   'Smart Coworking Space App will increase the efficieny of work done by employees, satisfaction of employees/employers and increase the wellness of all!',
                   style: TextStyle(
                     color: bordaOrange,
                     fontSize: 15.5,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -95,35 +96,60 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
                 style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.white),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            side: BorderSide(color: bordaOrange)))),
+                  backgroundColor: MaterialStateProperty.all(Colors.white),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side: BorderSide(
+                        color: bordaOrange,
+                      ),
+                    ),
+                  ),
+                ),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                  );
                 },
               ),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(
-                vertical: 100,
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 90,
+                right: 90,
+                top: 30,
+                bottom: 0,
               ),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TermsPrivacyPolicy()));
-                },
-                child: Text(
-                  'Read Terms of Services & Privacy Policy',
+              child: RichText(
+                text: TextSpan(
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    decoration: TextDecoration.underline,
+                    color: bordaOrange,
+                    fontSize: 16.0,
                   ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'By clicking Continue, you agree to our ',
+                    ),
+                    TextSpan(
+                      text: 'Terms of Service & Privacy Policy.',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 17,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TermsPrivacyPolicy(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
                 ),
               ),
             ),

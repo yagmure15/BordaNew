@@ -7,15 +7,13 @@ class SettingsScreen extends StatefulWidget {
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
-Color sections = Color.fromRGBO(49, 98, 102, 1);
-
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: bordaGreen,
+        backgroundColor: bordaSoftGreen,
         appBar: AppBar(
           leading: TextButton(
               onPressed: () {
@@ -54,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 margin: EdgeInsets.only(bottom: 10),
                 //width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  color: sections,
+                  color: bordaGreen,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 //padding: const EdgeInsets.only(bottom: 5),
@@ -78,7 +76,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 margin: EdgeInsets.only(bottom: 10),
                 //width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                    color: sections, borderRadius: BorderRadius.circular(10)),
+                  color: bordaGreen,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 //padding: const EdgeInsets.only(bottom: 5),
                 child: Center(
                   child: Text(
@@ -97,7 +97,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 //width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  color: sections,
+                  color: bordaGreen,
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
                     //fit: BoxFit.fill,
@@ -128,7 +128,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 margin: EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                    color: sections, borderRadius: BorderRadius.circular(10)),
+                  color: bordaGreen,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Center(
                   child: Text(
                     'Allow Notifications',
@@ -148,7 +150,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 margin: EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                    color: sections, borderRadius: BorderRadius.circular(10)),
+                  color: bordaGreen,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Center(
                   child: Text(
                     'Light Mode',
@@ -168,7 +172,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 margin: EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                    color: sections, borderRadius: BorderRadius.circular(10)),
+                  color: bordaGreen,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: TextButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -193,7 +199,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 margin: EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                    color: sections, borderRadius: BorderRadius.circular(10)),
+                  color: bordaGreen,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(context,

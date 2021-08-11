@@ -1,7 +1,9 @@
 import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({Key? key}) : super(key: key);
@@ -34,7 +36,6 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                 "https://images6.alphacoders.com/337/337780.jpg"),
                             fit: BoxFit.fill)),
                   ),
-                  // TODO: should we keep both the name and email in there? What about settings? Don't include email?
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 6),
                     child: Text(
@@ -73,12 +74,37 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.food_bank_outlined),
-                title: Text(
+                title: RichText(
+                  text: new TextSpan(
+                    text: 'Baklava',
+                    style: new TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: bordaGreen,
+                    ),
+                    recognizer: new TapGestureRecognizer()
+                      ..onTap = () {
+                        launch(
+                            'https://www.yemeksepeti.com/gaziantepli-baklavaci-samet-usta-kagithane-sultan-selim-sanayi-mah-istanbul');
+                      },
+                  ),
+                ),
+              ),
+              /* 
+              Text(
                   "Baklava",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
-                onTap: null,
+                ), 
+              onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TermsPrivacyPolicy(),
+                    ),
+                  );
+                }, 
               ),
+              */
               ListTile(
                 leading: Icon(Icons.settings),
                 title: Text(

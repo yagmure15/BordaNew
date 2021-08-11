@@ -42,7 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       drawer: DrawerScreen(),
-      backgroundColor: Color(HexColor.toHexCode("#2a4449")),
+      backgroundColor: bordaSoftGreen,
       body: _dashboardBody(),
       floatingActionButton: _animatedFloatingButton(),
     );
@@ -229,20 +229,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Icon(Icons.event),
             label: "Create Event",
             onTap: () {
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CreateEvent()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CreateEvent()));
             }),
         SpeedDialChild(
             child: Icon(Icons.meeting_room),
             label: "Meeting Room Reservation",
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MeetingRoomScreen()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeetingRoomScreen()));
             }),
         SpeedDialChild(
             child: Icon(Icons.desktop_mac),
