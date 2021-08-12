@@ -24,16 +24,10 @@ class _CreateEvent extends State {
     minute: 0,
     hour: TimeOfDay.now().hour + 2,
   );
-  String? selectedOffice;
+  String? selectedTitle;
   String? selectedDate;
-  String? selectedMeetingRoom;
 
-  List listDesks = ["No available desk"];
-  List listOffice = ["İTÜ Arı 3 -  İstanbul", "IYTE Campus, Teknopark - Izmir"];
-  List listMeetingRoom = ["A", "B", "C", "D"];
-
-  List gun1 = ["Masa1", "masa 2"];
-  List gun2 = ["Masa 5", "Masa 8", "Masa 9"];
+  List listTitle = ["Competition","Meeting","Celebration"];
 
   int guestCount = 0;
   DateTime? neyDateformat;
@@ -60,7 +54,10 @@ class _CreateEvent extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
+      resizeToAvoidBottomInset: false,
+
       body: Container(
+
           height: double.infinity,
           width: double.infinity,
           color: bordaSoftGreen,
@@ -69,6 +66,7 @@ class _CreateEvent extends State {
             children: <Widget>[
               Container(height: 490, width: 350, child: _getBooking()),
               Column(
+
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
@@ -88,47 +86,22 @@ class _CreateEvent extends State {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
 
-  Widget _EventTitleArea() {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Enter a title for the event you will create',
-              style: TextStyle(color: Colors.grey, fontSize: 10)),
-          TextFormField(
-            style: TextStyle(
-                height: 1.5, fontSize: 16, fontWeight: FontWeight.w500),
-            controller: titleController,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(0),
-                enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.grey, width: 0.5)),
-                fillColor: Colors.white,
-                border: UnderlineInputBorder(),
-                filled: true,
-                labelText: "Enter a Title"),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _EventDescriptionArea() {
+
     return Container(
+
       margin: EdgeInsets.only(top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Enter a title for the event you will create',
+          const Text('Enter a details for the event you will create',
               style: TextStyle(color: Colors.grey, fontSize: 10)),
           SizedBox(
             height: 10,
           ),
           TextFormField(
-            maxLines: 2,
+              maxLines: 2,
             style: TextStyle(
                 height: 1.5, fontSize: 16, fontWeight: FontWeight.w500),
             controller: titleController,
@@ -147,14 +120,53 @@ class _CreateEvent extends State {
       ),
     );
   }
+  Widget _SelectEventTitleArea() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Please select the title of the organization!',
+            style: TextStyle(color: Colors.grey, fontSize: 10),
+          ),
+          DropdownButton(
 
+            items: listTitle.map((valueItem) {
+              return DropdownMenuItem(
+                  value: valueItem,
+                  child: Container(
+                    child: Text(valueItem,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  ));
+            }).toList(),
+
+            isExpanded: true,
+            hint: Container(
+                padding: EdgeInsets.only(left: 0),
+                child: Text("Choose a Title",
+                    style:
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+            itemHeight: 48,
+            value: selectedTitle,
+            onChanged: (newValue) {
+              setState(() {
+                selectedTitle = newValue as String?;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
   Widget _DateArea() {
     return GestureDetector(
       onTap: () {
         createDateDialog(context);
       },
       child: Container(
-          margin: EdgeInsets.only(top: 20),
+          margin: EdgeInsets.only(top: 0),
           alignment: Alignment.centerLeft,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +369,7 @@ class _CreateEvent extends State {
                     fontSize: 20),
               ),
             ),
-            _EventTitleArea(),
+            _SelectEventTitleArea(),
             _DateArea(),
             _Divider(),
             _HoursArea(),
@@ -441,10 +453,4 @@ class _CreateEvent extends State {
     ));
   }
 
-  String _validateEventTitle(String value) {
-    if (value.isEmpty) {
-      return "name is required";
-    }
-    return "null";
-  }
 }

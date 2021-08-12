@@ -201,7 +201,7 @@ class _MeetingRoomScreen extends State {
             isExpanded: true,
             hint: Container(
                 padding: EdgeInsets.only(left: 0),
-                child: Text("Choose an Office",
+                child: Text("Choose a Meeting Room",
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
             itemHeight: 48,
