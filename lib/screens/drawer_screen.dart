@@ -4,6 +4,7 @@ import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 
 class DrawerScreen extends StatefulWidget {
@@ -81,21 +82,25 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   );
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.food_bank_outlined),
-                title: RichText(
-                  text: new TextSpan(
-                    text: 'Baklava',
-                    style: new TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: bordaOrange,
+              InkWell(
+                onTap: (){
+                },
+                child: ListTile(
+                  leading: Icon(Icons.food_bank_outlined),
+                  title: RichText(
+                    text: new TextSpan(
+                      text: 'Baklava',
+                      style: new TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: bordaGreen,
+                      ),
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () {
+                          launch(
+                              'https://www.yemeksepeti.com/gaziantepli-baklavaci-samet-usta-kagithane-sultan-selim-sanayi-mah-istanbul');
+                        },
                     ),
-                    recognizer: new TapGestureRecognizer()
-                      ..onTap = () {
-                        launch(
-                            'https://www.yemeksepeti.com/gaziantepli-baklavaci-samet-usta-kagithane-sultan-selim-sanayi-mah-istanbul');
-                      },
                   ),
                 ),
               ),
@@ -132,5 +137,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
         ],
       ),
     );
+  }
+  void _showToast(S) {
+    Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
 }
