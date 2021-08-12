@@ -13,7 +13,7 @@ class HotDeskSelectionScreen extends StatefulWidget {
 class _HotDeskSelectionScreenState extends State {
 
   String _allDataOrEmptyData = "All Desks";
-  List allDeskList = ["a", "b", "c", "d"];
+  List allDeskList = ["a", "b", "c", "d","a", "b", "c", "d","a", "b", "c", "d"];
   List onlyAvailableDesks = ["d", "e"];
 
   @override

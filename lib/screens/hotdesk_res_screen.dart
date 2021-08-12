@@ -24,10 +24,6 @@ class _HotdeskScreen extends State {
     hour: 18,
   );
 
-
-
-
-
   String? selectedOffice;
   String? selectedDate;
   String? selectedDesk;
@@ -41,13 +37,16 @@ class _HotdeskScreen extends State {
   DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
   bool isPetBrought = false;
-  String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
+  String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now().add(Duration(days: 1)));
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
 
   @override
   Widget build(BuildContext context) {
+    
+    //hangi ofiste çalışıyorsa listeden onu set ediyoruz.
+    selectedOffice = listOffice[0].toString();
     _showToast(_dateTimeEnd.toString());
     return Scaffold(
       backgroundColor: bordaSoftGreen,
@@ -65,18 +64,20 @@ class _HotdeskScreen extends State {
           height: double.infinity,
           width: double.infinity,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
             children: <Widget>[
-              Container(height: 470, width: 350, child: _getBooking()),
+              Container(height: 520, width: 350, child: _getBooking()),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                       child: Image(
-                    image: AssetImage("assets/hotdesk.png"),
-                    height: 120,
-                    width: 250,
-                  )),
+                        image: AssetImage("assets/hotdesk.png"),
+                        height: 80,
+                        width: 80,
+                      )),
                 ],
               ),
             ],
@@ -99,6 +100,7 @@ class _HotdeskScreen extends State {
             style: TextStyle(color: Colors.grey, fontSize: 10),
           ),
           DropdownButton(
+
             items: listOffice.map((valueItem) {
               return DropdownMenuItem(
                   value: valueItem,
@@ -108,6 +110,7 @@ class _HotdeskScreen extends State {
                             fontSize: 16, fontWeight: FontWeight.w500)),
                   ));
             }).toList(),
+
             isExpanded: true,
             hint: Container(
                 padding: EdgeInsets.only(left: 0),
@@ -153,23 +156,41 @@ class _HotdeskScreen extends State {
   Widget _ReservationSearhButton() {
     GlobalKey _key = GlobalKey();
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 30, 0, 10),
-      child: MaterialButton(
-        color: bordaOrange,
-        child: Text("Next",
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            )),
-        key: _key,
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HotDeskSelectionScreen()));
-          _SentInformRequest();
-        },
+      margin: EdgeInsets.fromLTRB(0, 25, 0, 0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            color: bordaOrange,
+            child: Text("Choose A Desk",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                )),
+            key: _key,
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HotDeskSelectionScreen()));
+              _SentInformRequest();
+            },
+          ),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(
+                side: BorderSide(color: bordaOrange),
+                minimumSize: Size(MediaQuery.of(context).size.width, 35)),
+            onPressed: () {},
+            child: Text("I Feel Lucky",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.orange,
+                  fontWeight: FontWeight.w500,
+                )),
+          ),
+        ],
       ),
     );
   }
@@ -419,7 +440,6 @@ class _HotdeskScreen extends State {
     }
 
     _showToast(selectedDate);
-    print(selectedDate);
     Navigator.of(context).pop(_dateRangePickerController);
   }
 
@@ -427,7 +447,7 @@ class _HotdeskScreen extends State {
     Navigator.of(context).pop(_dateRangePickerController);
 
     setState(() {
-      firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
+      firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now().add(Duration(days: 1)));
     });
     selectedDate = firstDate;
   }
@@ -506,6 +526,7 @@ class _HotdeskScreen extends State {
       ),
     );
   }
+
   Future<void> _openTimePickerStart(BuildContext context) async {
     final TimeOfDay? t = await showTimePicker(
         context: context,
@@ -513,7 +534,7 @@ class _HotdeskScreen extends State {
         builder: (context, Widget? child) {
           return MediaQuery(
               data:
-              MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
               child: child!);
         });
     if (t != null) {
@@ -530,7 +551,7 @@ class _HotdeskScreen extends State {
         builder: (context, Widget? child) {
           return MediaQuery(
               data:
-              MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
               child: child!);
         });
     if (t != null) {

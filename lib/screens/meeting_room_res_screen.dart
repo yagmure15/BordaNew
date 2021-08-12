@@ -53,6 +53,8 @@ class _MeetingRoomScreen extends State {
 
   @override
   Widget build(BuildContext context) {
+    selectedOffice = listOffice[0].toString();
+
     return Scaffold(
       backgroundColor: bordaSoftGreen,
       appBar: AppBar(
@@ -71,15 +73,15 @@ class _MeetingRoomScreen extends State {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(height: 470, width: 350, child: _getBooking()),
+              Container(height: 450, width: 350, child: _getBooking()),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                       child: Image(
                     image: AssetImage("assets/meeting2.png"),
-                    height: 120,
-                    width: 250,
+                    height: 80,
+                    width: 80,
                   )),
                 ],
               ),
@@ -241,7 +243,7 @@ class _MeetingRoomScreen extends State {
   Widget _ReservationSearhButton() {
     GlobalKey _key = GlobalKey();
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 30, 0, 10),
+      margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
       child: MaterialButton(
         color: Color(HexColor.toHexCode("#ff5a00")),
         child: Text("Search",

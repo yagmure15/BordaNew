@@ -67,15 +67,15 @@ class _CreateEvent extends State {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(height: 500, width: 350, child: _getBooking()),
+              Container(height: 490, width: 350, child: _getBooking()),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                       child: Image(
                     image: AssetImage("assets/event2.png"),
-                    height: 100,
-                    width: 150,
+                    height: 80,
+                    width: 80,
                   )),
                 ],
               ),
@@ -128,7 +128,7 @@ class _CreateEvent extends State {
             height: 10,
           ),
           TextFormField(
-            maxLines: 3,
+            maxLines: 2,
             style: TextStyle(
                 height: 1.5, fontSize: 16, fontWeight: FontWeight.w500),
             controller: titleController,
@@ -175,7 +175,7 @@ class _CreateEvent extends State {
   Widget _ReservationSearhButton() {
     GlobalKey _key = GlobalKey();
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: MaterialButton(
         color: bordaOrange,
         child: Text("Create",
