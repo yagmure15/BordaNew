@@ -70,7 +70,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   "Weather",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
-                onTap: null,
+                onTap: (){
+                  
+                },
               ),
               ListTile(
                 leading: Icon(Icons.food_bank_outlined),
@@ -80,7 +82,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     style: new TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: bordaGreen,
+                      color: bordaOrange,
                     ),
                     recognizer: new TapGestureRecognizer()
                       ..onTap = () {

@@ -15,6 +15,19 @@ class HotdeskScreen extends StatefulWidget {
 }
 
 class _HotdeskScreen extends State {
+  TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
+    minute: 0,
+    hour: 9,
+  );
+  TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
+    minute: 0,
+    hour: 18,
+  );
+
+
+
+
+
   String? selectedOffice;
   String? selectedDate;
   String? selectedDesk;
@@ -35,6 +48,7 @@ class _HotdeskScreen extends State {
 
   @override
   Widget build(BuildContext context) {
+    _showToast(_dateTimeEnd.toString());
     return Scaffold(
       backgroundColor: bordaSoftGreen,
       appBar: AppBar(
@@ -53,7 +67,7 @@ class _HotdeskScreen extends State {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(height: 420, width: 350, child: _getBooking()),
+              Container(height: 470, width: 350, child: _getBooking()),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -331,6 +345,8 @@ class _HotdeskScreen extends State {
             _SelectOffice(),
             _DateArea(),
             _Divider(),
+            _HoursArea(),
+            _Divider(),
             _GuestAndPetQuestion(),
             _ReservationSearhButton(),
           ],
@@ -414,6 +430,114 @@ class _HotdeskScreen extends State {
       firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
     });
     selectedDate = firstDate;
+  }
+
+  String getTimeString(TimeOfDay date) {
+    if (date == null) {
+      return "oömadı";
+    } else {
+      final hours = date.hour.toString().padLeft(2, "0");
+      final minute = date.minute.toString().padLeft(2, "0");
+
+      return '$hours:$minute';
+    }
+  }
+
+  Widget _HoursArea() {
+    return Container(
+      margin: EdgeInsets.only(top: 5),
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      _openTimePickerStart(context);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Starting Time',
+                            style: TextStyle(color: Colors.grey, fontSize: 10)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(getTimeString(_dateTimeStart),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                      ],
+                    ),
+                  ),
+                  flex: 4,
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      _openTimePickerEnd(context);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Ending Time',
+                            style: TextStyle(color: Colors.grey, fontSize: 10)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(getTimeString(_dateTimeEnd),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                      ],
+                    ),
+                  ),
+                  flex: 4,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+  Future<void> _openTimePickerStart(BuildContext context) async {
+    final TimeOfDay? t = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: _dateTimeStart.hour, minute: 00),
+        builder: (context, Widget? child) {
+          return MediaQuery(
+              data:
+              MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child!);
+        });
+    if (t != null) {
+      setState(() {
+        _dateTimeStart = t;
+      });
+    }
+  }
+
+  Future<void> _openTimePickerEnd(BuildContext context) async {
+    final TimeOfDay? t = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: _dateTimeEnd.hour, minute: 00),
+        builder: (context, Widget? child) {
+          return MediaQuery(
+              data:
+              MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child!);
+        });
+    if (t != null) {
+      setState(() {
+        _dateTimeEnd = t;
+      });
+    }
   }
 
   _showSnackBar(BuildContext context, String msg) {
