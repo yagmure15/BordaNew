@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 
+import 'meeting_search_employee.dart';
+
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({Key? key}) : super(key: key);
 
@@ -63,7 +65,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EventCalendarScreen()));
+                          builder: (context) => SearchEmployee()));
                 },
               ),
               ListTile(

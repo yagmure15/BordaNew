@@ -34,6 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: bordaGreen,
         actions: <Widget>[
           IconButton(
+
             padding: EdgeInsets.only(right: 16),
             icon: const Icon(Icons.notifications_active),
             onPressed: () {},

@@ -1,3 +1,4 @@
+import 'package:bordatech/screens/meeting_search_employee.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -254,8 +255,9 @@ class _MeetingRoomScreen extends State {
             )),
         key: _key,
         onPressed: () {
-          pickTime(context);
-          _SentInformRequest();
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchEmployee() ));
+
+      _SentInformRequest();
         },
       ),
     );
