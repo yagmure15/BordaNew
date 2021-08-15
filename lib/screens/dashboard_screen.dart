@@ -1,11 +1,11 @@
 import 'package:bordatech/screens/drawer_screen.dart';
+import 'package:bordatech/screens/event_res_screen.dart';
 import 'package:bordatech/screens/hotdesk_res_screen.dart';
+import 'package:bordatech/screens/meeting_room_res_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import 'inform_res_screen.dart';
+import 'package:bordatech/screens/inform_res_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -20,46 +20,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(
-          title: Center(
-            child: SizedBox(
-                height: 30,
-                child: Container(
-                  margin: EdgeInsets.only(left: 40),
-                  child: Image(
-                    image: AssetImage("assets/borda.png"),
-                  ),
-                )),
-          ),
-          backgroundColor: Color(HexColor.toHexCode("#24343b")),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.notifications_active),
-              onPressed: () {},
-            ),
-            PopupMenuButton(
-              itemBuilder: (BuildContext context) {
-                return [
-                  const PopupMenuItem(
-                    child: Text("Ayarlar"),
-                  ),
-                  const PopupMenuItem(
-                    child: Text("Takvim"),
-                  )
-                ];
-              },
-            )
-          ],
+      appBar: AppBar(
+        title: Center(
+          child: SizedBox(
+              height: 30,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 60),
+                child: Image(
+                  image: AssetImage("assets/borda.png"),
+                ),
+              )),
         ),
-        drawer: DrawerScreen(),
-        backgroundColor: Color(HexColor.toHexCode("#2a4449")),
-        body: _dashboardBody(),
-        floatingActionButton: _animatedFloatingButton(),
+        backgroundColor: bordaGreen,
+        actions: <Widget>[
+          IconButton(
+
+            padding: EdgeInsets.only(right: 16),
+            icon: const Icon(Icons.notifications_active),
+            onPressed: () {},
+          ),
+          // TODO: delete the pop up
+        ],
+      ),
+      drawer: DrawerScreen(),
+      backgroundColor: bordaSoftGreen,
+      body: _dashboardBody(),
+      floatingActionButton: _animatedFloatingButton(),
     );
   }
 
   Widget _dashboardBody() {
-
     return Column(
       children: <Widget>[
         Align(
@@ -77,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         Card(
           margin: EdgeInsets.only(top: 5, left: 20, right: 20),
-          color: Color(HexColor.toHexCode("#24343b")),
+          color: bordaGreen,
           elevation: 10.0,
           child: Container(
             padding: EdgeInsets.only(top: 15, bottom: 15),
@@ -91,6 +81,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       height: 5,
                     ),
                     Text(
+                      "Employees",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
                       "35/40",
                       style: TextStyle(
                         color: Colors.lightGreen,
@@ -101,12 +98,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 Column(
                   children: <Widget>[
-
-                    Image(
-                        image: AssetImage("assets/thermometer2.png")),
-
+                    Image(image: AssetImage("assets/thermometer2.png")),
                     SizedBox(
                       height: 5,
+                    ),
+                    Text(
+                      "Temperature",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15,
+                      ),
                     ),
                     Text(
                       "32°C",
@@ -122,6 +123,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Image(image: AssetImage("assets/hum.png")),
                     SizedBox(
                       height: 5,
+                    ),
+                    Text(
+                      "Humidity",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15,
+                      ),
                     ),
                     Text(
                       "13%",
@@ -151,7 +159,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         Card(
           margin: EdgeInsets.only(top: 5, left: 20, right: 20),
-          color: Color(HexColor.toHexCode("#24343b")),
+          color: bordaGreen,
           elevation: 10.0,
           child: Container(
             padding: EdgeInsets.only(top: 15, bottom: 15),
@@ -234,41 +242,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _animatedFloatingButton() {
     return SpeedDial(
-
-      overlayColor: Color(HexColor.toHexCode("#24343b")),
+      overlayColor: bordaGreen,
       overlayOpacity: 0.5,
-      backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+      backgroundColor: bordaOrange,
       animatedIcon: AnimatedIcons.menu_close,
       children: [
         SpeedDialChild(
-
             child: Icon(Icons.event),
             label: "Create Event",
-            onTap: () => print("tıklandı")),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CreateEvent()));
+            }),
         SpeedDialChild(
             child: Icon(Icons.meeting_room),
             label: "Meeting Room Reservation",
-            onTap: () => print("tıklandı")),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeetingRoomScreen()));
+            }),
         SpeedDialChild(
             child: Icon(Icons.desktop_mac),
             label: "Hot Desk Reservation",
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HotdeskScreen()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => HotdeskScreen()));
             }),
         SpeedDialChild(
             child: Icon(Icons.announcement_outlined),
             label: "Inform Reservation",
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => InformResScreen()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => InformResScreen()));
             }),
       ],
     );
   }
-
 }

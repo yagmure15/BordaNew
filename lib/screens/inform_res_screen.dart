@@ -25,32 +25,41 @@ class _InformResScreen extends State {
   String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
   List<String> dateArr = [];
   List<String> oneDayArr = [];
-  String chooseOnlyOneDay = "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
+  String chooseOnlyOneDay =
+      "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
 
   @override
   Widget build(BuildContext context) {
+    selectedOffice = listOffice[0].toString();
+
     return Scaffold(
+      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
-        title: Text("Inform Reservation"),
-        backgroundColor: Color(HexColor.toHexCode("#24343b")),
+        leading: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Image.asset('assets/return.png')),
+        title: Text('Notify Participation'),
+        backgroundColor: bordaGreen,
+        centerTitle: true,
       ),
       body: Container(
           height: double.infinity,
           width: double.infinity,
-          color: Color(HexColor.toHexCode("#2a4449")),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(height: 470, width: 350, child: _getBooking()),
+              Container(height: 460, width: 350, child: _getBooking()),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                       child: Image(
                     image: AssetImage("assets/informbg.png"),
-                    height: 120,
-                    width: 250,
+                    height: 80,
+                    width: 80,
                   )),
                 ],
               ),
@@ -66,8 +75,9 @@ class _InformResScreen extends State {
   Widget _ReservationSearhButton() {
     GlobalKey _key = GlobalKey();
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 30, 0, 10),
+      margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
       child: MaterialButton(
+
         color: Color(HexColor.toHexCode("#ff5a00")),
         child: Text("Search",
             style: const TextStyle(
@@ -76,10 +86,9 @@ class _InformResScreen extends State {
               fontWeight: FontWeight.w500,
             )),
         key: _key,
-        onPressed: ()
-        {
+        onPressed: () {
           _SentInformRequest();
-         },
+        },
       ),
     );
   }
@@ -329,7 +338,6 @@ class _InformResScreen extends State {
             _Divider(),
             _PetQuery(),
             _ReservationSearhButton(),
-
           ],
         ),
       ),
@@ -354,7 +362,7 @@ class _InformResScreen extends State {
         width: 350,
         child: Column(
           children: <Widget>[
-           /* Image.asset(
+            /* Image.asset(
               'assets/temperature.png',
               height: 50,
               width: 50,
@@ -365,21 +373,19 @@ class _InformResScreen extends State {
       );
 
   void _SentInformRequest() {
-    if(selectedOffice == null){
-      _showSnackBar(context,chooseAnOffice);
-
-    }else {
+    if (selectedOffice == null) {
+      _showSnackBar(context, chooseAnOffice);
+    } else {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-
       if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
-        _showSnackBar(context,chooseOnlyOneDay);
+        _showSnackBar(context, chooseOnlyOneDay);
       }
 
       if (dateArr.length == 1) {
         final String formatted =
-        formatter.format(DateTime.parse(dateArr[0].toString()));
-       // _showToast(formatted);
+            formatter.format(DateTime.parse(dateArr[0].toString()));
+        // _showToast(formatted);
       }
       if (dateArr.length == 0) {
         final String formatted = formatter.format(DateTime.now());
@@ -391,7 +397,6 @@ class _InformResScreen extends State {
             dateArr[i] = dateArr[i].toString().replaceFirst(RegExp(' '), '');
           }
           dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
-
         }
         //_showToast(dateArr.toString());
 
@@ -403,7 +408,6 @@ class _InformResScreen extends State {
 
       */
     }
-
   }
 
   void _onSubmitController(Object val) {
@@ -442,6 +446,7 @@ class _InformResScreen extends State {
       firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
     }
   }
+
   void _onCancelController() {
     dateArr.clear();
     //listede backend için düzenleme yapmak gerekebilir.
@@ -453,25 +458,24 @@ class _InformResScreen extends State {
       firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
     });
   }
+
   _showSnackBar(BuildContext context, String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            msg,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          action: SnackBarAction(
-            label: "OK",
-            textColor: Colors.white,
-            disabledTextColor: Colors.deepPurple,
-            onPressed: () {
-            },
-          ),
-          backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
-        ));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        msg,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        textAlign: TextAlign.left,
+      ),
+      action: SnackBarAction(
+        label: "OK",
+        textColor: Colors.white,
+        disabledTextColor: Colors.deepPurple,
+        onPressed: () {},
+      ),
+      backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+    ));
   }
 }

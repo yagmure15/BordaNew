@@ -1,61 +1,161 @@
-import 'package:bordatech/screens/dashboard_screen.dart';
+import 'package:bordatech/utils/hex_color.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:bordatech/screens/terms_privacy_screen.dart';
+import 'package:bordatech/screens/login_screen.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      /*  
       theme: ThemeData(
+        textTheme: GoogleFonts.josephinSansTextTheme(Theme.of(context).textTheme),
         primarySwatch: Colors.blue,
+        
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      */
+      debugShowCheckedModeBanner: false,
+      home: WelcomeScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class WelcomeScreen extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-
-
+class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-            child: RaisedButton(
-              onPressed: () { 
-                Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardScreen()));
-              },
+      backgroundColor: bordaGreen,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
               child: Center(
-                child: Text("asdasd"),
-          )
+                child: Container(
+                  width: 140,
+                  height: 100,
+                  child: Image(
+                    image: AssetImage("assets/bordaiot.png"),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: Container(
+                child: Text(
+                  'Welcome to Borda Smart App',
+                  style: TextStyle(
+                    color: bordaOrange,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              child: Container(
+                child: Text(
+                  'Smart Coworking Space App will increase the efficieny of work done by employees, satisfaction of employees/employers and increase the wellness of all!',
+                  style: TextStyle(
+                    color: bordaOrange,
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 80, right: 80, top: 30, bottom: 0),
+              child: ElevatedButton(
+                child: Container(
+                  margin:
+                      EdgeInsets.only(top: 10, bottom: 10, right: 40, left: 40),
+                  child: Text(
+                    "Continue",
+                    style: TextStyle(
+                      color: bordaOrange,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.white),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side: BorderSide(
+                        color: bordaOrange,
+                      ),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 90,
+                right: 90,
+                top: 30,
+                bottom: 0,
+              ),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    color: bordaOrange,
+                    fontSize: 16.0,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'By clicking Continue, you agree to our ',
+                    ),
+                    TextSpan(
+                      text: 'Terms of Service & Privacy Policy.',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 17,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TermsPrivacyPolicy(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
