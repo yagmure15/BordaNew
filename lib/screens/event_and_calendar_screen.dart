@@ -35,7 +35,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
             _showToast(_selectedCalendarType);
           });
         }, itemBuilder: (context) {
-          return {'Aylık', 'Haftalık',"Günlük"}.map((String choice) {
+          return {'Events', 'Meeting Rooms',"My Calendar"}.map((String choice) {
             return PopupMenuItem<String>(
               value: choice,
               child: Text(choice),
@@ -43,28 +43,20 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
           }).toList();
         })],
       ),
-      body: _getCalendarType()
+      body: Takvim(),
     );
   }
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
    _getCalendarType(){
-     if(_selectedCalendarType == "Aylık"){
-       return Takvim(calanderView[0]);
-     }
-     else if (_selectedCalendarType == "Haftalık"){
-       return Text("as");
-     } else {
-       return Takvim(calanderView[2]);
-     }
+
     
   }
-  Widget Takvim(CalendarView c){
+  Widget Takvim(){
 
     return SfCalendar(
       allowedViews: calanderView,
-      view: c,
       dataSource: MeetingDataSource(_getDataSource()),
     );
   }

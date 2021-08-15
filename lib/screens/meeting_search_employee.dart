@@ -21,8 +21,6 @@ class _SearchEmployeeState extends State<SearchEmployee> {
   void initState() {
     itemSearch.addAll(employeeCheckboxList);
     super.initState();
-
-    _showToast(itemSearch);
   }
 
   final department = [
