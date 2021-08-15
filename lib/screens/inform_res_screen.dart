@@ -77,6 +77,7 @@ class _InformResScreen extends State {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
       child: MaterialButton(
+
         color: Color(HexColor.toHexCode("#ff5a00")),
         child: Text("Search",
             style: const TextStyle(

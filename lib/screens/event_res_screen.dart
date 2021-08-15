@@ -24,16 +24,10 @@ class _CreateEvent extends State {
     minute: 0,
     hour: TimeOfDay.now().hour + 2,
   );
-  String? selectedOffice;
+  String? selectedTitle;
   String? selectedDate;
-  String? selectedMeetingRoom;
 
-  List listDesks = ["No available desk"];
-  List listOffice = ["İTÜ Arı 3 -  İstanbul", "IYTE Campus, Teknopark - Izmir"];
-  List listMeetingRoom = ["A", "B", "C", "D"];
-
-  List gun1 = ["Masa1", "masa 2"];
-  List gun2 = ["Masa 5", "Masa 8", "Masa 9"];
+  List listTitle = ["Competition", "Meeting", "Celebration"];
 
   int guestCount = 0;
   DateTime? neyDateformat;
@@ -60,60 +54,13 @@ class _CreateEvent extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          color: bordaSoftGreen,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(height: 490, width: 350, child: _getBooking()),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      child: Image(
-                    image: AssetImage("assets/event2.png"),
-                    height: 80,
-                    width: 80,
-                  )),
-                ],
-              ),
-            ],
-          )),
+      resizeToAvoidBottomInset: true,
+      body: _Body(),
     );
   }
 
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
-  }
-
-  Widget _EventTitleArea() {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Enter a title for the event you will create',
-              style: TextStyle(color: Colors.grey, fontSize: 10)),
-          TextFormField(
-            style: TextStyle(
-                height: 1.5, fontSize: 16, fontWeight: FontWeight.w500),
-            controller: titleController,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-                contentPadding: EdgeInsets.all(0),
-                enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.grey, width: 0.5)),
-                fillColor: Colors.white,
-                border: UnderlineInputBorder(),
-                filled: true,
-                labelText: "Enter a Title"),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _EventDescriptionArea() {
@@ -122,7 +69,7 @@ class _CreateEvent extends State {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Enter a title for the event you will create',
+          const Text('Enter a details for the event you will create',
               style: TextStyle(color: Colors.grey, fontSize: 10)),
           SizedBox(
             height: 10,
@@ -148,13 +95,52 @@ class _CreateEvent extends State {
     );
   }
 
+  Widget _SelectEventTitleArea() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Please select the title of the organization!',
+            style: TextStyle(color: Colors.grey, fontSize: 10),
+          ),
+          DropdownButton(
+            items: listTitle.map((valueItem) {
+              return DropdownMenuItem(
+                  value: valueItem,
+                  child: Container(
+                    child: Text(valueItem,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  ));
+            }).toList(),
+            isExpanded: true,
+            hint: Container(
+                padding: EdgeInsets.only(left: 0),
+                child: Text("Choose a Title",
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+            itemHeight: 48,
+            value: selectedTitle,
+            onChanged: (newValue) {
+              setState(() {
+                selectedTitle = newValue as String?;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _DateArea() {
     return GestureDetector(
       onTap: () {
         createDateDialog(context);
       },
       child: Container(
-          margin: EdgeInsets.only(top: 20),
+          margin: EdgeInsets.only(top: 0),
           alignment: Alignment.centerLeft,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,6 +163,7 @@ class _CreateEvent extends State {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
         color: bordaOrange,
         child: Text("Create",
             style: const TextStyle(
@@ -357,7 +344,7 @@ class _CreateEvent extends State {
                     fontSize: 20),
               ),
             ),
-            _EventTitleArea(),
+            _SelectEventTitleArea(),
             _DateArea(),
             _Divider(),
             _HoursArea(),
@@ -441,10 +428,58 @@ class _CreateEvent extends State {
     ));
   }
 
-  String _validateEventTitle(String value) {
-    if (value.isEmpty) {
-      return "name is required";
-    }
-    return "null";
+  Widget _Body() {
+    return SingleChildScrollView(
+        child: Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.only(top: 50, left: 50, right: 50),
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.topLeft,
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Text(
+                      'Book a Place',
+                      style: TextStyle(
+                          color: Colors.black87,
+                          backgroundColor: Colors.transparent,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20),
+                    ),
+                  ),
+                  _SelectEventTitleArea(),
+                  _DateArea(),
+                  _Divider(),
+                  _HoursArea(),
+                  _Divider(),
+                  _EventDescriptionArea(),
+                  _ReservationSearhButton(),
+                ],
+              )),
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 55),
+                alignment: FractionalOffset.bottomCenter,
+                child: Image(
+                  image: AssetImage("assets/event2.png"),
+                ),
+                height: 80,
+                width: 80,
+              ),
+            ],
+          )
+        ],
+      ),
+    ));
   }
 }

@@ -34,6 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: bordaGreen,
         actions: <Widget>[
           IconButton(
+
             padding: EdgeInsets.only(right: 16),
             icon: const Icon(Icons.notifications_active),
             onPressed: () {},
@@ -80,6 +81,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       height: 5,
                     ),
                     Text(
+                      "Employees",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
                       "35/40",
                       style: TextStyle(
                         color: Colors.lightGreen,
@@ -95,6 +103,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       height: 5,
                     ),
                     Text(
+                      "Temperature",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
                       "32°C",
                       style: TextStyle(
                         color: Colors.lightGreen,
@@ -108,6 +123,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Image(image: AssetImage("assets/hum.png")),
                     SizedBox(
                       height: 5,
+                    ),
+                    Text(
+                      "Humidity",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15,
+                      ),
                     ),
                     Text(
                       "13%",
