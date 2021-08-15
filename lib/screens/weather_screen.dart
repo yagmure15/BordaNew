@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:geolocator/geolocator.dart';
@@ -72,9 +74,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       for (var i = 0; i < 7; i++) {
         this.minTempForecast[i] = results["daily"][i]["temp"]["min"].toString();
         this.maxTempForecast[i] = results["daily"][i]["temp"]["max"].toString();
-        this.iconAbbr[i] = "http://openweathermap.org/img/wn/" +
-            results["daily"][i]["weather"][0]["icon"] +
-            ".png";
+        this.iconAbbr[i] = results["daily"][i]["weather"][0]["main"];
       }
     });
   }
@@ -97,6 +97,22 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return tempUrl;
   }
 
+  IconData getCurrentIcon(var condition) {
+    if (condition == "Clear") {
+      return WeatherIcons.day_sunny;
+    } else if (condition == "Clouds") {
+      return WeatherIcons.cloudy;
+    } else if (condition == "Snow") {
+      return WeatherIcons.snow;
+    } else if (condition == "Rain" || condition == "Drizzle") {
+      return WeatherIcons.rain;
+    } else if (condition == "Thunderstorm") {
+      return WeatherIcons.thunderstorm;
+    } else {
+      return WeatherIcons.fog;
+    }
+  }
+
   /*
   This is just initializing the statet with super keyword parent-inheritance and then calling the methods with "then" keyword
   which set the return value into then e.g. then((value){and then do something})  ---> if not getData().then((variable) => null) kind of thing
@@ -113,6 +129,55 @@ class _WeatherScreenState extends State<WeatherScreen> {
         });
       });
     });
+  }
+
+  Widget forecastElement(daysFromNow, abbr, minTemperature, maxTemperature) {
+    var now = new DateTime.now();
+    var oneDayFromNow = now.add(new Duration(days: daysFromNow));
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 10,
+        left: 20.0,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          //color: Color.fromRGBO(205, 212, 228, 0.2),
+          color: Colors.black38,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              Text(
+                new DateFormat.E().format(oneDayFromNow),
+                style: TextStyle(color: Colors.white, fontSize: 17),
+              ),
+              Text(
+                new DateFormat.MMMd().format(oneDayFromNow),
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                child: FaIcon(
+                  getCurrentIcon(abbr),
+                  //WeatherIcons.day_sunny,
+                  color: bordaOrange,
+                ),
+              ),
+              Text(
+                'High: ' + maxTemperature.toString() + ' °C',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
+              Text(
+                'Low: ' + minTemperature.toString() + ' °C',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -143,13 +208,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
             SizedBox(height: 10),
             Card(
               color: Colors.black12,
-              shape: BeveledRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 padding: EdgeInsets.symmetric(horizontal: 10),
-                height: MediaQuery.of(context).size.height / 4.2,
+                height: MediaQuery.of(context).size.height / 4,
                 //width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -157,11 +222,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(
-                        bottom: 15,
+                        bottom: 10,
                         top: 15,
                       ),
                       child: Text(
-                        locality != null ? locality.toString() : "Loading",
+                        locality != "" ? locality.toString() : "Loading",
                         style: TextStyle(
                           fontSize: 23,
                           color: Colors.white,
@@ -170,7 +235,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       ),
                     ),
                     Text(
-                      temp != null
+                      temp != ""
                           ? temp.toString() + "\u00B0" + " C"
                           : "Loading",
                       style: TextStyle(
@@ -180,14 +245,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(0),
-                      child: Container(
-                        child: Image(
-                          alignment: Alignment.topCenter,
-                          width: 70,
-                          height: 50,
-                          image: NetworkImage(iconUrl),
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        currently != "" ? currently.toString() : "Loading",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
                         ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Column(
+                        children: <Widget>[
+                          FaIcon(
+                            getCurrentIcon(currently),
+                            color: bordaOrange,
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -201,8 +277,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Card(
                       color: Colors.black26,
-                      shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       child: Container(
@@ -232,7 +308,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   height: 5,
                                 ),
                                 Text(
-                                  feelsLike != null
+                                  feelsLike != ""
                                       ? feelsLike.toString() + "\u00B0" + " C"
                                       : "Loading",
                                   style: TextStyle(
@@ -262,7 +338,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   height: 5,
                                 ),
                                 Text(
-                                  description != null
+                                  description != ""
                                       ? description.toString()
                                       : "Loading",
                                   style: TextStyle(
@@ -275,6 +351,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             Column(
                               children: <Widget>[
                                 FaIcon(
+                                  //getIcon(),
                                   WeatherIcons.humidity,
                                   color: bordaOrange,
                                 ),
@@ -292,7 +369,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   height: 5,
                                 ),
                                 Text(
-                                  humidity != null
+                                  humidity != ""
                                       ? "%" + humidity.toString()
                                       : "Loading",
                                   style: TextStyle(
@@ -311,8 +388,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Card(
                       color: Colors.black26,
-                      shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       child: Container(
@@ -341,7 +418,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   height: 5,
                                 ),
                                 Text(
-                                  windSpeed != null
+                                  windSpeed != ""
                                       ? windSpeed.toString() + " km/h"
                                       : "Loading",
                                   style: TextStyle(
@@ -368,10 +445,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 5,
+                                  width: 15,
                                 ),
                                 Text(
-                                  tempMin != null
+                                  tempMin != ""
                                       ? tempMin.toString() + "\u00B0" + " C"
                                       : "Loading",
                                   style: TextStyle(
@@ -401,7 +478,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   height: 5,
                                 ),
                                 Text(
-                                  tempMax != null
+                                  tempMax != ""
                                       ? tempMax.toString() + "\u00B0" + " C"
                                       : "Loading",
                                   style: TextStyle(
@@ -423,6 +500,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         for (var i = 0; i < 7; i++)
                           forecastElement(i + 1, iconAbbr[i],
                               minTempForecast[i], maxTempForecast[i]),
+                        SizedBox(
+                          width: 20,
+                        ),
                       ],
                     ),
                   ),
@@ -434,50 +514,4 @@ class _WeatherScreenState extends State<WeatherScreen> {
       ),
     );
   }
-}
-
-Widget forecastElement(
-    daysFromNow, abbreviation, minTemperature, maxTemperature) {
-  var now = new DateTime.now();
-  var oneDayFromNow = now.add(new Duration(days: daysFromNow));
-  return Padding(
-    padding: const EdgeInsets.only(top: 10, left: 20.0),
-    child: Container(
-      decoration: BoxDecoration(
-        //color: Color.fromRGBO(205, 212, 228, 0.2),
-        color: Colors.black38,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            Text(
-              new DateFormat.E().format(oneDayFromNow),
-              style: TextStyle(color: Colors.white, fontSize: 17),
-            ),
-            Text(
-              new DateFormat.MMMd().format(oneDayFromNow),
-              style: TextStyle(color: Colors.white, fontSize: 13),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 5, bottom: 5),
-              child: Image.network(
-                abbreviation,
-                width: 25,
-              ),
-            ),
-            Text(
-              'High: ' + maxTemperature.toString() + ' °C',
-              style: TextStyle(color: Colors.white, fontSize: 13),
-            ),
-            Text(
-              'Low: ' + minTemperature.toString() + ' °C',
-              style: TextStyle(color: Colors.white, fontSize: 13),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }
