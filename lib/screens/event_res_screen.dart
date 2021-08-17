@@ -27,7 +27,9 @@ class _CreateEvent extends State {
   String? selectedTitle;
   String? selectedDate;
 
-  List listTitle = ["Competition", "Meeting", "Celebration"];
+  List listTitle = [ "Competition \u{1F3C6}", "Meeting", "Celebration",];
+
+
 
   int guestCount = 0;
   DateTime? neyDateformat;
@@ -39,6 +41,7 @@ class _CreateEvent extends State {
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office!";
+
 
   @override
   Widget build(BuildContext context) {
@@ -109,10 +112,16 @@ class _CreateEvent extends State {
             items: listTitle.map((valueItem) {
               return DropdownMenuItem(
                   value: valueItem,
-                  child: Container(
-                    child: Text(valueItem,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  child: Row(
+                    children: [
+                      Container(
+                        child: Text(valueItem,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500)),
+                      ),
+
+
+                    ],
                   ));
             }).toList(),
             isExpanded: true,
@@ -482,4 +491,5 @@ class _CreateEvent extends State {
       ),
     ));
   }
+
 }

@@ -2,6 +2,7 @@ import 'package:bordatech/screens/drawer_screen.dart';
 import 'package:bordatech/screens/event_res_screen.dart';
 import 'package:bordatech/screens/hotdesk_res_screen.dart';
 import 'package:bordatech/screens/meeting_room_res_screen.dart';
+import 'package:bordatech/screens/notification_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -35,9 +36,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: <Widget>[
           IconButton(
 
-            padding: EdgeInsets.only(right: 16),
-            icon: const Icon(Icons.notifications_active),
-            onPressed: () {},
+            padding: EdgeInsets.only(right: 16, left: 16),
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen()));
+
+            },
           ),
           // TODO: delete the pop up
         ],
