@@ -7,7 +7,9 @@ class HexColor {
     int color = int.parse(colorNew);
     return color;
   }
+
 }
+
 
 var bordaGreen = Color(HexColor.toHexCode("#24343b"));
 var bordaOrange = Color(HexColor.toHexCode("#f0542d"));

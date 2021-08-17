@@ -1,3 +1,4 @@
+import 'package:bordatech/screens/deneme.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

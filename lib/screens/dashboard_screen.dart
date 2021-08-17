@@ -17,8 +17,23 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+
+
+
+/*
+
+    var deneme;
+  override
+  void initState() {
+    bool isDark = true;
+    isDark == true ? deneme = bordaOrange: deneme = bordaGreen;
+    super.initState();
+  }
+*/
+
   @override
   Widget build(BuildContext context) {
+
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -114,6 +129,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                     Text(
+                      // TODO: deneme
                       "32°C",
                       style: TextStyle(
                         color: Colors.lightGreen,
