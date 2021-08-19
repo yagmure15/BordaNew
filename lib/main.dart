@@ -142,6 +142,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
+                        Navigator.pop(context);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

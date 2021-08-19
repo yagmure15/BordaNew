@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:bordatech/HttpRequests/Login/birthday_model.dart';
-import 'package:bordatech/HttpRequests/Login/birthday_request.dart';
+import 'package:bordatech/HttpRequests/Birthdays/birthday_model.dart';
+import 'package:bordatech/HttpRequests/Birthdays/birthday_request.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/dashboard_screen.dart';

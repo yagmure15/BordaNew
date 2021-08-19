@@ -1,17 +1,54 @@
-import 'package:bordatech/HttpRequests/Login/birthday_model.dart';
-import 'package:bordatech/HttpRequests/Login/birthday_request.dart';
+import 'dart:convert';
+
+import 'package:bordatech/HttpRequests/Birthdays/birthday_model.dart';
+import 'package:bordatech/HttpRequests/Birthdays/birthday_request.dart';
+import 'package:bordatech/HttpRequests/Login/user_login_model.dart';
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_simple_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/dashboard_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenScreenState createState() => _LoginScreenScreenState();
 }
 
+void _showToast(S) {
+  Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
+}
+
+Future<UserLoginModel?> postData(String email, String password) async {
+  final String apiUrl = "http://10.0.2.2:5000/api/User/login";
+
+  final response = await http.post(Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"email": email, "password": password}));
+
+  if (response.statusCode == 201) {
+    final String responsString = response.body;
+
+    return userLoginModelFromJson(responsString);
+  } else {
+    return null;
+  }
+
+  print("BODY : " + response.body);
+
+  print("STATUS CODE " + response.statusCode.toString());
+}
+
 class _LoginScreenScreenState extends State<LoginScreen> {
+  String _email = "engin.yagmur@bordatech.com";
+  String _password = "Engin.11";
 
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
+  UserLoginModel? _user;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +80,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.only(
                     left: 20.0, right: 20.0, top: 20.0, bottom: 10.0),
                 child: TextField(
+                  controller: emailController,
                   style: TextStyle(
                     color: bordaOrange,
                   ),
@@ -60,6 +98,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.only(
                     left: 20.0, right: 20.0, top: 15, bottom: 40),
                 child: TextField(
+                  controller: passwordController,
                   style: TextStyle(
                     color: bordaOrange,
                   ),
@@ -75,7 +114,6 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-
               Container(
                 height: 50,
                 width: 250,
@@ -84,14 +122,41 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(20)),
                 margin: const EdgeInsets.only(bottom: 20),
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DashboardScreen()));
+                  onPressed: () async {
+                    String email = emailController.text;
+                    String password = passwordController.text;
+
+                    if (email.isEmpty && _password.isEmpty) {
+                      _showToast("Email ve Parola aralnı boş olamaz!");
+                    } else if (email.isEmpty) {
+                      _showToast("Email alanı boş olamaz!");
+                    } else if (password.isEmpty) {
+                      _showToast("parola alanı boş olamaz!");
+                    } else {
+                      final UserLoginModel? user =
+                          await postData(email, password);
+
+                      setState(() {
+                        _user = user;
+                      });
+
+                      if (_user == null) {
+                        _showToast("Kullanıcı adı veya Parola Geçersiz");
+                      } else {
+                        //  Navigator.pop(context);
+
+                        setUserValues(
+                          ID: _user!.id.toString(),
+                          name: _user!.user.fullName,
+                          email: _user!.user.email,
+                          token: _user!.token,
+                          expiration: _user!.expiration.toString(),
+                        );
+                      }
+                    }
                   },
                   child: Text(
-                    'Login',
+                    "Login",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 25,
@@ -100,6 +165,9 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+              _user == null
+                  ? Text("olmadı")
+                  : Text(_user!.user.fullName.toString()),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -114,7 +182,10 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        //TODO FORGOT PASSWORD SCREEN GOES HERE
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DashboardScreen()));
                       },
                       child: Text(
                         'Forget Password',
@@ -131,5 +202,20 @@ class _LoginScreenScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> setUserValues({
+    required String ID,
+    required String name,
+    required String token,
+    required String expiration,
+    required String email,
+  }) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString("name", name);
+    pref.setString("userID", ID);
+    pref.setString("token", token);
+    pref.setString("expiration", expiration);
+    pref.setString("email", email);
   }
 }

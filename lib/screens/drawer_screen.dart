@@ -2,9 +2,11 @@ import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_simple_preferences.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 
 import 'meeting_search_employee.dart';
@@ -17,8 +19,20 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
+
+  String fullName ="";
+  String email = "";
+  @override
+  void initState() {
+    super.initState();
+    getuserName();
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return Drawer(
       child: Column(
         children: <Widget>[
@@ -43,7 +57,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 6),
                     child: Text(
-                      "Engin Yağmur",
+                      fullName,
                       style: TextStyle(fontSize: 22, color: Colors.white),
                     ),
                   ),
@@ -143,4 +157,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
+  void getuserName() async{
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    fullName = pref.getString("name").toString();
+    email = pref.getString("email").toString();
+    setState(() {
+
+    });
+  }
+
 }

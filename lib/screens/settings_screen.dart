@@ -1,4 +1,5 @@
 import 'package:bordatech/screens/login_screen.dart';
+import 'package:bordatech/screens/update_password_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 
@@ -178,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => UpdatePasswordScreen()));
                 },
                 child: Center(
                   child: Text(
