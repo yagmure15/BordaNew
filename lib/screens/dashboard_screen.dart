@@ -7,6 +7,7 @@ import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:bordatech/screens/inform_res_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -17,6 +18,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+
+
 
 
 
@@ -298,4 +301,5 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ],
     );
   }
+
 }
