@@ -18,18 +18,20 @@ class _CreateEvent extends State {
   String? _eventTitle;
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour + 1,
+    hour: TimeOfDay.now().hour,
   );
   TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour + 2,
+    hour: TimeOfDay.now().hour,
   );
   String? selectedTitle;
   String? selectedDate;
 
-  List listTitle = [ "Competition \u{1F3C6}", "Meeting", "Celebration",];
-
-
+  List listTitle = [
+    "Competition \u{1F3C6}",
+    "Meeting",
+    "Celebration",
+  ];
 
   int guestCount = 0;
   DateTime? neyDateformat;
@@ -41,7 +43,6 @@ class _CreateEvent extends State {
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office!";
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +120,6 @@ class _CreateEvent extends State {
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
                       ),
-
-
                     ],
                   ));
             }).toList(),
@@ -491,5 +490,4 @@ class _CreateEvent extends State {
       ),
     ));
   }
-
 }

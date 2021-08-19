@@ -136,7 +136,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     var oneDayFromNow = now.add(new Duration(days: daysFromNow));
     return Padding(
       padding: const EdgeInsets.only(
-        top: 10,
+        top: 5,
         left: 20.0,
       ),
       child: Container(
@@ -146,7 +146,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
               Text(
@@ -205,14 +205,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
         ),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 10),
+            SizedBox(height: 8),
             Card(
               color: Colors.black12,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                margin: EdgeInsets.symmetric(vertical: 2.5, horizontal: 20),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 height: MediaQuery.of(context).size.height / 4,
                 //width: MediaQuery.of(context).size.width,
@@ -228,7 +228,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       child: Text(
                         locality != "" ? locality.toString() : "Loading",
                         style: TextStyle(
-                          fontSize: 23,
+                          fontSize: 20,
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
                         ),
@@ -241,7 +241,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 30,
+                        fontSize: 25,
                       ),
                     ),
                     Padding(
@@ -251,12 +251,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 8),
                       child: Column(
                         children: <Widget>[
                           FaIcon(
@@ -274,7 +274,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Card(
                       color: Colors.black26,
                       shape: RoundedRectangleBorder(
@@ -385,7 +385,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Card(
                       color: Colors.black26,
                       shape: RoundedRectangleBorder(

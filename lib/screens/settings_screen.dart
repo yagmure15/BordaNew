@@ -29,20 +29,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0, bottom: 20),
-              child: Center(
-                child: Container(
-                  width: 130,
-                  height: 90,
-                  child: Image(
-                    image: AssetImage("assets/account.png"),
+            Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 30.0, bottom: 20),
+                child: Center(
+                  child: Container(
+                    width: 130,
+                    height: 90,
+                    child: Image(
+                      image: AssetImage("assets/account.png"),
+                    ),
                   ),
                 ),
               ),
             ),
             Container(
-              width: 320,
+              width: MediaQuery.of(context).size.width - 40,
               height: 45,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
@@ -66,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Container(
-              width: 320,
+              width: MediaQuery.of(context).size.width - 40,
               height: 45,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
@@ -90,7 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Container(
-              width: 320,
+              width: MediaQuery.of(context).size.width - 40,
               height: 95,
 
               //width: MediaQuery.of(context).size.width,
@@ -119,7 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Container(
-              width: 320,
+              width: MediaQuery.of(context).size.width - 40,
               height: 45,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
@@ -141,7 +144,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Container(
-              width: 320,
+              width: MediaQuery.of(context).size.width - 40,
               height: 45,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
@@ -163,7 +166,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Container(
-              width: 320,
+              width: MediaQuery.of(context).size.width - 40,
               height: 45,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
@@ -190,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Container(
-              width: 320,
+              width: MediaQuery.of(context).size.width - 40,
               height: 45,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
