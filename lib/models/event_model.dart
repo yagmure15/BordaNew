@@ -2,7 +2,6 @@ class EventModel {
   String eventType;
   String startDay;
   String endDay;
-
   String note;
   EventModel({
     required this.eventType,
