@@ -1,12 +1,18 @@
 import 'package:bordatech/screens/deneme.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_info.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/terms_privacy_screen.dart';
 import 'package:bordatech/screens/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 void main() {
   runApp(MyApp());
+
+
 }
 
 class MyApp extends StatelessWidget {
@@ -32,6 +38,8 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

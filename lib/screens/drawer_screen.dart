@@ -1,7 +1,9 @@
+import 'package:bordatech/main.dart';
 import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_info.dart';
 import 'package:bordatech/utils/user_simple_preferences.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -19,20 +21,17 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-
-  String fullName ="";
+  String fullName = "";
   String email = "";
+
   @override
   void initState() {
     super.initState();
     getuserName();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-
     return Drawer(
       child: Column(
         children: <Widget>[
@@ -99,8 +98,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 },
               ),
               InkWell(
-                onTap: (){
-                },
+                onTap: () {},
                 child: ListTile(
                   leading: Icon(Icons.food_bank_outlined),
                   title: RichText(
@@ -120,11 +118,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   ),
                 ),
               ),
-              /* 
+              /*
               Text(
                   "Baklava",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ), 
+                ),
               onTap: () {
                   Navigator.push(
                     context,
@@ -132,7 +130,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       builder: (context) => TermsPrivacyPolicy(),
                     ),
                   );
-                }, 
+                },
               ),
               */
               ListTile(
@@ -154,16 +152,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
       ),
     );
   }
+
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
-  void getuserName() async{
+
+  void getuserName() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     fullName = pref.getString("name").toString();
     email = pref.getString("email").toString();
-    setState(() {
-
-    });
+    setState(() {});
   }
-
 }

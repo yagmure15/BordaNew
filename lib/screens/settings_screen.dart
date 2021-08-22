@@ -1,14 +1,38 @@
+import 'dart:math';
+
 import 'package:bordatech/screens/login_screen.dart';
 import 'package:bordatech/screens/update_password_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_info.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
+
+
 class _SettingsScreenState extends State<SettingsScreen> {
+
+
+  String fullName = "";
+  String email = "";
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    getUserNameAndEmail();
+
+
+
+}
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               //padding: const EdgeInsets.only(bottom: 5),
               child: Center(
                 child: Text(
-                  'Mehmet Baran Nakipoğlu',
+                  fullName,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -84,7 +108,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               //padding: const EdgeInsets.only(bottom: 5),
               child: Center(
                 child: Text(
-                  'mehmet.nakipoglu@bordatech.com',
+                  email,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -225,5 +249,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+  void getUserNameAndEmail() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    fullName = pref.getString("name").toString();
+    email = pref.getString("email").toString();
+    setState(() {});
   }
 }

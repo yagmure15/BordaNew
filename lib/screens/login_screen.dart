@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:bordatech/HttpRequests/Birthdays/birthday_model.dart';
-import 'package:bordatech/HttpRequests/Birthdays/birthday_request.dart';
-import 'package:bordatech/HttpRequests/Login/user_login_model.dart';
+
+import 'package:bordatech/httprequests/login/user_login_model.dart';
 import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_info.dart';
 import 'package:bordatech/utils/user_simple_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/dashboard_screen.dart';
@@ -22,7 +22,8 @@ void _showToast(S) {
 }
 
 Future<UserLoginModel?> postData(String email, String password) async {
-  final String apiUrl = "http://10.0.2.2:5000/api/User/login";
+
+  final String apiUrl = Constants.HTTPURL+"/api/users/login";
 
   final response = await http.post(Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
@@ -30,7 +31,6 @@ Future<UserLoginModel?> postData(String email, String password) async {
 
   if (response.statusCode == 201) {
     final String responsString = response.body;
-
     return userLoginModelFromJson(responsString);
   } else {
     return null;
@@ -42,8 +42,8 @@ Future<UserLoginModel?> postData(String email, String password) async {
 }
 
 class _LoginScreenScreenState extends State<LoginScreen> {
-  String _email = "engin.yagmur@bordatech.com";
-  String _password = "Engin.11";
+  String _email = "";
+  String _password = "";
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -143,15 +143,32 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                       if (_user == null) {
                         _showToast("Kullanıcı adı veya Parola Geçersiz");
                       } else {
-                        //  Navigator.pop(context);
 
+                        /*
+                        UserInfo userinfo = UserInfo();
+                        userinfo.setAuthToken(_user!.token.toString());
+                        userinfo.setName(_user!.userResource.fullName);
+                        userinfo.setEmail(_user!.userResource.email);
+                        userinfo.setUserId(_user!.id);
+                        userinfo.setOfficeId(_user!.userResource.officeId);
+                        userinfo.setDepartmentId(_user!.userResource.departmentId);
+
+                        UserInfo.setuserName(" aa "+ _user!.userResource.fullName.toString());
+                        //
+                          */
                         setUserValues(
+                          officeId: _user!.userResource.officeId,
                           ID: _user!.id.toString(),
-                          name: _user!.user.fullName,
-                          email: _user!.user.email,
+                          name: _user!.userResource.fullName,
+                          email: _user!.userResource.email,
                           token: _user!.token,
                           expiration: _user!.expiration.toString(),
                         );
+
+                        Navigator.of(context).pop();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardScreen()));
+
+
                       }
                     }
                   },
@@ -165,9 +182,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              _user == null
-                  ? Text("olmadı")
-                  : Text(_user!.user.fullName.toString()),
+
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -204,12 +219,15 @@ class _LoginScreenScreenState extends State<LoginScreen> {
     );
   }
 
+
+
   Future<void> setUserValues({
     required String ID,
     required String name,
     required String token,
     required String expiration,
     required String email,
+    required int officeId,
   }) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString("name", name);
@@ -217,5 +235,10 @@ class _LoginScreenScreenState extends State<LoginScreen> {
     pref.setString("token", token);
     pref.setString("expiration", expiration);
     pref.setString("email", email);
+    pref.setInt("officeId", officeId);
   }
+
+
+
+
 }

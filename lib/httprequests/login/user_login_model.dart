@@ -13,57 +13,61 @@ class UserLoginModel {
     required this.token,
     required this.expiration,
     required this.id,
-    required this.user,
+    required this.userResource,
   });
 
   String token;
   DateTime expiration;
   String id;
-  User user;
+  UserResource userResource;
 
   factory UserLoginModel.fromJson(Map<String, dynamic> json) => UserLoginModel(
     token: json["token"],
     expiration: DateTime.parse(json["expiration"]),
     id: json["id"],
-    user: User.fromJson(json["user"]),
+    userResource: UserResource.fromJson(json["userResource"]),
   );
 
   Map<String, dynamic> toJson() => {
     "token": token,
     "expiration": expiration.toIso8601String(),
     "id": id,
-    "user": user.toJson(),
+    "userResource": userResource.toJson(),
   };
 }
 
-class User {
-  User({
-    required this.birthday,
-    required this.email,
-    this.password,
+class UserResource {
+  UserResource({
+    required this.id,
     required this.fullName,
-    this.events,
+    required this.email,
+    required this.birthday,
+    required this.officeId,
+    required this.departmentId,
   });
 
-  DateTime birthday;
-  String email;
-  dynamic password;
+  String id;
   String fullName;
-  dynamic events;
+  String email;
+  DateTime birthday;
+  int officeId;
+  int departmentId;
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
-    birthday: DateTime.parse(json["birthday"]),
-    email: json["email"],
-    password: json["password"],
+  factory UserResource.fromJson(Map<String, dynamic> json) => UserResource(
+    id: json["id"],
     fullName: json["fullName"],
-    events: json["events"],
+    email: json["email"],
+    birthday: DateTime.parse(json["birthday"]),
+    officeId: json["officeId"],
+    departmentId: json["departmentId"],
   );
 
   Map<String, dynamic> toJson() => {
-    "birthday": birthday.toIso8601String(),
-    "email": email,
-    "password": password,
+    "id": id,
     "fullName": fullName,
-    "events": events,
+    "email": email,
+    "birthday": birthday.toIso8601String(),
+    "officeId": officeId,
+    "departmentId": departmentId,
   };
 }
