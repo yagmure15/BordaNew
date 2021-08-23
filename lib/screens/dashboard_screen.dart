@@ -293,7 +293,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             }),
         SpeedDialChild(
             child: Icon(Icons.announcement_outlined),
-            label: "Inform Reservation",
+            label: "Notify of Arrival",
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => InformResScreen()));

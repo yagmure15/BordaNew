@@ -461,12 +461,10 @@ class _InformResScreen extends State {
       if (dateArr.length == 0) {
         final String formatted = formatter.format(DateTime.now());
         dateArr.add(formatted);
-        //_showToast(formatted);
       }
       if (dateArr.length == 1) {
         final String formatted =
             formatter.format(DateTime.parse(dateArr[0].toString()));
-        // _showToast(formatted);
       }
       if (dateArr.length > 1) {
         for (int i = 0; i < dateArr.length; i++) {
@@ -566,8 +564,6 @@ class _InformResScreen extends State {
         setState(() {
           selectedOfficeId = _officeListModelList![i].id.toString();
         });
-
-        _showToast(selectedOfficeId);
         break;
       }
     }

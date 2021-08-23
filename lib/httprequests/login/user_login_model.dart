@@ -13,8 +13,9 @@ class UserLoginModel {
     required this.token,
     required this.expiration,
     required this.id,
-    required this.userResource,
+     required this.userResource,
   });
+
 
   String token;
   DateTime expiration;
