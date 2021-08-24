@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:bordatech/HttpRequests/Login/change_password_model.dart';
 import 'package:bordatech/screens/login_screen.dart';
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,7 +28,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
 
   Future<void> postData(String newPassword, String oldPassword) async {
     setState(() {
-      url = "http://10.0.2.2:5000/api/User/UpdatePassword/" + userID!;
+      url = Constants.HTTPURL + "/api/User/UpdatePassword/" + userID!;
     });
 
     final response = await http.post(Uri.parse(url!),

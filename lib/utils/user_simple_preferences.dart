@@ -4,7 +4,7 @@ class UserSimplePreferences{
 
   static late SharedPreferences _preferences;
 
-  static const _keyUserName = "fullname";
+  static const _keyUserName = "name";
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();

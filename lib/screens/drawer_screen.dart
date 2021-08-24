@@ -1,8 +1,10 @@
+import 'package:bordatech/main.dart';
 import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_info.dart';
 import 'package:bordatech/utils/user_simple_preferences.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class DrawerScreen extends StatefulWidget {
 class _DrawerScreenState extends State<DrawerScreen> {
   String fullName = "";
   String email = "";
+
   @override
   void initState() {
     super.initState();
@@ -116,11 +119,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   ),
                 ),
               ),
-              /* 
+              /*
               Text(
                   "Baklava",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ), 
+                ),
               onTap: () {
                   Navigator.push(
                     context,
@@ -128,7 +131,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       builder: (context) => TermsPrivacyPolicy(),
                     ),
                   );
-                }, 
+                },
               ),
               */
               ListTile(

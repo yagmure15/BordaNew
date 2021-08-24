@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as cnv;
 
 class CreateEvent extends StatefulWidget {
   @override
@@ -12,29 +18,61 @@ class CreateEvent extends StatefulWidget {
   }
 }
 
+String userId = "";
+String officeId = "";
+String? userToken;
+int? selectedEventTypeId;
+String? eventStart, eventEnd;
+Future<void> postEventRequest(BuildContext context, String applicationUserId,
+    int eventType, String startDate, String endDate, String description) async {
+  final String apiUrl = Constants.HTTPURL + "/api/Events/CreateEvent";
+
+  final response = await http.post(Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        "applicationUserId": applicationUserId,
+        "eventType": eventType,
+        "startDate": startDate,
+        "endDate": endDate,
+        "description": description
+      }));
+
+  if (response.statusCode == 201) {
+    final String responsString = response.body;
+    print("BODY : " + response.body);
+    //Navigator.of(context).pop();
+
+    print("OLDU : ");
+  } else {}
+
+  print("STATUS CODE FOR EVENT : " + response.statusCode.toString());
+}
+
 class _CreateEvent extends State {
   TextEditingController titleController = new TextEditingController();
 
-  String? _eventTitle;
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
     hour: TimeOfDay.now().hour,
   );
+
   TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
     minute: 0,
     hour: TimeOfDay.now().hour,
   );
   String? selectedTitle;
-  String? selectedDate;
+  String selectedDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
 
   List listTitle = [
     "Competition \u{1F3C6}",
-    "Meeting",
-    "Celebration",
+    "Meeting \u{1F37A}",
+    "Celebration \u{1F381} ",
   ];
 
   int guestCount = 0;
-  DateTime? neyDateformat;
   DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
   bool isPetBrought = false;
@@ -43,6 +81,15 @@ class _CreateEvent extends State {
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office!";
+
+  @override
+  void initState() {
+    super.initState();
+    getuserInfo();
+
+    selectedDate = DateTime.now().toString();
+    selectedTitle = listTitle[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +300,7 @@ class _CreateEvent extends State {
 
   String getTimeString(TimeOfDay date) {
     if (date == null) {
-      return "oömadı";
+      return "Olmadı";
     } else {
       final hours = date.hour.toString().padLeft(2, "0");
       final minute = date.minute.toString().padLeft(2, "0");
@@ -393,7 +440,12 @@ class _CreateEvent extends State {
         ),
       );
 
-  void _SentInformRequest() {}
+  void _SentInformRequest() {
+    getEventIdFromList(selectedTitle);
+    convertStringToDateIso();
+    postEventRequest(context, userId, selectedEventTypeId!, eventStart!,
+        eventEnd!, titleController.text.toString());
+  }
 
   void _onSubmitController(Object val) {
     setState(() {
@@ -402,8 +454,6 @@ class _CreateEvent extends State {
           .format(DateTime.parse(selectedDate.toString()));
     });
 
-    _showToast(selectedDate);
-    print(selectedDate);
     Navigator.of(context).pop(_dateRangePickerController);
   }
 
@@ -489,5 +539,55 @@ class _CreateEvent extends State {
         ],
       ),
     ));
+  }
+
+  void getEventIdFromList(name) {
+    if (name == listTitle[0]) {
+      setState(() {
+        selectedEventTypeId = 0;
+      });
+    } else if (name == listTitle[1]) {
+      setState(() {
+        selectedEventTypeId = 1;
+      });
+    } else if (name == listTitle[2]) {
+      setState(() {
+        selectedEventTypeId = 2;
+      });
+    }
+  }
+
+  void getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    userId = pref.getString("userID").toString();
+    officeId = pref.getInt("officeId").toString();
+    userToken = pref.getString("token").toString();
+    setState(() {});
+  }
+
+  void convertStringToDateIso() {
+    setState(() {
+      String date = DateFormat('yyyy-MM-dd')
+          .format(DateTime.parse(selectedDate.toString()));
+
+      setState(() {
+        eventStart = date +
+            "T" +
+            _dateTimeStart.hour.toString().padLeft(2, "0") +
+            ":" +
+            _dateTimeStart.minute.toString().padLeft(2, "0") +
+            ":00.000Z";
+
+        eventEnd = date +
+            "T" +
+            _dateTimeEnd.hour.toString().padLeft(2, "0") +
+            ":" +
+            _dateTimeEnd.minute.toString().padLeft(2, "0") +
+            ":00.000Z";
+        //1951-11-04T19:35:37.116Z
+      });
+
+      // "$y-$m-${d}T$h:$min:$sec.$ms${us}Z"
+    });
   }
 }

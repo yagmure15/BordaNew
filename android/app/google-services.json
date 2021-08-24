@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "720451671039",
+    "project_id": "smart-co-working-space",
+    "storage_bucket": "smart-co-working-space.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720451671039:android:cc35085193ca75d080cdca",
+        "android_client_info": {
+          "package_name": "com.app.bordatech"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720451671039-93is398m9gu97bufdshh6b23ievj4270.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBia3TuGhPYrGMYBD9e2U3TW6QYNmLW3mM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "720451671039-93is398m9gu97bufdshh6b23ievj4270.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
