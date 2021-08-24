@@ -1,4 +1,5 @@
 import 'package:bordatech/screens/event_and_calendar_screen.dart';
+import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
@@ -19,8 +20,7 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-
-  String fullName ="";
+  String fullName = "";
   String email = "";
   @override
   void initState() {
@@ -28,11 +28,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
     getuserName();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-
     return Drawer(
       child: Column(
         children: <Widget>[
@@ -70,7 +67,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 leading: Icon(Icons.calendar_today),
                 title: Text(
-                  "Events and Calendar",
+                  "Calendars",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
                 onTap: () {
@@ -85,7 +82,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 leading: Icon(Icons.wb_sunny_outlined),
                 title: Text(
-                  "Weather",
+                  "Weather & Forecast",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
                 onTap: () {
@@ -99,8 +96,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 },
               ),
               InkWell(
-                onTap: (){
-                },
+                onTap: () {},
                 child: ListTile(
                   leading: Icon(Icons.food_bank_outlined),
                   title: RichText(
@@ -154,16 +150,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
       ),
     );
   }
+
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
   }
-  void getuserName() async{
+
+  void getuserName() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     fullName = pref.getString("name").toString();
     email = pref.getString("email").toString();
-    setState(() {
-
-    });
+    setState(() {});
   }
-
 }

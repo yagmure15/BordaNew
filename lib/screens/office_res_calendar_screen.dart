@@ -1,35 +1,23 @@
-import 'package:bordatech/models/event_model.dart';
-import 'package:bordatech/models/user_model.dart';
 import 'package:bordatech/screens/birthday_calendar_screen.dart';
+import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/my_calendar_screen.dart';
-import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'dart:math';
 
-final Random random = Random();
-
-final List<Color> colorCollection = <Color>[
-  Color(0xFFa31449),
-  Color(0xFF24611a),
-  Color(0xFFb3a329),
-  Color(0xFF541FC7),
-  Color(0xFFC71f9D),
-  Color(0xFFAA00FF),
-  Color(0xFF01A1EF),
-  Color(0xFF36B37B),
-  Color(0xFFFC571D)
-];
-
-class EventCalendarScreen extends StatefulWidget {
+class OfficeCalendarScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _EventCalendarScreenState();
+    return _OfficeCalendarScreenState();
   }
 }
 
-class _EventCalendarScreenState extends State<EventCalendarScreen> {
+class _OfficeCalendarScreenState extends State<OfficeCalendarScreen> {
+  List<CalendarView> _allowedViews = <CalendarView>[
+    CalendarView.timelineDay,
+    CalendarView.timelineWeek,
+    CalendarView.timelineMonth
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,13 +61,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: bordaOrange),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 1),
-                          height: 2,
-                          width: 45,
-                          color: Colors.orange[800],
+                              color: Colors.white30),
                         ),
                       ],
                     ),
@@ -139,7 +121,13 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white30),
+                              color: bordaOrange),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 1),
+                          height: 2,
+                          width: 45,
+                          color: Colors.orange[800],
                         ),
                       ],
                     ),
@@ -151,7 +139,13 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               padding: EdgeInsets.all(8),
               width: MediaQuery.of(context).size.width,
               height: (MediaQuery.of(context).size.height) * 0.8,
-              child: getCalendar(reservations: _getEvents()),
+              child: SfCalendar(
+                allowedViews: _allowedViews,
+                resourceViewSettings: ResourceViewSettings(size: 80),
+                showDatePickerButton: true,
+                view: CalendarView.timelineDay,
+                dataSource: _getCalendarDataSource(),
+              ),
             ),
           ],
         ),
@@ -160,80 +154,66 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   }
 }
 
-SfCalendar getCalendar({DataSource? reservations, dynamic scheduleViewBuider}) {
-  List<CalendarView> _allowedViews = <CalendarView>[
-    CalendarView.day,
-    CalendarView.week,
-    CalendarView.month,
-  ];
-
-  return SfCalendar(
-    allowedViews: _allowedViews,
-    monthViewSettings: MonthViewSettings(
-      showAgenda: true,
-      agendaViewHeight: 200,
-      agendaItemHeight: 50,
-      appointmentDisplayCount: 10,
-      showTrailingAndLeadingDates: false,
-      numberOfWeeksInView: 5,
-      dayFormat: 'EEE',
-    ),
-    view: CalendarView.month,
-    dataSource: reservations,
-    showDatePickerButton: true,
-    timeSlotViewSettings: TimeSlotViewSettings(
-        timeInterval: Duration(hours: 2),
-        timeIntervalHeight: 70.0,
-        timeIntervalWidth: 120,
-        timeRulerSize: 40),
-  );
-}
-
 class DataSource extends CalendarDataSource {
-  DataSource(List<Appointment> source) {
+  DataSource(List<Appointment> source, List<CalendarResource> resourceColl) {
     appointments = source;
+    resources = resourceColl;
   }
 }
 
-DataSource _getEvents() {
-  final List<EventModel> subjectCollection = <EventModel>[
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-24T18:30:37.773Z",
-        endDay: "2021-08-24T20:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{1F3C6}"),
-    EventModel(
-        eventType: "Celebration \u{1F37A}",
-        startDay: "2021-08-29T18:30:37.773Z",
-        endDay: "2021-08-29T20:30:37.773Z",
-        note: "Let's celebrate the Milestone! \{u1F451 }"),
-    EventModel(
-        eventType: "Meeting \u{1F37A}",
-        startDay: "2021-08-20T14:30:37.773Z",
-        endDay: "2021-08-20T15:45:37.773Z",
-        note: "Coffee Time \u{1F37A}"),
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-28T10:30:37.773Z",
-        endDay: "2021-08-28T13:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{u1F451 }"),
-  ];
+DataSource _getCalendarDataSource() {
+  List<Appointment> appointments = <Appointment>[];
+  List<CalendarResource> resources = <CalendarResource>[];
+/*   DateTime start = DateTime.parse("2021-08-26T13:15:37.773Z");
+  DateTime end = DateTime.parse("2021-08-26T13:15:37.773Z"); */
+  List<String> _nameCollection = <String>[];
+  _nameCollection.add("Ifrah");
+  _nameCollection.add("Baran");
+  _nameCollection.add("Engin");
+  _nameCollection.add("Eymen");
+  _nameCollection.add("Yusuf");
+  _nameCollection.add("Eda");
+  _nameCollection.add("Burçin");
+  _nameCollection.add("Yaren");
+  _nameCollection.add("Emine");
+  _nameCollection.add("Ata");
+  _nameCollection.add("Berkay");
+  _nameCollection.add("Zeynep");
 
-  final List<Appointment> events = <Appointment>[];
+  List<String> _subjectCollection = <String>[];
+  _subjectCollection.add('Hot Desk');
+  _subjectCollection.add('Meeting Room');
+  _subjectCollection.add("Will be in the Office!");
 
-  for (int i = 0; i < subjectCollection.length; i++) {
-    DateTime start = DateTime.parse(subjectCollection[i].startDay);
-    DateTime end = DateTime.parse(subjectCollection[i].endDay);
-    // added recurrence appointment
-    events.add(
-      Appointment(
-        subject: subjectCollection[i].eventType,
-        startTime: start,
-        endTime: end,
+  for (int i = 0; i < _nameCollection.length; i++) {
+    resources.add(
+      CalendarResource(
+        displayName: _nameCollection[i],
+        id: '000' + i.toString(),
         color: colorCollection[random.nextInt(9)],
-        notes: subjectCollection[i].note,
+        image: ExactAssetImage('assets/user.png'),
       ),
     );
   }
-  return DataSource(events);
+  for (int i = 0; i < resources.length; i++) {
+    appointments.add(
+      Appointment(
+          startTime: DateTime.now().add(Duration(hours: i + 1)),
+          endTime: DateTime.now().add(Duration(hours: i)),
+          subject: _subjectCollection[random.nextInt(3)],
+          color: colorCollection[random.nextInt(9)],
+          resourceIds: <Object>['000' + i.toString()]),
+    );
+  }
+  appointments.add(
+    Appointment(
+        startTime: DateTime.now(),
+        endTime: DateTime.now().add(Duration(hours: 2)),
+        subject: 'Hot Desk',
+        color: colorCollection[random.nextInt(9)],
+        resourceIds: <Object>['0001']),
+  );
+  // For multiple addition https://github.com/SyncfusionExamples/resource-in-flutter-event-calendar/blob/main/lib/main.dart
+
+  return DataSource(appointments, resources);
 }

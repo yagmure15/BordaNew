@@ -1,35 +1,39 @@
-import 'package:bordatech/models/event_model.dart';
-import 'package:bordatech/models/user_model.dart';
-import 'package:bordatech/screens/birthday_calendar_screen.dart';
+import 'package:bordatech/models/birthday_model.dart';
+import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/my_calendar_screen.dart';
 import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'dart:math';
 
-final Random random = Random();
+enum allMonths {
+  january,
+  february,
+  march,
+  april,
+  may,
+  june,
+  july,
+  august,
+  september,
+  october,
+  november,
+  december
+}
+String _getMonthDate(int month) {
+  var enumMonth = allMonths.values[month - 1];
+  String monthName = enumMonth.toString().split('.').last;
+  return monthName;
+}
 
-final List<Color> colorCollection = <Color>[
-  Color(0xFFa31449),
-  Color(0xFF24611a),
-  Color(0xFFb3a329),
-  Color(0xFF541FC7),
-  Color(0xFFC71f9D),
-  Color(0xFFAA00FF),
-  Color(0xFF01A1EF),
-  Color(0xFF36B37B),
-  Color(0xFFFC571D)
-];
-
-class EventCalendarScreen extends StatefulWidget {
+class BirthdayCalendarScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _EventCalendarScreenState();
+    return _BirthdayCalendarScreenState();
   }
 }
 
-class _EventCalendarScreenState extends State<EventCalendarScreen> {
+class _BirthdayCalendarScreenState extends State<BirthdayCalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,13 +77,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: bordaOrange),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 1),
-                          height: 2,
-                          width: 45,
-                          color: Colors.orange[800],
+                              color: Colors.white30),
                         ),
                       ],
                     ),
@@ -99,7 +97,13 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white30),
+                              color: bordaOrange),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 1),
+                          height: 2,
+                          width: 45,
+                          color: Colors.orange[800],
                         ),
                       ],
                     ),
@@ -151,7 +155,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               padding: EdgeInsets.all(8),
               width: MediaQuery.of(context).size.width,
               height: (MediaQuery.of(context).size.height) * 0.8,
-              child: getCalendar(reservations: _getEvents()),
+              child: getScheduleViewCalendar(reservations: _getBirthdays()),
             ),
           ],
         ),
@@ -160,13 +164,12 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
   }
 }
 
-SfCalendar getCalendar({DataSource? reservations, dynamic scheduleViewBuider}) {
+SfCalendar getScheduleViewCalendar(
+    {DataSource? reservations, dynamic scheduleViewBuilder}) {
   List<CalendarView> _allowedViews = <CalendarView>[
-    CalendarView.day,
-    CalendarView.week,
     CalendarView.month,
+    CalendarView.schedule
   ];
-
   return SfCalendar(
     allowedViews: _allowedViews,
     monthViewSettings: MonthViewSettings(
@@ -178,14 +181,43 @@ SfCalendar getCalendar({DataSource? reservations, dynamic scheduleViewBuider}) {
       numberOfWeeksInView: 5,
       dayFormat: 'EEE',
     ),
-    view: CalendarView.month,
+    view: CalendarView.schedule,
     dataSource: reservations,
     showDatePickerButton: true,
-    timeSlotViewSettings: TimeSlotViewSettings(
-        timeInterval: Duration(hours: 2),
-        timeIntervalHeight: 70.0,
-        timeIntervalWidth: 120,
-        timeRulerSize: 40),
+    /* scheduleViewSettings: ScheduleViewSettings(
+      hideEmptyScheduleWeek: true,
+    ), */
+    scheduleViewMonthHeaderBuilder: (context, scheduleViewBuilder) {
+      final String monthName = _getMonthDate(scheduleViewBuilder.date.month);
+      return Center(
+        child: Stack(
+          fit: StackFit.passthrough,
+          children: [
+            Image(
+              image: AssetImage('assets/' + monthName + '.jpg'),
+              fit: BoxFit.fitWidth,
+              width: scheduleViewBuilder.bounds.width,
+              height: 80,
+            ),
+            Positioned(
+              left: 8,
+              right: 0,
+              top: 8,
+              bottom: 0,
+              child: Text(
+                monthName.toUpperCase() +
+                    ' ' +
+                    scheduleViewBuilder.date.year.toString(),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900),
+              ),
+            )
+          ],
+        ),
+      );
+    },
   );
 }
 
@@ -195,45 +227,35 @@ class DataSource extends CalendarDataSource {
   }
 }
 
-DataSource _getEvents() {
-  final List<EventModel> subjectCollection = <EventModel>[
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-24T18:30:37.773Z",
-        endDay: "2021-08-24T20:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{1F3C6}"),
-    EventModel(
-        eventType: "Celebration \u{1F37A}",
-        startDay: "2021-08-29T18:30:37.773Z",
-        endDay: "2021-08-29T20:30:37.773Z",
-        note: "Let's celebrate the Milestone! \{u1F451 }"),
-    EventModel(
-        eventType: "Meeting \u{1F37A}",
-        startDay: "2021-08-20T14:30:37.773Z",
-        endDay: "2021-08-20T15:45:37.773Z",
-        note: "Coffee Time \u{1F37A}"),
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-28T10:30:37.773Z",
-        endDay: "2021-08-28T13:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{u1F451 }"),
+DataSource _getBirthdays() {
+  // TODO: Birthday models can change into "2021-08-25T18:30:37.773Z"
+  final List<BirthdayModel> subjectCollection = <BirthdayModel>[
+    BirthdayModel(name: "Mehmet", birthday: "1998-08-29T18:30:37.773Z"),
+    BirthdayModel(name: "Eymen", birthday: "1998-08-26T18:30:37.773Z"),
+    BirthdayModel(name: "Engin", birthday: "1998-08-26T18:30:37.773Z"),
+    BirthdayModel(name: "Ifrah", birthday: "1996-08-28T18:30:37.773Z"),
+    BirthdayModel(name: "Yusuf", birthday: "1997-09-01T18:30:37.773Z"),
+    BirthdayModel(name: "Zeynep", birthday: "1997-09-02T18:30:37.773Z"),
   ];
 
-  final List<Appointment> events = <Appointment>[];
+  final List<Appointment> birthdays = <Appointment>[];
 
   for (int i = 0; i < subjectCollection.length; i++) {
-    DateTime start = DateTime.parse(subjectCollection[i].startDay);
-    DateTime end = DateTime.parse(subjectCollection[i].endDay);
+    DateTime bDay = DateTime.parse(subjectCollection[i].birthday);
+
+    String yearsOld = " is " +
+        (DateTime.now().year - bDay.year.toInt()).toString() +
+        " years old. Happy Birthday!";
+
     // added recurrence appointment
-    events.add(
-      Appointment(
-        subject: subjectCollection[i].eventType,
-        startTime: start,
-        endTime: end,
+    birthdays.add(Appointment(
+        subject: subjectCollection[i].name + yearsOld,
+        startTime: bDay,
+        endTime: bDay.add(const Duration(hours: 1)),
         color: colorCollection[random.nextInt(9)],
-        notes: subjectCollection[i].note,
-      ),
-    );
+        isAllDay: true,
+        recurrenceRule: 'FREQ=DAILY;INTERVAL=365'));
   }
-  return DataSource(events);
+
+  return DataSource(birthdays);
 }

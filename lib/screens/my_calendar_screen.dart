@@ -1,35 +1,19 @@
-import 'package:bordatech/models/event_model.dart';
 import 'package:bordatech/models/user_model.dart';
 import 'package:bordatech/screens/birthday_calendar_screen.dart';
-import 'package:bordatech/screens/my_calendar_screen.dart';
+import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'dart:math';
 
-final Random random = Random();
-
-final List<Color> colorCollection = <Color>[
-  Color(0xFFa31449),
-  Color(0xFF24611a),
-  Color(0xFFb3a329),
-  Color(0xFF541FC7),
-  Color(0xFFC71f9D),
-  Color(0xFFAA00FF),
-  Color(0xFF01A1EF),
-  Color(0xFF36B37B),
-  Color(0xFFFC571D)
-];
-
-class EventCalendarScreen extends StatefulWidget {
+class MyCalendarScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _EventCalendarScreenState();
+    return _MyCalendarScreenState();
   }
 }
 
-class _EventCalendarScreenState extends State<EventCalendarScreen> {
+class _MyCalendarScreenState extends State<MyCalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,13 +57,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: bordaOrange),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 1),
-                          height: 2,
-                          width: 45,
-                          color: Colors.orange[800],
+                              color: Colors.white30),
                         ),
                       ],
                     ),
@@ -119,7 +97,13 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white30),
+                              color: bordaOrange),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 1),
+                          height: 2,
+                          width: 45,
+                          color: Colors.orange[800],
                         ),
                       ],
                     ),
@@ -151,7 +135,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               padding: EdgeInsets.all(8),
               width: MediaQuery.of(context).size.width,
               height: (MediaQuery.of(context).size.height) * 0.8,
-              child: getCalendar(reservations: _getEvents()),
+              child: getCalendar(reservations: _getMyReservations()),
             ),
           ],
         ),
@@ -195,45 +179,49 @@ class DataSource extends CalendarDataSource {
   }
 }
 
-DataSource _getEvents() {
-  final List<EventModel> subjectCollection = <EventModel>[
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-24T18:30:37.773Z",
-        endDay: "2021-08-24T20:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{1F3C6}"),
-    EventModel(
-        eventType: "Celebration \u{1F37A}",
-        startDay: "2021-08-29T18:30:37.773Z",
-        endDay: "2021-08-29T20:30:37.773Z",
-        note: "Let's celebrate the Milestone! \{u1F451 }"),
-    EventModel(
-        eventType: "Meeting \u{1F37A}",
-        startDay: "2021-08-20T14:30:37.773Z",
-        endDay: "2021-08-20T15:45:37.773Z",
-        note: "Coffee Time \u{1F37A}"),
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-28T10:30:37.773Z",
-        endDay: "2021-08-28T13:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{u1F451 }"),
+DataSource _getMyReservations() {
+  // TODO: Birthday models can change into "2021-08-25T18:30:37.773Z"
+  final List<MyReservation> subjectCollection = <MyReservation>[
+    MyReservation(
+        title: "Notify",
+        startDay: "2021-08-20T09:00:37.773Z",
+        endDay: "2021-08-20T17:00:37.773Z"),
+    MyReservation(
+        title: "Meeting Room",
+        startDay: "2021-08-20T13:30:37.773Z",
+        endDay: "2021-08-20T15:00:37.773Z"),
+    MyReservation(
+        title: "Hot Desk",
+        startDay: "2021-08-23T09:00:37.773Z",
+        endDay: "2021-08-23T12:00:37.773Z"),
+    MyReservation(
+        title: "Hot Desk",
+        startDay: "2021-08-27T09:00:37.773Z",
+        endDay: "2021-08-27T14:00:37.773Z"),
+    MyReservation(
+        title: "Meeting Room",
+        startDay: "2021-08-26T10:15:37.773Z",
+        endDay: "2021-08-26T11:45:37.773Z"),
+    MyReservation(
+        title: "Hot Desk Room",
+        startDay: "2021-08-26T13:15:37.773Z",
+        endDay: "2021-08-26T16:45:37.773Z"),
   ];
 
-  final List<Appointment> events = <Appointment>[];
-
+  final List<Appointment> myReservations = <Appointment>[];
   for (int i = 0; i < subjectCollection.length; i++) {
     DateTime start = DateTime.parse(subjectCollection[i].startDay);
     DateTime end = DateTime.parse(subjectCollection[i].endDay);
     // added recurrence appointment
-    events.add(
+    myReservations.add(
       Appointment(
-        subject: subjectCollection[i].eventType,
+        subject: subjectCollection[i].title,
         startTime: start,
         endTime: end,
         color: colorCollection[random.nextInt(9)],
-        notes: subjectCollection[i].note,
       ),
     );
   }
-  return DataSource(events);
+
+  return DataSource(myReservations);
 }

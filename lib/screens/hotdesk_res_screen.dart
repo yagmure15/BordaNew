@@ -37,14 +37,14 @@ class _HotdeskScreen extends State {
   DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
   bool isPetBrought = false;
-  String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now().add(Duration(days: 1)));
+  String firstDate = DateFormat('dd MMMM yyyy, EEEE')
+      .format(DateTime.now().add(Duration(days: 1)));
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
 
   @override
   Widget build(BuildContext context) {
-    
     //hangi ofiste çalışıyorsa listeden onu set ediyoruz.
     selectedOffice = listOffice[0].toString();
     _showToast(_dateTimeEnd.toString());
@@ -60,28 +60,29 @@ class _HotdeskScreen extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-            children: <Widget>[
-              Container(height: 520, width: 350, child: _getBooking()),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      child: Image(
-                        image: AssetImage("assets/hotdesk.png"),
-                        height: 80,
-                        width: 80,
-                      )),
-                ],
-              ),
-            ],
-          )),
+      body: SingleChildScrollView(
+        child: Container(
+            //height: double.infinity,
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(height: 520, width: 350, child: _getBooking()),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                        child: Image(
+                      image: AssetImage("assets/hotdesk.png"),
+                      height: 80,
+                      width: 80,
+                    )),
+                  ],
+                ),
+              ],
+            )),
+      ),
     );
   }
 
@@ -100,7 +101,6 @@ class _HotdeskScreen extends State {
             style: TextStyle(color: Colors.grey, fontSize: 10),
           ),
           DropdownButton(
-
             items: listOffice.map((valueItem) {
               return DropdownMenuItem(
                   value: valueItem,
@@ -110,7 +110,6 @@ class _HotdeskScreen extends State {
                             fontSize: 16, fontWeight: FontWeight.w500)),
                   ));
             }).toList(),
-
             isExpanded: true,
             hint: Container(
                 padding: EdgeInsets.only(left: 0),
@@ -447,7 +446,8 @@ class _HotdeskScreen extends State {
     Navigator.of(context).pop(_dateRangePickerController);
 
     setState(() {
-      firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now().add(Duration(days: 1)));
+      firstDate = DateFormat('dd MMMM yyyy, EEEE')
+          .format(DateTime.now().add(Duration(days: 1)));
     });
     selectedDate = firstDate;
   }
