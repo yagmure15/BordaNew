@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bordatech/httprequests/offices/office_list_model.dart';
 import 'package:bordatech/screens/hotdesk_selection_screen.dart';
 import 'package:bordatech/utils/constants.dart';
@@ -18,6 +20,7 @@ class HotdeskScreen extends StatefulWidget {
     return _HotdeskScreen();
   }
 }
+
 String userId = "";
 String officeId = "";
 String? userToken;
@@ -25,11 +28,9 @@ String? selectedOfficeId;
 
 
 class _HotdeskScreen extends State {
-
+  String? eventDateIsoType;
   List<OfficeListModel>? _officeListModelList;
   String? selectedOffice;
-
-
 
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
@@ -52,7 +53,8 @@ class _HotdeskScreen extends State {
   DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
   bool isPetBrought = false;
-  String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now().add(Duration(days: 1)));
+  String firstDate = DateFormat('dd MMMM yyyy, EEEE')
+      .format(DateTime.now().add(Duration(days: 1)));
 
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
@@ -91,9 +93,16 @@ class _HotdeskScreen extends State {
   void initState() {
     super.initState();
     getuserInfo();
-    getOffices();
+    Timer(Duration(milliseconds: 100), () {
+      getOffices();
+    });
+
+    selectedDate = firstDate;
+    eventDateIsoType = DateFormat('yyyy-MM-dd')
+        .format(DateTime.now().add(Duration(days: 1)));
 
   }
+
   @override
   Widget build(BuildContext context) {
     //hangi ofiste çalışıyorsa listeden onu set ediyoruz.
@@ -109,31 +118,31 @@ class _HotdeskScreen extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: _officeListModelList == null ? Center(
-        child: CircularProgressIndicator(),
-      ):
-      Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-            children: <Widget>[
-              Container(height: 430, width: 350, child: _getBooking()),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      child: Image(
+      body: _officeListModelList == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(height: 430, width: 350, child: _getBooking()),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                          child: Image(
                         image: AssetImage("assets/hotdesk.png"),
                         height: 80,
                         width: 80,
                       )),
+                    ],
+                  ),
                 ],
-              ),
-            ],
-          )),
+              )),
     );
   }
 
@@ -152,7 +161,6 @@ class _HotdeskScreen extends State {
             style: TextStyle(color: Colors.grey, fontSize: 10),
           ),
           DropdownButton(
-
             items: _officeListModelList!.map((valueItem) {
               return DropdownMenuItem(
                   value: valueItem.name,
@@ -196,7 +204,7 @@ class _HotdeskScreen extends State {
                   style: TextStyle(color: Colors.grey, fontSize: 10)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 5, 0),
-                child: Text(firstDate,
+                child: Text(selectedDate!,
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w500)),
               ),
@@ -223,10 +231,19 @@ class _HotdeskScreen extends State {
                 )),
             key: _key,
             onPressed: () {
+            print(eventDateIsoType);
+
+
+
+
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => HotDeskSelectionScreen()));
+                      builder: (context) => HotDeskSelectionScreen(eventDateIsoType!)));
+
+
+
               _SentInformRequest();
             },
           ),
@@ -460,36 +477,13 @@ class _HotdeskScreen extends State {
 
   void _onSubmitController(Object val) {
     setState(() {
-      selectedDate = val.toString();
-      firstDate = DateFormat('dd MMMM yyyy, EEEE')
-          .format(DateTime.parse(selectedDate.toString()));
+      selectedDate =
+          DateFormat('dd MMMM yyyy, EEEE').format(DateTime.parse(val.toString()));
+      eventDateIsoType =
+          DateFormat('yyyy-MM-dd').format(DateTime.parse(val.toString()));
+
+
     });
-
-    if (selectedDate == "2021-08-13 00:00:00.000") {
-      setState(() {
-        selectedDesk == null;
-        listDesks = gun1;
-      });
-    }
-    if (selectedDate == "2021-08-14 00:00:00.000") {
-      setState(() {
-        selectedDesk == "asd";
-        listDesks = gun2;
-      });
-    }
-    if (selectedDate == "2021-08-15 00:00:00.000") {
-      setState(() {
-        selectedDesk == "null";
-
-        listDesks = ["a0", "sasd", "asdasdasd"];
-      });
-    }
-    if (selectedDate == "2021-08-16 00:00:00.000") {
-      setState(() {
-        selectedDesk == "null";
-        listDesks = gun2;
-      });
-    }
 
     Navigator.of(context).pop(_dateRangePickerController);
   }
@@ -500,13 +494,17 @@ class _HotdeskScreen extends State {
     setState(() {
       firstDate = DateFormat('dd MMMM yyyy, EEEE')
           .format(DateTime.now().add(Duration(days: 1)));
+      selectedDate = firstDate;
+      eventDateIsoType =
+          DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)));
+
     });
-    selectedDate = firstDate;
+
   }
 
   String getTimeString(TimeOfDay date) {
     if (date == null) {
-      return "oömadı";
+      return "olmadı";
     } else {
       final hours = date.hour.toString().padLeft(2, "0");
       final minute = date.minute.toString().padLeft(2, "0");
@@ -642,6 +640,7 @@ class _HotdeskScreen extends State {
       userToken = pref.getString("token").toString();
     });
   }
+
   void setInitialSelectedOffice() {
     for (int i = 0; i < _officeListModelList!.length; i++) {
       if (officeId == _officeListModelList![i].id.toString()) {
@@ -663,7 +662,6 @@ class _HotdeskScreen extends State {
       }
     }
   }
-
 
 
 }

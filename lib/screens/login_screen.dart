@@ -27,7 +27,7 @@ Future<UserLoginModel?> postData(String email, String password) async {
 
   final response = await http.post(Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}));
+      body: jsonEncode({"email": "engin.yagmur@bordatech.com", "password": "Engin.11"}));
 
   if (response.statusCode == 201) {
     final String responsString = response.body;

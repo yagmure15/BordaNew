@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:bordatech/httprequests/notify/notify_of_arrical_model.dart';
@@ -81,13 +82,14 @@ class _InformResScreen extends State {
   String chooseAnOffice = "Please, Choose an Office";
 
   Future<void> getOffices() async {
+
     final String apiUrl = Constants.HTTPURL + "/api/offices";
 
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $userToken",
+        "Authorization": "Bearer $userToken"
       },
     );
 
@@ -114,7 +116,14 @@ class _InformResScreen extends State {
   void initState() {
     super.initState();
     getuserInfo();
-    getOffices();
+    Timer(Duration(milliseconds: 100), () {
+      getOffices();
+
+    });
+
+
+
+
   }
 
   @override
@@ -131,30 +140,31 @@ class _InformResScreen extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: _officeListModelList == null
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : Container(
-              height: double.infinity,
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(height: 460, width: 350, child: _getBooking()),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                          child: Image(
-                        image: AssetImage("assets/informbg.png"),
-                        height: 80,
-                        width: 80,
-                      )),
-                    ],
-                  ),
-                ],
-              )),
+      body: _officeListModelList == null ? Center(
+        child: CircularProgressIndicator(),
+      ) :
+
+      Container(
+                height: double.infinity,
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(height: 460, width: 350, child: _getBooking()),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                            child: Image(
+                              image: AssetImage("assets/informbg.png"),
+                              height: 80,
+                              width: 80,
+                            )),
+                      ],
+                    ),
+                  ],
+                )),
+
     );
   }
 
@@ -539,12 +549,18 @@ class _InformResScreen extends State {
     });
   }
 
-  void getuserInfo() async {
+ void getuserInfo() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    userId = pref.getString("userID").toString();
-    officeId = pref.getInt("officeId").toString();
-    userToken = pref.getString("token").toString();
-    setState(() {});
+
+    setState(() {
+      userId = pref.getString("userID").toString();
+      officeId = pref.getInt("officeId").toString();
+      userToken = pref.getString("token").toString();
+
+    });
+
+
+
   }
 
   void setInitialSelectedOffice() {

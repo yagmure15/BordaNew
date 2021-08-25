@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bordatech/httprequests/offices/office_list_model.dart';
 import 'package:bordatech/screens/meeting_search_employee.dart';
 import 'package:bordatech/utils/constants.dart';
@@ -96,7 +98,10 @@ class _MeetingRoomScreen extends State {
   void initState() {
     super.initState();
     getuserInfo();
-    getOffices();
+    Timer(Duration(milliseconds: 100), () {
+      getOffices();
+
+    });
   }
   @override
   Widget build(BuildContext context) {

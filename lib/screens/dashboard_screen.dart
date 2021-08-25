@@ -4,6 +4,7 @@ import 'package:bordatech/screens/hotdesk_res_screen.dart';
 import 'package:bordatech/screens/meeting_room_res_screen.dart';
 import 'package:bordatech/screens/notification_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:bordatech/screens/inform_res_screen.dart';
@@ -21,7 +22,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 
 
+@override
+  void initState() {
+    super.initState();
 
+    print("USER ID " + USERID);
+  }
 
 /*
 
