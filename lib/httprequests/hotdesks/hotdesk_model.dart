@@ -5,8 +5,6 @@
 import 'dart:convert';
 
 List<HotdeskModel> hotdeskModelFromJson(String str) => List<HotdeskModel>.from(json.decode(str).map((x) => HotdeskModel.fromJson(x)));
-List<HotDeskReservation> hotdeskReservationFromJson(String str) => List<HotDeskReservation>.from(json.decode(str).map((x) => HotDeskReservation.fromJson(x)));
-List<ApplicationUser> aplicationUserFromJson(String str) => List<ApplicationUser>.from(json.decode(str).map((x) => ApplicationUser.fromJson(x)));
 
 String hotdeskModelToJson(List<HotdeskModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
@@ -20,10 +18,6 @@ class HotdeskModel {
   int id;
   String name;
   List<HotDeskReservation> hotDeskReservations;
-
-
-
-
 
   factory HotdeskModel.fromJson(Map<String, dynamic> json) => HotdeskModel(
     id: json["id"],
@@ -47,8 +41,6 @@ class HotDeskReservation {
     required this.updatedAt,
     required this.applicationUserId,
     required this.applicationUser,
-    required this.hotDeskId,
-    required this.isCancelled,
   });
 
   int id;
@@ -58,8 +50,6 @@ class HotDeskReservation {
   DateTime updatedAt;
   String applicationUserId;
   ApplicationUser applicationUser;
-  int hotDeskId;
-  bool isCancelled;
 
   factory HotDeskReservation.fromJson(Map<String, dynamic> json) => HotDeskReservation(
     id: json["id"],
@@ -69,8 +59,6 @@ class HotDeskReservation {
     updatedAt: DateTime.parse(json["updatedAt"]),
     applicationUserId: json["applicationUserId"],
     applicationUser: ApplicationUser.fromJson(json["applicationUser"]),
-    hotDeskId: json["hotDeskId"],
-    isCancelled: json["isCancelled"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -81,8 +69,6 @@ class HotDeskReservation {
     "updatedAt": updatedAt.toIso8601String(),
     "applicationUserId": applicationUserId,
     "applicationUser": applicationUser.toJson(),
-    "hotDeskId": hotDeskId,
-    "isCancelled": isCancelled,
   };
 }
 

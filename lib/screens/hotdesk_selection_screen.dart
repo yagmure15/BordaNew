@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bordatech/httprequests/hotdesks/hotdesk_model.dart';
 import 'package:bordatech/utils/constants.dart';
@@ -32,52 +33,71 @@ String? eventStart, eventEnd;
 class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
   Future<List<HotdeskModel>?> _getHotdesks() async {
     final String apiUrl = Constants.HTTPURL +
-        "/api/hotdesks" +
-        something;
+        "/api/hotdesks/reservations?requestedDate=" + something;
 
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {
         "Content-Type": "application/json",
         "Authorization":
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlbmdpbi55YWdtdXJAYm9yZGF0ZWNoLmNvbSIsImp0aSI6IjBlNGE5OTI3LTEyNTUtNGQxOS04NWIyLTVhNDAxNjY5MjFhMCIsImV4cCI6MTYyOTk4Mzc0MCwiaXNzIjoiTVZTIiwiYXVkIjoiQXBpVXNlciJ9.r107fH1mrG6_rjaGXWi_-lOFzXo_RpvlfwiW-_Sy3GA",
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJleW1lbkBtYWlsLmNvbSIsImp0aSI6ImM2ZDg2ODVlLWQ5MTgtNDQyNi04MmUxLTc0MDEzYzFjYjUwYSIsImV4cCI6MTYzMDA2MTEzOCwiaXNzIjoiTVZTIiwiYXVkIjoiQXBpVXNlciJ9.FPL9PT6NeFJvdqp_FkNaVMmU5AmrJHdiyxcQXocJYfg",
       },
     );
+
+    print("STATUS CODE "+ response.statusCode.toString());
+
     if (response.statusCode == 200) {
       final String responsString = response.body;
       final List<HotdeskModel> list = hotdeskModelFromJson(responsString);
 
-      print(list[5].hotDeskReservations[0].startDate.toString());
+      print("LIST SIZE : " + list.length.toString());
 
       return list;
     } else {
       return null;
     }
-
-    /*
-
-    if (response.statusCode == 200) {
-      final String responsString = response.body;
-      var jsonData = cnv.jsonDecode(responsString);
-      List<HotdeskModel> hotdesks = [];
-
-      for (var i in jsonData) {
-        HotdeskModel hotdesk = HotdeskModel(
-            id: jsonData["id"],
-            name: jsonData["name"],
-            hotDeskReservations: jsonData["hotDeskReservations"]);
-
-        hotdesks.add(hotdesk);
-
-        print("hotdesk $i : " + hotdesk.name);
-
-        return hotdesks;
-      }
-    } else {
-      return null;
-    }
-*/
   }
+
+
+  Future<void> postHotdeskRequest(BuildContext context, String userId, String startDate,String id) async {
+    final String apiUrl = Constants.HTTPURL + "/api/hotdesks/" + id +"/reserve";
+
+    final response = await http.post(Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $userToken",
+        },
+        body: jsonEncode({
+          "userId": userId,
+          "startDate": startDate+"T09:00:00.000",
+          "endDate": startDate+"T18:00:00.000",
+        }));
+
+    if (response.statusCode == 201) {
+      final String responsString = response.body;
+      print("BODY : " + response.body);
+      Navigator.of(context).pop();
+
+      setState(() {
+        _allDataOrEmptyData = "All Desks";
+      });
+
+      print("OLDU : ");
+    } else {}
+
+    print("STATUS CODE FOR EVENT : " + response.statusCode.toString());
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   String something;
   _HotDeskSelectionScreenState(this.something);
@@ -88,6 +108,7 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     getuserInfo();
     Timer(Duration(milliseconds: 100), () {});
   }
@@ -166,15 +187,15 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                 ),
                 padding: EdgeInsets.all(0),
                 width: MediaQuery.of(context).size.width * 0.7,
-                height: 320,
+                height: 330,
                 child: Column(
                   children: [
                     Container(
-                      height: 100,
+                      height: 120,
                       color: Colors.black12,
                       child: Align(
                         alignment: Alignment.center,
-                        child: Row(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image(
@@ -255,7 +276,11 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                         onPressed: () {
                           if (isShowable) {
                             print("DOLUU");
-                          } else {}
+                          } else {
+
+                            postHotdeskRequest(context, userId, something, snapshot.data[index].id.toString());
+
+                          }
                         },
                       ),
                     )

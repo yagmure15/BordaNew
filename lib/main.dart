@@ -1,29 +1,52 @@
 import 'package:bordatech/screens/deneme.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:bordatech/utils/user_info.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/terms_privacy_screen.dart';
 import 'package:bordatech/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    "high_important_channel", "High Important Channel", "description",
+    importance: Importance.high, playSound: true);
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
-void main() {
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true, badge: true, sound: true);
+
   runApp(MyApp());
-
-
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      /*  
+      /*
       theme: ThemeData(
         textTheme: GoogleFonts.josephinSansTextTheme(Theme.of(context).textTheme),
         primarySwatch: Colors.blue,
-        
+
       ),
       */
       debugShowCheckedModeBanner: false,
@@ -39,6 +62,63 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+                android: AndroidNotificationDetails(
+                    channel.id, channel.name, channel.description,
+                    color: Colors.green,
+                    playSound: true,
+                    icon: "@mipmap/ic_launcher")));
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: Text(notification.title.toString()),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(notification.body.toString()),
+                    ],
+                  ),
+                ),
+              );
+            });
+      }
+    });
+  }
+
+  void showNotification() {
+    flutterLocalNotificationsPlugin.show(
+        0,
+        "title",
+        "body",
+        NotificationDetails(
+            android: AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.high,
+                color: Colors.green,
+                playSound: true,
+                icon: "@mipmap/ic_launcher")));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +230,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                        Navigator.pop(context);
+                          Navigator.pop(context);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
