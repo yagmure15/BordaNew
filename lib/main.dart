@@ -1,3 +1,4 @@
+import 'package:bordatech/provider/theme_notifier.dart';
 import 'package:bordatech/screens/deneme.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:bordatech/utils/user_info.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/terms_privacy_screen.dart';
 import 'package:bordatech/screens/login_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -24,6 +26,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -35,23 +38,25 @@ Future<void> main() async {
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
 
-  runApp(MyApp());
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      /*
-      theme: ThemeData(
-        textTheme: GoogleFonts.josephinSansTextTheme(Theme.of(context).textTheme),
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider<ThemeColorData>(
+        create: (BuildContext context) => ThemeColorData(),
+        builder: (context, _ ) {
+          Provider.of<ThemeColorData>(context).loadThemeFromSharedPref();
+          return MaterialApp(
 
-      ),
-      */
-      debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
-    );
+            theme: Provider.of<ThemeColorData>(context).themeColor,
+            debugShowCheckedModeBanner: false,
+            home: WelcomeScreen(),
+          );
+        });
   }
 }
 

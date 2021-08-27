@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class HexColor {
   static toHexCode(String colorHexCode) {
     String colorNew = '0xff' + colorHexCode;
@@ -7,8 +9,9 @@ class HexColor {
     int color = int.parse(colorNew);
     return color;
   }
-
 }
+
+
 
 
 var bordaGreen = Color(HexColor.toHexCode("#24343b"));

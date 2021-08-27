@@ -56,7 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               )),
         ),
-        backgroundColor: bordaGreen,
+
         actions: <Widget>[
           IconButton(
 
@@ -71,7 +71,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       drawer: DrawerScreen(),
-      backgroundColor: bordaSoftGreen,
+
       body: _dashboardBody(),
       floatingActionButton: _animatedFloatingButton(),
     );

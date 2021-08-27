@@ -1,10 +1,13 @@
 import 'dart:math';
 
+import 'package:bordatech/provider/theme_notifier.dart';
 import 'package:bordatech/screens/login_screen.dart';
 import 'package:bordatech/screens/update_password_screen.dart';
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:bordatech/utils/user_info.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -17,6 +20,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
 
 
+  bool isDarkMode = true;
   String fullName = "";
   String email = "";
 
@@ -35,8 +39,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
         leading: TextButton(
             onPressed: () {
@@ -48,7 +52,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           fit: BoxFit.contain,
           height: 30,
         ),
-        backgroundColor: bordaGreen,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -179,14 +182,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: bordaGreen,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Center(
-                child: Text(
-                  'Light Mode',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+              child: Container(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+
+                    children: [
+
+                      Text(
+                        'Light Mode',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(width: 10,),
+                        Switch(
+                            value:  Provider.of<ThemeColorData>(context,listen: false).isDark,
+                            onChanged: (_){
+                              Provider.of<ThemeColorData>(context,listen: false).toggleTheme();
+                            }
+                        )
+
+
+
+
+
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -257,3 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {});
   }
 }
+
+
+
+

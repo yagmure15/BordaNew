@@ -31,6 +31,10 @@ int? selectedEventTypeId;
 String? eventStart, eventEnd;
 
 class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
+
+
+
+
   Future<List<HotdeskModel>?> _getHotdesks() async {
     final String apiUrl = Constants.HTTPURL +
         "/api/hotdesks/reservations?requestedDate=" + something;
@@ -40,7 +44,7 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
       headers: {
         "Content-Type": "application/json",
         "Authorization":
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJleW1lbkBtYWlsLmNvbSIsImp0aSI6ImM2ZDg2ODVlLWQ5MTgtNDQyNi04MmUxLTc0MDEzYzFjYjUwYSIsImV4cCI6MTYzMDA2MTEzOCwiaXNzIjoiTVZTIiwiYXVkIjoiQXBpVXNlciJ9.FPL9PT6NeFJvdqp_FkNaVMmU5AmrJHdiyxcQXocJYfg",
+        "Bearer $userToken",
       },
     );
 
@@ -57,6 +61,11 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
       return null;
     }
   }
+
+
+
+
+
 
 
   Future<void> postHotdeskRequest(BuildContext context, String userId, String startDate,String id) async {
@@ -323,24 +332,24 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                                 leading: Image.asset(
                                   'assets/deskempty.png',
                                   color: snapshot.data[index]
-                                              .hotDeskReservations.length ==
-                                          0
+                                      .hotDeskReservations.length ==
+                                      0
                                       ? Colors.greenAccent
                                       : Colors.redAccent,
                                 ),
                                 title: Text(snapshot.data[index].name,style: TextStyle(color:
                                 Colors.black38),),
                                 subtitle: Text(snapshot.data[index]
-                                            .hotDeskReservations.length ==
-                                        0
+                                    .hotDeskReservations.length ==
+                                    0
                                     ? "Available"
                                     : snapshot
-                                        .data[index]
-                                        .hotDeskReservations[0]
-                                        .applicationUser
-                                        .fullName
-                                        .toString(),style: TextStyle(
-                                  fontWeight: FontWeight.w900
+                                    .data[index]
+                                    .hotDeskReservations[0]
+                                    .applicationUser
+                                    .fullName
+                                    .toString(),style: TextStyle(
+                                    fontWeight: FontWeight.w900
                                 ),),
                               ),
                             ),
