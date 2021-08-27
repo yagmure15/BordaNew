@@ -1,10 +1,23 @@
+import 'dart:async';
+
+import 'package:bordatech/httprequests/departments/departments.dart';
+import 'package:bordatech/httprequests/meetingroom/all_emplooyes.dart';
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class SearchEmployee extends StatefulWidget {
-  String? userId, userToken, meetingStartDate, meetingEndDate, selectedOfficeId, SelectedMeetigRoomId;
+import 'meeting_room_res_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as cnv;
 
+class SearchEmployee extends StatefulWidget {
+  String? userId,
+      userToken,
+      meetingStartDate,
+      meetingEndDate,
+      selectedOfficeId,
+      SelectedMeetigRoomId;
 
   SearchEmployee(this.userId, this.userToken, this.meetingStartDate,
       this.meetingEndDate, this.selectedOfficeId, this.SelectedMeetigRoomId);
@@ -22,42 +35,107 @@ class _SearchEmployeeState extends State<SearchEmployee> {
   TextEditingController textEditingController = TextEditingController();
 
   List<CheckBoxState> itemSearch = [];
+  List<ShowAlllEmplooyes>? _allEmplooyesList;
+
+  List<Departments>? _departmentList;
+
+
+  List<CheckBoxState> employeeCheckboxList = [
+    CheckBoxState(name: "Mehmet Baran Nakipoğlu ", title: "yazılım"),
+  ];
+/*
+  final department = [
+    CheckBoxState(name: "asdasd", title: "yazılım"),
+    CheckBoxState(name: "HWD", title: "donanım"),
+    CheckBoxState(name: "PMO", title: "pmo"),
+    CheckBoxState(name: "ssss", title: "pmo")
+
+  ];
+*/
+
+
+
+  Future<void> getAllEmplooyesByOfficeId() async {
+    setState(() {});
+
+    final String apiUrl = Constants.HTTPURL + "/api/users?officeId=1";
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final String responsString = response.body;
+      List<dynamic> body = cnv.jsonDecode(responsString);
+
+      _allEmplooyesList =
+          body.map((dynamic item) => ShowAlllEmplooyes.fromJson(item)).toList();
+
+      for (int i = 0; i < _allEmplooyesList!.length; i++) {
+        employeeCheckboxList.add(CheckBoxState(
+            name: _allEmplooyesList![i].fullName.toString(),
+            title: _allEmplooyesList![i].departmentId.toString()));
+      }
+    } else {
+      return null;
+    }
+  }
+  Future<void> getAllDepartmants() async {
+    setState(() {});
+
+    final String apiUrl = Constants.HTTPURL + "/api/departments";
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final String responsString = response.body;
+      print("BODY FOR DEPARTMENTS: " + response.body);
+
+      List<dynamic> body = cnv.jsonDecode(responsString);
+
+      _departmentList =
+          body.map((dynamic item) => Departments.fromJson(item)).toList();
+
+      for (int i = 0; i < _allEmplooyesList!.length; i++) {
+        employeeCheckboxList.add(CheckBoxState(
+            name: _allEmplooyesList![i].fullName.toString(),
+            title: _allEmplooyesList![i].departmentId.toString()));
+      }
+    } else {
+      return null;
+    }
+
+    print("STATUS CODE FOR DEPARMENTS " + response.statusCode.toString());
+  }
 
   @override
   void initState() {
-    itemSearch.addAll(employeeCheckboxList);
     super.initState();
+    getAllEmplooyesByOfficeId();
+    getAllDepartmants();
+    Timer(Duration(milliseconds: 500), () {
+      setState(() {
+        employeeCheckboxList = employeeCheckboxList;
+      });
+
+      itemSearch.addAll(employeeCheckboxList);
+    });
   }
 
-  final department = [
-    CheckBoxState(name: "SWD", title: "yazılım"),
-    CheckBoxState(name: "HWD", title: "donanım"),
-    CheckBoxState(name: "PMO", title: "pmo")
-  ];
-  final onlySWD = CheckBoxState(name: "SWD", title: "yazılım");
+
+  final onlySWD = CheckBoxState(name: "SWasdfD", title: "yazılım");
   final onlyHWD = CheckBoxState(name: "HWD", title: "donanım");
   final onlyPMO = CheckBoxState(name: "PMO", title: "pmo");
-
-  final employeeCheckboxList = [
-    CheckBoxState(name: "Mehmet Baran Nakipoğlu ", title: "yazılım"),
-    CheckBoxState(name: "Eda Aktaş", title: "pmo"),
-    CheckBoxState(name: "Eymen Topçuoğlu", title: "yazılım"),
-    CheckBoxState(name: "Emine Acar", title: "donanım"),
-    CheckBoxState(name: "Barış Esin", title: "pmo"),
-    CheckBoxState(name: "Dilara Diz", title: "pmo"),
-    CheckBoxState(name: "Ifrah Saleem", title: "yazılım"),
-    CheckBoxState(name: "İrem Yaren Aydın", title: "pmo"),
-    CheckBoxState(name: "Ata Korkusuz", title: "donanım"),
-    CheckBoxState(name: "Berkay Arslan", title: "donanım"),
-    CheckBoxState(name: "Zeynep Bilge", title: "donanım"),
-    CheckBoxState(name: "Yusuf Savaş", title: "donanım"),
-    CheckBoxState(name: "Utku Urkun", title: "donanım"),
-    CheckBoxState(name: "Onat Çınlar", title: "pmo"),
-    CheckBoxState(name: "Mehmet Ali Aldıç", title: "pmo"),
-    CheckBoxState(name: "Engin Yağmur", title: "yazılım"),
-    CheckBoxState(name: "Fatih Onuk", title: "pmo"),
-    CheckBoxState(name: "Çağla Burçin Dikbasan", title: "pmo"),
-  ];
 
   @override
   Widget build(BuildContext context) {

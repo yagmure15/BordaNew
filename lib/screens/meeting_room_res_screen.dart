@@ -557,10 +557,6 @@ class _MeetingRoomScreen extends State {
                     selectedOfficeId,
                     selectedMeetingRoomId,
                   )));
-
-
-
-
     }
   }
 
