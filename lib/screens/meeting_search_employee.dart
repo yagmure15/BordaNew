@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SearchEmployee extends StatefulWidget {
+  String? userId, userToken, meetingStartDate, meetingEndDate, selectedOfficeId, SelectedMeetigRoomId;
+
+
+  SearchEmployee(this.userId, this.userToken, this.meetingStartDate,
+      this.meetingEndDate, this.selectedOfficeId, this.SelectedMeetigRoomId);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState

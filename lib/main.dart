@@ -24,9 +24,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -109,6 +109,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             });
       }
     });
+
+
+
   }
 
   void showNotification() {
