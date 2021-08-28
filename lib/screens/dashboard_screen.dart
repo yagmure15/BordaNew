@@ -1,13 +1,14 @@
+import 'package:bordatech/httprequests/notifications/notification_request.dart';
 import 'package:bordatech/screens/drawer_screen.dart';
 import 'package:bordatech/screens/event_res_screen.dart';
 import 'package:bordatech/screens/hotdesk_res_screen.dart';
 import 'package:bordatech/screens/meeting_room_res_screen.dart';
 import 'package:bordatech/screens/notification_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
-import 'package:bordatech/utils/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:bordatech/screens/inform_res_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -18,15 +19,53 @@ class DashboardScreen extends StatefulWidget {
   }
 }
 
+String userId = "";
+String officeId = "";
+String? userToken;
+bool _shouldIgnore = false;
+
 class _DashboardScreenState extends State<DashboardScreen> {
 
+  _lockButton() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    var _date = DateTime.now();
+    await prefs.setString('lastPressed', _date.toString());
+  }
+
+  void getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      userId = pref.getString("userID").toString();
+      officeId = pref.getInt("officeId").toString();
+      userToken = pref.getString("token").toString();
+    });
+  }
 
 @override
   void initState() {
     super.initState();
+    getuserInfo();
+    checkShouldIgnore();
+  }
 
-    print("USER ID " + USERID);
+  checkShouldIgnore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    //DateTime.parse because you can only save Strings locally.
+    // .add Adds 12h to the date when the button was last pressed.
+    var clickedDate = prefs.getString('lastPressed');
+    var _date= DateTime.parse(clickedDate!);
+    var currentDate = DateTime.now();
+    var nextDate = DateTime(_date.year ,_date.month, _date.day + 1);
+    if(currentDate.isBefore(nextDate)){
+      setState((){ _shouldIgnore = true; });
+    }
+    else {
+      setState((){ _shouldIgnore = false; });
+    }
+    print(_shouldIgnore);
   }
 
 /*
@@ -264,6 +303,130 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            margin: EdgeInsets.only(top: 20, left: 25),
+            child: Text(
+              "Requests",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ),
+        Card(
+          margin: EdgeInsets.only(top: 5, left: 20, right: 20),
+          color: bordaGreen,
+          elevation: 10.0,
+          child: Container(
+            padding: EdgeInsets.only(top: 15, bottom: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        HttpServiceForNotification httpreq = new HttpServiceForNotification();
+                        httpreq.sendNotificationToAllUsers('Noise Alert', 'Someone has requested to reduce noise!', userToken!);
+                         },
+                      child: CircleAvatar(
+                        backgroundColor: Colors.orangeAccent,
+                        radius: 25.0,
+                        child:Icon(
+                            Icons.volume_off,
+                          color: Colors.white
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "Reduce Noise",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        HttpServiceForNotification httpreq = new HttpServiceForNotification();
+                        httpreq.sendNotificationToAllUsers('Happy Hour', 'Someone has requested for a happy hour!', userToken!);
+                        _lockButton();
+                        checkShouldIgnore();
+                        print(_shouldIgnore);
+                        },
+                      child: Visibility(
+                        visible: _shouldIgnore ? false : true,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.yellow,
+                          radius: 25.0,
+                          child:Icon(
+                              Icons.wb_sunny_outlined,
+                            color: Colors.white
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Visibility(
+                      visible: _shouldIgnore ? false : true,
+                      child: Text(
+                        "Happy Hour",
+                        style: TextStyle(
+                          color: Colors.white54,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: (){
+                        _showToast("You have already requested happy hour today!");
+                      },
+                      child: Visibility(
+                        visible: _shouldIgnore ? true : false,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white38,
+                          radius: 25.0,
+                          child:Icon(
+                              Icons.wb_sunny_outlined,
+                              color: Colors.black
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Visibility(
+                      visible: _shouldIgnore ? true : false,
+                      child: Text(
+                        "Happy Hour",
+                        style: TextStyle(
+                          color: Colors.white54,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         )
       ],
     );
@@ -308,4 +471,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  void _showToast(S) {
+    Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
+  }
 }
