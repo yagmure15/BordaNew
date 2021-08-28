@@ -15,12 +15,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HotDeskSelectionScreen extends StatefulWidget {
-  String something;
-  HotDeskSelectionScreen(this.something);
+  String selectedDate;
+
+  HotDeskSelectionScreen(this.selectedDate);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _HotDeskSelectionScreenState(something);
+    return _HotDeskSelectionScreenState(selectedDate);
   }
 }
 

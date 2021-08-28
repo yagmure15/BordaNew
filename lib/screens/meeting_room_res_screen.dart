@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bordatech/httprequests/meetingroom/meeting_room_model_by_officeid.dart';
 import 'package:bordatech/httprequests/offices/office_list_model.dart';
 import 'package:bordatech/screens/meeting_search_employee.dart';
 import 'package:bordatech/utils/constants.dart';
@@ -20,26 +21,30 @@ class MeetingRoomScreen extends StatefulWidget {
     return _MeetingRoomScreen();
   }
 }
+
 String userId = "";
 String officeId = "";
 String? userToken;
 String? selectedOfficeId;
-
+String? selectedMeetingRoomId;
+String? meetingStart, meetingEnd;
 
 class _MeetingRoomScreen extends State {
   List<OfficeListModel>? _officeListModelList;
-  String? selectedOffice;
+  List<MeetingRoomModelByOfficeId>? _meetingRoomModelList;
 
+  String? selectedOffice;
 
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour + 1,
+    hour: TimeOfDay.now().hour,
   );
   TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour + 2,
+    hour: TimeOfDay.now().hour,
   );
-  String? selectedDate;
+  String? selectedDate =
+      DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
   String? selectedMeetingRoom;
   TimeOfDay startTime = TimeOfDay.now();
   TimeOfDay? time;
@@ -48,23 +53,51 @@ class _MeetingRoomScreen extends State {
   String baslangic = (TimeOfDay.now().hour + 1).toString() + ":00";
 
   List listDesks = ["No available desk"];
-  List listMeetingRoom = ["A", "B", "C", "D"];
-
-  List gun1 = ["Masa1", "masa 2"];
-  List gun2 = ["Masa 5", "Masa 8", "Masa 9"];
 
   DateTime _startDate = DateTime.now();
-  int guestCount = 0;
   DateTime? neyDateformat;
   DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
   bool isPetBrought = false;
   String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
   List<String> dateArr = [];
-  List<String> oneDayArr = [];
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
+  String chooseMeetingRoom = "Please, Choose a Meeting Room";
+
+  Future<void> getMeetingRoomsByOfficeId() async {
+    setState(() {});
+
+    final String apiUrl = Constants.HTTPURL +
+        "/api/rooms/?officeId=" +
+        selectedOfficeId.toString();
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final String responsString = response.body;
+      print("BODY FOR MEETING ROOM : " + response.body);
+
+      List<dynamic> body = cnv.jsonDecode(responsString);
+
+      _meetingRoomModelList = body
+          .map((dynamic item) => MeetingRoomModelByOfficeId.fromJson(item))
+          .toList();
+    } else {
+      return null;
+    }
+
+    print("STATUS CODE FOR MEETING ROOM " + response.statusCode.toString());
+    // print(userToken);
+  }
+
   Future<void> getOffices() async {
     final String apiUrl = Constants.HTTPURL + "/api/offices";
 
@@ -79,8 +112,6 @@ class _MeetingRoomScreen extends State {
     if (response.statusCode == 200) {
       final String responsString = response.body;
 
-      print("BODY : " + response.body);
-
       List<dynamic> body = cnv.jsonDecode(responsString);
       _officeListModelList =
           body.map((dynamic item) => OfficeListModel.fromJson(item)).toList();
@@ -91,21 +122,23 @@ class _MeetingRoomScreen extends State {
       // hata mesajı gösterebilirsin
     }
 
-    print("STATUS CODE FOR OFFICE LIST " + response.statusCode.toString());
     // print(userToken);
   }
+
   @override
   void initState() {
     super.initState();
     getuserInfo();
+    selectedDate = DateTime.now().toString();
+
     Timer(Duration(milliseconds: 100), () {
       getOffices();
-
+      setInitialSelectedOffice();
     });
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: bordaSoftGreen,
       appBar: AppBar(
@@ -118,31 +151,30 @@ class _MeetingRoomScreen extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: _officeListModelList ==null ? Center(
-        child: CircularProgressIndicator(),
-      ):
-
-
-      Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(height: 450, width: 350, child: _getBooking()),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      child: Image(
-                    image: AssetImage("assets/meeting2.png"),
-                    height: 80,
-                    width: 80,
-                  )),
+      body: _officeListModelList == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(height: 450, width: 350, child: _getBooking()),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                          child: Image(
+                        image: AssetImage("assets/meeting2.png"),
+                        height: 80,
+                        width: 80,
+                      )),
+                    ],
+                  ),
                 ],
-              ),
-            ],
-          )),
+              )),
     );
   }
 
@@ -206,7 +238,6 @@ class _MeetingRoomScreen extends State {
             style: TextStyle(color: Colors.grey, fontSize: 10),
           ),
           DropdownButton(
-
             items: _officeListModelList!.map((valueItem) {
               return DropdownMenuItem(
                   value: valueItem.name,
@@ -216,20 +247,22 @@ class _MeetingRoomScreen extends State {
                             fontSize: 16, fontWeight: FontWeight.w500)),
                   ));
             }).toList(),
-
             isExpanded: true,
             hint: Container(
                 padding: EdgeInsets.only(left: 0),
                 child: Text("Choose an Office",
                     style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
             itemHeight: 48,
             value: selectedOffice,
             onChanged: (newValue) {
               setState(() {
+                selectedMeetingRoom = null;
                 selectedOffice = newValue as String?;
               });
               getOfficeIdForSearh();
+
+              getMeetingRoomsByOfficeId();
             },
           ),
         ],
@@ -247,30 +280,41 @@ class _MeetingRoomScreen extends State {
             'Which Meeting Room do you want to res to?',
             style: TextStyle(color: Colors.grey, fontSize: 10),
           ),
-          DropdownButton(
-            items: listMeetingRoom.map((valueItem) {
-              return DropdownMenuItem(
-                  value: valueItem,
-                  child: Container(
-                    child: Text(valueItem,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
-                  ));
-            }).toList(),
-            isExpanded: true,
-            hint: Container(
-                padding: EdgeInsets.only(left: 0),
-                child: Text("Choose a Meeting Room",
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
-            itemHeight: 48,
-            value: selectedMeetingRoom,
-            onChanged: (newValue) {
-              setState(() {
-                selectedMeetingRoom = newValue as String?;
-              });
-            },
-          ),
+          FutureBuilder(
+              future: getMeetingRoomsByOfficeId(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (_meetingRoomModelList == null) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return DropdownButton(
+                    items: _meetingRoomModelList!.map((valueItem) {
+                      return DropdownMenuItem(
+                          value: valueItem.name,
+                          child: Container(
+                            child: Text(valueItem.name,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500)),
+                          ));
+                    }).toList(),
+                    isExpanded: true,
+                    hint: Container(
+                        padding: EdgeInsets.only(left: 0),
+                        child: Text("Choose a Meeting Room",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500))),
+                    itemHeight: 48,
+                    value: selectedMeetingRoom,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedMeetingRoom = newValue as String?;
+                        getMeetingRoomIdFromName();
+                      });
+                    },
+                  );
+                }
+              }),
         ],
       ),
     );
@@ -313,9 +357,9 @@ class _MeetingRoomScreen extends State {
             )),
         key: _key,
         onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchEmployee() ));
+          //   Navigator.push(context, MaterialPageRoute(builder: (context) => SearchEmployee() ));
 
-      _SentInformRequest();
+          _goToSelectionEmplooyePage();
         },
       ),
     );
@@ -494,41 +538,25 @@ class _MeetingRoomScreen extends State {
         ),
       );
 
-  void _SentInformRequest() {
+  void _goToSelectionEmplooyePage() {
     if (selectedOffice == null) {
       _showSnackBar(context, chooseAnOffice);
+    } else if (selectedMeetingRoom == null) {
+      _showSnackBar(context, chooseMeetingRoom);
     } else {
-      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      convertStringToDateIso();
 
-      if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
-        _showSnackBar(context, chooseOnlyOneDay);
-      }
-
-      if (dateArr.length == 1) {
-        final String formatted =
-            formatter.format(DateTime.parse(dateArr[0].toString()));
-        // _showToast(formatted);
-      }
-      if (dateArr.length == 0) {
-        final String formatted = formatter.format(DateTime.now());
-        //_showT_showToast(formatted);
-      }
-      if (dateArr.length > 1) {
-        for (int i = 0; i < dateArr.length; i++) {
-          if (i > 0) {
-            dateArr[i] = dateArr[i].toString().replaceFirst(RegExp(' '), '');
-          }
-          dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
-        }
-        //_showToast(dateArr.toString());
-
-      }
-
-      /*
-
-      //verileri gönderme işlemini burada yap!
-
-      */
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SearchEmployee(
+                    userId,
+                    userToken,
+                    meetingStart,
+                    meetingEnd,
+                    selectedOfficeId,
+                    selectedMeetingRoomId,
+                  )));
     }
   }
 
@@ -539,8 +567,6 @@ class _MeetingRoomScreen extends State {
           .format(DateTime.parse(selectedDate.toString()));
     });
 
-    _showToast(selectedDate);
-    print(selectedDate);
     Navigator.of(context).pop(_dateRangePickerController);
   }
 
@@ -572,6 +598,7 @@ class _MeetingRoomScreen extends State {
       backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
     ));
   }
+
   void getuserInfo() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
 
@@ -579,8 +606,11 @@ class _MeetingRoomScreen extends State {
       userId = pref.getString("userID").toString();
       officeId = pref.getInt("officeId").toString();
       userToken = pref.getString("token").toString();
+
+      selectedOfficeId = officeId;
     });
   }
+
   void setInitialSelectedOffice() {
     for (int i = 0; i < _officeListModelList!.length; i++) {
       if (officeId == _officeListModelList![i].id.toString()) {
@@ -601,5 +631,43 @@ class _MeetingRoomScreen extends State {
         break;
       }
     }
+  }
+
+  void getMeetingRoomIdFromName() {
+    for (int i = 0; i < _meetingRoomModelList!.length; i++) {
+      if (selectedMeetingRoom == _meetingRoomModelList![i].name) {
+        setState(() {
+          selectedMeetingRoomId = _meetingRoomModelList![i].id.toString();
+        });
+
+        break;
+      }
+    }
+  }
+
+  void convertStringToDateIso() {
+    setState(() {
+      String date = DateFormat('yyyy-MM-dd')
+          .format(DateTime.parse(selectedDate.toString()));
+
+      setState(() {
+        meetingStart = date +
+            "T" +
+            _dateTimeStart.hour.toString().padLeft(2, "0") +
+            ":" +
+            _dateTimeStart.minute.toString().padLeft(2, "0") +
+            ":00.000Z";
+
+        meetingEnd = date +
+            "T" +
+            _dateTimeEnd.hour.toString().padLeft(2, "0") +
+            ":" +
+            _dateTimeEnd.minute.toString().padLeft(2, "0") +
+            ":00.000Z";
+        //1951-11-04T19:35:37.116Z
+      });
+
+      // "$y-$m-${d}T$h:$min:$sec.$ms${us}Z"
+    });
   }
 }
