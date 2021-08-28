@@ -116,8 +116,10 @@ class _InformResScreen extends State {
   void initState() {
     super.initState();
     getuserInfo();
-    Timer(Duration(milliseconds: 100), () {
+    Timer(Duration(milliseconds: 200), () {
       getOffices();
+
+
 
     });
 
@@ -493,8 +495,13 @@ class _InformResScreen extends State {
           dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
           liste.add(dateArr[i]);
         }
+        if(selectedOfficeId == null){
+          setState(() {
+            selectedOfficeId = officeId;
+          });
 
-        postNotifyRequest(context, int.parse(selectedOfficeId!), userId,
+        }
+        postNotifyRequest(context, int.parse(selectedOfficeId!) , userId,
             isPetBrought, liste, guestCount);
       }
     }

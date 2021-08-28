@@ -179,6 +179,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               padding: const EdgeInsets.only(
                   left: 80, right: 80, top: 30, bottom: 0),
               child: ElevatedButton(
+
                 child: Container(
                   margin:
                       EdgeInsets.only(top: 10, bottom: 10, right: 40, left: 40),
@@ -193,6 +194,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
                 style: ButtonStyle(
+
                   backgroundColor: MaterialStateProperty.all(Colors.white),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(

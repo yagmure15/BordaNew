@@ -118,7 +118,7 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    _showToast(something);
     getuserInfo();
     Timer(Duration(milliseconds: 100), () {});
   }
