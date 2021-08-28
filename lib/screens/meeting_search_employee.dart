@@ -194,7 +194,7 @@ class _SearchEmployeeState extends State<SearchEmployee> {
     getAllEmplooyesByOfficeId();
     getAllDepartmants();
 
-    Timer(Duration(milliseconds: 2000), () {
+    Timer(Duration(milliseconds: 800), () {
       setState(() {
         employeeCheckboxList = employeeCheckboxList;
       });
