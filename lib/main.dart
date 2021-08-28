@@ -38,6 +38,9 @@ Future<void> main() async {
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
 
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
+  print(fcmToken);
+
   runApp(
     MyApp(),
   );
