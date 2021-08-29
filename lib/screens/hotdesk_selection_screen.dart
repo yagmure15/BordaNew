@@ -32,24 +32,20 @@ int? selectedEventTypeId;
 String? eventStart, eventEnd;
 
 class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
-
-
-
-
   Future<List<HotdeskModel>?> _getHotdesks() async {
     final String apiUrl = Constants.HTTPURL +
-        "/api/hotdesks/reservations?requestedDate=" + something;
+        "/api/hotdesks/reservations?requestedDate=" +
+        something;
 
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {
         "Content-Type": "application/json",
-        "Authorization":
-        "Bearer $userToken",
+        "Authorization": "Bearer $userToken",
       },
     );
 
-    print("STATUS CODE "+ response.statusCode.toString());
+    print("STATUS CODE " + response.statusCode.toString());
 
     if (response.statusCode == 200) {
       final String responsString = response.body;
@@ -63,14 +59,10 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
     }
   }
 
-
-
-
-
-
-
-  Future<void> postHotdeskRequest(BuildContext context, String userId, String startDate,String id) async {
-    final String apiUrl = Constants.HTTPURL + "/api/hotdesks/" + id +"/reserve";
+  Future<void> postHotdeskRequest(
+      BuildContext context, String userId, String startDate, String id) async {
+    final String apiUrl =
+        Constants.HTTPURL + "/api/hotdesks/" + id + "/reserve";
 
     final response = await http.post(Uri.parse(apiUrl),
         headers: {
@@ -79,8 +71,8 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
         },
         body: jsonEncode({
           "userId": userId,
-          "startDate": startDate+"T09:00:00.000",
-          "endDate": startDate+"T18:00:00.000",
+          "startDate": startDate + "T09:00:00.000",
+          "endDate": startDate + "T18:00:00.000",
         }));
 
     if (response.statusCode == 201) {
@@ -98,17 +90,6 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
     print("STATUS CODE FOR EVENT : " + response.statusCode.toString());
   }
 
-
-
-
-
-
-
-
-
-
-
-
   String something;
   _HotDeskSelectionScreenState(this.something);
   String? name;
@@ -118,7 +99,6 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     getuserInfo();
     Timer(Duration(milliseconds: 100), () {});
   }
@@ -138,6 +118,15 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
           backgroundColor: bordaGreen,
           centerTitle: true,
           actions: <Widget>[
+            InkWell(
+              child: Icon(Icons.map),
+              onTap: () {
+                _showOfficeDeskMap();
+              },
+            ),
+            SizedBox(
+              width: 10,
+            ),
             PopupMenuButton<String>(onSelected: (Selected) {
               setState(() {
                 _allDataOrEmptyData = Selected;
@@ -287,9 +276,8 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                           if (isShowable) {
                             print("DOLUU");
                           } else {
-
-                            postHotdeskRequest(context, userId, something, snapshot.data[index].id.toString());
-
+                            postHotdeskRequest(context, userId, something,
+                                snapshot.data[index].id.toString());
                           }
                         },
                       ),
@@ -333,25 +321,28 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                                 leading: Image.asset(
                                   'assets/deskempty.png',
                                   color: snapshot.data[index]
-                                      .hotDeskReservations.length ==
-                                      0
+                                              .hotDeskReservations.length ==
+                                          0
                                       ? Colors.greenAccent
                                       : Colors.redAccent,
                                 ),
-                                title: Text(snapshot.data[index].name,style: TextStyle(color:
-                                Colors.black38),),
-                                subtitle: Text(snapshot.data[index]
-                                    .hotDeskReservations.length ==
-                                    0
-                                    ? "Available"
-                                    : snapshot
-                                    .data[index]
-                                    .hotDeskReservations[0]
-                                    .applicationUser
-                                    .fullName
-                                    .toString(),style: TextStyle(
-                                    fontWeight: FontWeight.w900
-                                ),),
+                                title: Text(
+                                  snapshot.data[index].name,
+                                  style: TextStyle(color: Colors.black38),
+                                ),
+                                subtitle: Text(
+                                  snapshot.data[index].hotDeskReservations
+                                              .length ==
+                                          0
+                                      ? "Available"
+                                      : snapshot
+                                          .data[index]
+                                          .hotDeskReservations[0]
+                                          .applicationUser
+                                          .fullName
+                                          .toString(),
+                                  style: TextStyle(fontWeight: FontWeight.w900),
+                                ),
                               ),
                             ),
                           ),
@@ -405,11 +396,14 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                                   'assets/deskempty.png',
                                   color: Colors.greenAccent,
                                 ),
-                                title: Text(model[index].name,style: TextStyle(color:
-                                Colors.black38),),
-                                subtitle: Text("Available",style: TextStyle(
-                                    fontWeight: FontWeight.w900
-                                ),),
+                                title: Text(
+                                  model[index].name,
+                                  style: TextStyle(color: Colors.black38),
+                                ),
+                                subtitle: Text(
+                                  "Available",
+                                  style: TextStyle(fontWeight: FontWeight.w900),
+                                ),
                               ),
                             ),
                           ),
@@ -450,5 +444,43 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
       return DateFormat("dd MMMM yyyy").format(DateTime.parse(str)) +
           "\n  09:00 -- 18:00";
     }
+  }
+
+  void _showOfficeDeskMap() {
+
+     showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: Material(
+              type: MaterialType.transparency,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  child: Container(
+                    child: InteractiveViewer(
+                      maxScale: 100.2,
+                      minScale: 0.2,
+                      child: Image.asset('assets/istanbulofficeplan.png'),
+
+                    )
+
+
+
+
+
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

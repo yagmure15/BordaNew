@@ -550,12 +550,13 @@ class _MeetingRoomScreen extends State {
           context,
           MaterialPageRoute(
               builder: (context) => SearchEmployee(
+
                     userId,
-                    userToken,
-                    meetingStart,
-                    meetingEnd,
-                    selectedOfficeId,
-                    selectedMeetingRoomId,
+                    userToken!,
+                    meetingStart!,
+                    meetingEnd!,
+                    selectedOfficeId!,
+                    selectedMeetingRoomId!,
                   )));
     }
   }

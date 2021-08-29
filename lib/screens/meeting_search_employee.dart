@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:bordatech/httprequests/departments/departments.dart';
 import 'package:bordatech/httprequests/meetingroom/all_emplooyes.dart';
 import 'package:bordatech/utils/constants.dart';
@@ -12,53 +12,74 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as cnv;
 
 class SearchEmployee extends StatefulWidget {
-  String? userId,
-      userToken,
-      meetingStartDate,
-      meetingEndDate,
-      selectedOfficeId,
-      SelectedMeetigRoomId;
+
+  final String userId;
+  final  String userToken;
+  final  String  meetingStartDate;
+  final String  meetingEndDate;
+  final  String  selectedOfficeId;
+  final  String  SelectedMeetigRoomId;
 
   SearchEmployee(this.userId, this.userToken, this.meetingStartDate,
       this.meetingEndDate, this.selectedOfficeId, this.SelectedMeetigRoomId);
 
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _SearchEmployeeState();
+    return _SearchEmployeeState(
+      userId,
+      userToken,
+      meetingStartDate,
+        meetingEndDate,
+        selectedOfficeId,
+        SelectedMeetigRoomId
+    );
   }
 }
 
 class _SearchEmployeeState extends State<SearchEmployee> {
+
+
+  String? _userId;
+  String? _userToken ;
+  String? _meetingStartDate;
+  String? _meetingEndDate;
+  String? _selectedOfficeId, _SelectedMeetigRoomId;
+
+  _SearchEmployeeState(
+      this._userId,
+      this._userToken,
+      this._meetingStartDate,
+      this._meetingEndDate,
+      this._selectedOfficeId,
+      this._SelectedMeetigRoomId,
+     );
+
+
   bool isCheck = true;
   String _query = "";
   TextEditingController textEditingController = TextEditingController();
 
   List<CheckBoxState> itemSearch = [];
   List<ShowAlllEmplooyes>? _allEmplooyesList;
-
+  List<Widget>? cekWidgets = [];
+  List<String> officeIdForMeetingAttendance = [];
   List<Departments>? _departmentList;
 
-
-  List<CheckBoxState> employeeCheckboxList = [
-    CheckBoxState(name: "Mehmet Baran Nakipoğlu ", title: "yazılım"),
-  ];
-/*
-  final department = [
-    CheckBoxState(name: "asdasd", title: "yazılım"),
-    CheckBoxState(name: "HWD", title: "donanım"),
-    CheckBoxState(name: "PMO", title: "pmo"),
-    CheckBoxState(name: "ssss", title: "pmo")
-
-  ];
-*/
+  List<CheckBoxState> employeeCheckboxList = [];
+  List<CheckBoxState> departmentListesi = [];
+  List<ColorModel> renkListesi = [ColorModel(title: "", color: Colors.white24)];
+  bool deger = true;
+  bool isAllCheck = false;
+  int sayac = 0;
 
 
 
   Future<void> getAllEmplooyesByOfficeId() async {
     setState(() {});
 
-    final String apiUrl = Constants.HTTPURL + "/api/users?officeId=1";
+    final String apiUrl = Constants.HTTPURL + "/api/users?officeId=$_selectedOfficeId";
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -67,7 +88,6 @@ class _SearchEmployeeState extends State<SearchEmployee> {
         "Authorization": "Bearer $userToken",
       },
     );
-
     if (response.statusCode == 200) {
       final String responsString = response.body;
       List<dynamic> body = cnv.jsonDecode(responsString);
@@ -78,12 +98,31 @@ class _SearchEmployeeState extends State<SearchEmployee> {
       for (int i = 0; i < _allEmplooyesList!.length; i++) {
         employeeCheckboxList.add(CheckBoxState(
             name: _allEmplooyesList![i].fullName.toString(),
+            userId: _allEmplooyesList![i].id.toString(),
             title: _allEmplooyesList![i].departmentId.toString()));
       }
     } else {
       return null;
     }
   }
+
+  List<Color> colors = [
+    Colors.red,
+    Colors.green,
+    Colors.amber,
+    Colors.greenAccent,
+    Colors.cyan,
+    Colors.lime,
+    Colors.indigoAccent,
+    Colors.purpleAccent,
+    Colors.redAccent,
+    Colors.redAccent,
+    Colors.lightGreen,
+    Colors.greenAccent,
+    Colors.deepOrangeAccent,
+    Colors.yellow,
+    Colors.white12
+  ];
   Future<void> getAllDepartmants() async {
     setState(() {});
 
@@ -106,10 +145,10 @@ class _SearchEmployeeState extends State<SearchEmployee> {
       _departmentList =
           body.map((dynamic item) => Departments.fromJson(item)).toList();
 
-      for (int i = 0; i < _allEmplooyesList!.length; i++) {
-        employeeCheckboxList.add(CheckBoxState(
-            name: _allEmplooyesList![i].fullName.toString(),
-            title: _allEmplooyesList![i].departmentId.toString()));
+      for (int i = 0; i < _departmentList!.length; i++) {
+        departmentListesi.add(CheckBoxState(
+            name: _departmentList![i].name.toString(),
+            title: _departmentList![i].id.toString()));
       }
     } else {
       return null;
@@ -117,25 +156,54 @@ class _SearchEmployeeState extends State<SearchEmployee> {
 
     print("STATUS CODE FOR DEPARMENTS " + response.statusCode.toString());
   }
+  Future<void> postMeetingRoomRequest(BuildContext context,
+      List attendees) async {
+    final String apiUrl = Constants.HTTPURL + "/api/rooms/reservations";
+
+    final response = await http.post(Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $_userToken",
+        },
+        body: jsonEncode({
+          "organizerId": _userId,
+          "attendees": attendees,
+          "startDate": _meetingStartDate,
+          "endDate": _meetingEndDate,
+          "meetingRoomId": _SelectedMeetigRoomId
+        }));
+
+    if (response.statusCode == 201) {
+      final String responsString = response.body;
+      print("BODY : " + response.body);
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+
+      _showSnackBar(context,"Congrat! Meeting Room is reserved");
+    } else {
+      _showSnackBar(context,"ERROR! Try Again!");
+
+    }
+
+    print("STATUS CODE FOR MEETING REQUEST : " + response.statusCode.toString());
+  }
 
   @override
   void initState() {
     super.initState();
     getAllEmplooyesByOfficeId();
     getAllDepartmants();
-    Timer(Duration(milliseconds: 500), () {
+
+    Timer(Duration(milliseconds: 800), () {
       setState(() {
         employeeCheckboxList = employeeCheckboxList;
       });
 
       itemSearch.addAll(employeeCheckboxList);
+
+      setDepartmentsColor();
     });
   }
-
-
-  final onlySWD = CheckBoxState(name: "SWasdfD", title: "yazılım");
-  final onlyHWD = CheckBoxState(name: "HWD", title: "donanım");
-  final onlyPMO = CheckBoxState(name: "PMO", title: "pmo");
 
   @override
   Widget build(BuildContext context) {
@@ -157,20 +225,11 @@ class _SearchEmployeeState extends State<SearchEmployee> {
           _SearchBar(),
           Container(
             height: 60,
-            margin: EdgeInsets.only(top: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _checkboxForSWD(onlySWD),
-                SizedBox(
-                  width: 20,
-                ),
-                _checkboxForHWD(onlyHWD),
-                SizedBox(
-                  width: 20,
-                ),
-                _checkboxForPMO(onlyPMO),
+            margin: EdgeInsets.only(top: 20, left: 16, right: 16),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: <Widget>[
+                ...departmentListesi.map(buildSingleCheckbox).toList(),
               ],
             ),
           ),
@@ -187,13 +246,29 @@ class _SearchEmployeeState extends State<SearchEmployee> {
             child: MaterialButton(
               minWidth: MediaQuery.of(context).size.width,
               color: bordaOrange,
-              child: Text("Search",
+              child: Text("Ara",
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
                   )),
-              onPressed: () {},
+              onPressed: () {
+
+                setState(() {
+                  officeIdForMeetingAttendance.clear();
+                });
+
+                for(int i = 0; i<employeeCheckboxList.length; i++){
+                  if(employeeCheckboxList[i].value == true){
+                    setState(() {
+                      officeIdForMeetingAttendance.add(employeeCheckboxList[i].userId.toString());
+                    });
+                  }
+                }
+
+                postMeetingRoomRequest(context,officeIdForMeetingAttendance);
+
+              },
             ),
           ),
         ],
@@ -267,21 +342,13 @@ class _SearchEmployeeState extends State<SearchEmployee> {
     return Expanded(
       child: ListView(
         children: [
-          ...itemSearch.map(_checkboxListBuild).toList(),
+          ...itemSearch.map(_checkboxListBuildForUsers).toList(),
         ],
       ),
     );
   }
 
-  Widget _checkboxListBuild(CheckBoxState checkBoxState) {
-    Color color = Colors.lime;
-    if (checkBoxState.title == "yazılım") {
-      color = yesil;
-    } else if (checkBoxState.title == "donanım") {
-      color = sari;
-    } else if (checkBoxState.title == "pmo") {
-      color = turuncu;
-    }
+  Widget _checkboxListBuildForUsers(CheckBoxState checkBoxState) {
     return CheckboxListTile(
       title: Text(
         checkBoxState.name,
@@ -291,161 +358,177 @@ class _SearchEmployeeState extends State<SearchEmployee> {
       controlAffinity: ListTileControlAffinity.leading,
       secondary: Icon(
         Icons.person,
-        color: color,
+        color: getColorByDepartment(checkBoxState),
       ),
       onChanged: (bool? value) {
         setState(() {
           textEditingController.text = "";
           filterSearchResult("");
           _query = "";
-          checkBoxState.value = value!;
-          _allCheckController(value);
+
+            checkBoxState.value = value!;
         });
+
+        setState(() {
+          toggleForDepartmentsCheckbox(value, checkBoxState.title);
+        });
+
+
       },
     );
   }
 
-  Widget _checkboxForSWD(CheckBoxState checkBoxState) {
+
+  void toggleForDepartmentsCheckbox(bool? values, String title) {
+
+    if (values == false) {
+      setState(() {
+        departmentListesi.forEach((element) {
+          if (element.title == title) {
+            setState(() {
+              element.value = false;
+            });
+          }
+        });
+      });
+
+    } else {
+      for (int i = 0; i < employeeCheckboxList.length; i++) {
+        if (employeeCheckboxList[i].title == title) {
+          if (employeeCheckboxList[i].value == true) {
+            setState(() {
+              isAllCheck = true;
+            });
+
+          } else {
+            setState(() {
+              isAllCheck = false;
+
+            });
+            break;
+          }
+        }
+      }
+
+      departmentListesi.forEach((element) {
+        if (element.title == title) {
+          setState(() {
+            element.value = isAllCheck;
+          });
+        }
+      });
+    }
+  }
+
+  Widget buildSingleCheckbox(CheckBoxState checkBoxState) {
     return Card(
-      color: yesil,
+      color: getColorByDepartment(checkBoxState),
       child: SizedBox(
-        width: 100,
+        width: 150,
         child: CheckboxListTile(
           contentPadding: EdgeInsets.all(0),
-          title: Text(
-            checkBoxState.name,
-            style: TextStyle(color: Colors.white),
-          ),
-          value: checkBoxState.value,
           controlAffinity: ListTileControlAffinity.leading,
-          onChanged: toggleGroupCheckboxForSWD,
+          activeColor: Colors.redAccent,
+          value: checkBoxState.value,
+          title: Text(checkBoxState.name),
+          onChanged: (value) {
+            setState(() {
+              checkBoxState.value = value!;
+              toggleForEmplooyeCheckbox(value, checkBoxState.title);
+            });
+          },
         ),
       ),
     );
   }
 
-  Widget _checkboxForHWD(CheckBoxState checkBoxState) {
-    return Card(
-      color: sari,
-      child: SizedBox(
-        width: 100,
-        child: CheckboxListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 00),
-          title: Text(
-            checkBoxState.name,
-            style: TextStyle(color: Colors.white),
-          ),
-          value: checkBoxState.value,
-          controlAffinity: ListTileControlAffinity.leading,
-          onChanged: toggleGroupCheckboxForHWD,
-        ),
-      ),
-    );
-  }
-
-  Widget _checkboxForPMO(CheckBoxState checkBoxState) {
-    return Card(
-      color: turuncu,
-      child: SizedBox(
-        width: 100,
-        child: CheckboxListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 00),
-          title: Text(
-            checkBoxState.name,
-            style: TextStyle(color: Colors.white),
-          ),
-          value: checkBoxState.value,
-          controlAffinity: ListTileControlAffinity.leading,
-          onChanged: toggleGroupCheckboxForPMO,
-        ),
-      ),
-    );
-  }
-
-  void toggleGroupCheckboxForSWD(bool? value) {
-    if (value == null) return;
-
-    onlySWD.value = value;
-
+  void toggleForEmplooyeCheckbox(bool? value, String title) {
     for (int i = 0; i < employeeCheckboxList.length; i++) {
-      if (employeeCheckboxList[i].title == "yazılım") {
+      if (employeeCheckboxList[i].title == title) {
         setState(() {
-          employeeCheckboxList[i].value = value;
+          employeeCheckboxList[i].value = value!;
         });
       }
     }
   }
 
-  void toggleGroupCheckboxForHWD(bool? value) {
-    if (value == null) return;
 
-    onlyHWD.value = value;
 
-    for (int i = 0; i < employeeCheckboxList.length; i++) {
-      if (employeeCheckboxList[i].title == "donanım") {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  void setDepartmentsCheckbox(String title) {
+    departmentListesi.forEach((element) {
+      if (element.title == title) {
         setState(() {
-          employeeCheckboxList[i].value = value;
+          element.value = isAllCheck;
         });
-      }
-    }
-  }
-
-  void toggleGroupCheckboxForPMO(bool? value) {
-    if (value == null) return;
-
-    onlyPMO.value = value;
-
-    for (int i = 0; i < employeeCheckboxList.length; i++) {
-      if (employeeCheckboxList[i].title == "pmo") {
-        setState(() {
-          employeeCheckboxList[i].value = value;
-        });
-      }
-    }
-  }
-
-  void _allCheckController(bool value) {
-    setState(() {
-      for (int i = 0; i < employeeCheckboxList.length; i++) {
-        if (employeeCheckboxList[i].title == "yazılım" &&
-            employeeCheckboxList[i].value == false) {
-          setState(() {
-            onlySWD.value = false;
-          });
-          break;
-        } else {
-          setState(() {
-            onlySWD.value = true;
-          });
-        }
-      }
-      for (int i = 0; i < employeeCheckboxList.length; i++) {
-        if (employeeCheckboxList[i].title == "donanım" &&
-            employeeCheckboxList[i].value == false) {
-          setState(() {
-            onlyHWD.value = false;
-          });
-          break;
-        } else {
-          setState(() {
-            onlyHWD.value = true;
-          });
-        }
-      }
-      for (int i = 0; i < employeeCheckboxList.length; i++) {
-        if (employeeCheckboxList[i].title == "pmo" &&
-            employeeCheckboxList[i].value == false) {
-          setState(() {
-            onlyPMO.value = false;
-          });
-          break;
-        } else {
-          setState(() {
-            onlyPMO.value = true;
-          });
-        }
       }
     });
+  }
+
+  void setDepartmentsColor() {
+    for (int i = 0; i < renkListesi.length; i++) {
+      for (int j = 0; j < _departmentList!.length; j++) {
+        if (renkListesi[i].title.contains(_departmentList![j].id.toString())) {
+        } else {
+          renkListesi.add(ColorModel(
+              title: _departmentList![i].id.toString(), color: colors[sayac]));
+          sayac++;
+          break;
+        }
+      }
+    }
+  }
+
+  Color getColorByDepartment(CheckBoxState checkBoxState) {
+    Color? color;
+
+    for (int i = 0; i < renkListesi.length; i++) {
+      if (checkBoxState.title == renkListesi[i].title) {
+        setState(() {
+          color = renkListesi[i].color;
+        });
+        break;
+      } else {
+        setState(() {
+          color = Colors.lightGreen;
+        });
+      }
+    }
+    return color!;
   }
 }
 
@@ -455,8 +538,38 @@ void _showToast(S) {
 
 class CheckBoxState {
   final String name;
-  bool value;
+   bool value;
   final String title;
+  final userId;
 
-  CheckBoxState({required this.name, this.value = false, required this.title});
+  CheckBoxState({required this.name, this.value = false, required this.title, this.userId});
+}
+
+class ColorModel {
+  final String title;
+  final Color color;
+
+  ColorModel({
+    required this.title,
+    required this.color,
+  });
+}
+_showSnackBar(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      "\u{1F389}  " + msg,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      textAlign: TextAlign.left,
+    ),
+    action: SnackBarAction(
+      label: "OK",
+      textColor: Colors.white,
+      disabledTextColor: Colors.deepPurple,
+      onPressed: () {},
+    ),
+    backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+  ));
 }
