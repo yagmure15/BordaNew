@@ -79,7 +79,7 @@ class _SearchEmployeeState extends State<SearchEmployee> {
   Future<void> getAllEmplooyesByOfficeId() async {
     setState(() {});
 
-    final String apiUrl = Constants.HTTPURL + "/api/users?officeId=1";
+    final String apiUrl = Constants.HTTPURL + "/api/users?officeId=$_selectedOfficeId";
 
     final response = await http.get(
       Uri.parse(apiUrl),
