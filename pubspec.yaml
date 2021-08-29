@@ -49,6 +49,7 @@ dependencies:
   firebase_messaging: ^10.0.5
   flutter_local_notifications: ^8.1.1+1
   cloud_firestore: ^2.5.0
+  system_settings:
 
 dev_dependencies:
   flutter_test:

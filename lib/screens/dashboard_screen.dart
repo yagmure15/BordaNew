@@ -23,6 +23,7 @@ String userId = "";
 String officeId = "";
 String? userToken;
 bool _shouldIgnore = false;
+String name = "";
 
 class _DashboardScreenState extends State<DashboardScreen> {
 
@@ -40,6 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       userId = pref.getString("userID").toString();
       officeId = pref.getInt("officeId").toString();
       userToken = pref.getString("token").toString();
+      name = pref.getString("name").toString();
     });
   }
 
@@ -359,7 +361,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     GestureDetector(
                       onTap: () {
                         HttpServiceForNotification httpreq = new HttpServiceForNotification();
-                        httpreq.sendNotificationToAllUsers('Happy Hour', 'Someone has requested for a happy hour!', userToken!);
+                        httpreq.sendNotificationToAllUsers('Happy Hour', '$name has requested for a happy hour! Would you like to join $name?', userToken!);
                         _lockButton();
                         checkShouldIgnore();
                         print(_shouldIgnore);

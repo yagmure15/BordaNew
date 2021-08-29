@@ -6,6 +6,7 @@ import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:bordatech/utils/user_info.dart';
 import 'package:bordatech/utils/user_simple_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/dashboard_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -21,13 +22,13 @@ void _showToast(S) {
   Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
 }
 
-Future<UserLoginModel?> postData(String email, String password) async {
+Future<UserLoginModel?> postData(String email, String password, String fcmToken) async {
 
   final String apiUrl = Constants.HTTPURL+"/api/users/login";
 
   final response = await http.post(Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}));
+      body: jsonEncode({"email": email, "password": password, "FcmToken": fcmToken}));
 print(response.statusCode);
   if (response.statusCode == 201) {
     final String responsString = response.body;
@@ -44,11 +45,22 @@ print(response.statusCode);
 class _LoginScreenScreenState extends State<LoginScreen> {
   String _email = "";
   String _password = "";
+  String? fcmToken;
+
+  getToken() async {
+    this.fcmToken = await FirebaseMessaging.instance.getToken();
+  }
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   UserLoginModel? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +146,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                       _showToast("parola alanı boş olamaz!");
                     } else {
                       final UserLoginModel? user =
-                          await postData(email, password);
+                          await postData(email, password, fcmToken!);
 
                       setState(() {
                         _user = user;
