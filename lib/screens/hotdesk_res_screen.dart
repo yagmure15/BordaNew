@@ -1,10 +1,17 @@
+import 'dart:async';
+
+import 'package:bordatech/httprequests/offices/office_list_model.dart';
 import 'package:bordatech/screens/hotdesk_selection_screen.dart';
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as cnv;
 
 class HotdeskScreen extends StatefulWidget {
   @override
@@ -14,7 +21,17 @@ class HotdeskScreen extends StatefulWidget {
   }
 }
 
+String userId = "";
+String officeId = "";
+String? userToken;
+String? selectedOfficeId;
+
+
 class _HotdeskScreen extends State {
+  String? eventDateIsoType;
+  List<OfficeListModel>? _officeListModelList;
+  String? selectedOffice;
+
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
     hour: 9,
@@ -24,11 +41,10 @@ class _HotdeskScreen extends State {
     hour: 18,
   );
 
-  String? selectedOffice;
   String? selectedDate;
   String? selectedDesk;
+
   List listDesks = ["No available desk"];
-  List listOffice = ["İTÜ Arı 3 -  İstanbul", "IYTE Campus, Teknopark - Izmir"];
   List gun1 = ["Masa1", "masa 2"];
   List gun2 = ["Masa 5", "Masa 8", "Masa 9"];
 
@@ -37,17 +53,59 @@ class _HotdeskScreen extends State {
   DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
   bool isPetBrought = false;
-  String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now().add(Duration(days: 1)));
+  String firstDate = DateFormat('dd MMMM yyyy, EEEE')
+      .format(DateTime.now().add(Duration(days: 1)));
+
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
+  Future<void> getOffices() async {
+    final String apiUrl = Constants.HTTPURL + "/api/offices";
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final String responsString = response.body;
+
+      print("BODY : " + response.body);
+
+      List<dynamic> body = cnv.jsonDecode(responsString);
+      _officeListModelList =
+          body.map((dynamic item) => OfficeListModel.fromJson(item)).toList();
+      setState(() {});
+
+      setInitialSelectedOffice();
+    } else {
+      // hata mesajı gösterebilirsin
+    }
+
+    print("STATUS CODE FOR OFFICE LIST " + response.statusCode.toString());
+    // print(userToken);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getuserInfo();
+    Timer(Duration(milliseconds: 100), () {
+      getOffices();
+    });
+
+    selectedDate = firstDate;
+    eventDateIsoType = DateFormat('yyyy-MM-dd')
+        .format(DateTime.now().add(Duration(days: 1)));
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    
     //hangi ofiste çalışıyorsa listeden onu set ediyoruz.
-    selectedOffice = listOffice[0].toString();
-    _showToast(_dateTimeEnd.toString());
     return Scaffold(
       backgroundColor: bordaSoftGreen,
       appBar: AppBar(
@@ -60,28 +118,31 @@ class _HotdeskScreen extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-            children: <Widget>[
-              Container(height: 520, width: 350, child: _getBooking()),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      child: Image(
+      body: _officeListModelList == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(height: 380, width: 350, child: _getBooking()),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                          child: Image(
                         image: AssetImage("assets/hotdesk.png"),
                         height: 80,
                         width: 80,
                       )),
+                    ],
+                  ),
                 ],
-              ),
-            ],
-          )),
+              )),
     );
   }
 
@@ -100,17 +161,15 @@ class _HotdeskScreen extends State {
             style: TextStyle(color: Colors.grey, fontSize: 10),
           ),
           DropdownButton(
-
-            items: listOffice.map((valueItem) {
+            items: _officeListModelList!.map((valueItem) {
               return DropdownMenuItem(
-                  value: valueItem,
+                  value: valueItem.name,
                   child: Container(
-                    child: Text(valueItem,
+                    child: Text(valueItem.name,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w500)),
                   ));
             }).toList(),
-
             isExpanded: true,
             hint: Container(
                 padding: EdgeInsets.only(left: 0),
@@ -123,6 +182,7 @@ class _HotdeskScreen extends State {
               setState(() {
                 selectedOffice = newValue as String?;
               });
+              getOfficeIdForSearh();
             },
           ),
         ],
@@ -144,7 +204,7 @@ class _HotdeskScreen extends State {
                   style: TextStyle(color: Colors.grey, fontSize: 10)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 5, 0),
-                child: Text(firstDate,
+                child: Text(selectedDate!,
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w500)),
               ),
@@ -171,13 +231,26 @@ class _HotdeskScreen extends State {
                 )),
             key: _key,
             onPressed: () {
+            print(eventDateIsoType);
+
+
+
+
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => HotDeskSelectionScreen()));
+                      builder: (context) => HotDeskSelectionScreen(eventDateIsoType!)));
+
+
+
               _SentInformRequest();
             },
           ),
+
+
+          /*
+
           OutlinedButton(
             style: OutlinedButton.styleFrom(
                 side: BorderSide(color: bordaOrange),
@@ -190,11 +263,15 @@ class _HotdeskScreen extends State {
                   fontWeight: FontWeight.w500,
                 )),
           ),
+
+          */
+
         ],
       ),
     );
   }
 
+  /*
   Widget _GuestAndPetQuestion() {
     return Container(
       margin: EdgeInsets.only(top: 10),
@@ -306,7 +383,7 @@ class _HotdeskScreen extends State {
       ),
     );
   }
-
+  */
   Widget _Divider() {
     return Padding(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -368,7 +445,6 @@ class _HotdeskScreen extends State {
             _Divider(),
             _HoursArea(),
             _Divider(),
-            _GuestAndPetQuestion(),
             _ReservationSearhButton(),
           ],
         ),
@@ -408,38 +484,14 @@ class _HotdeskScreen extends State {
 
   void _onSubmitController(Object val) {
     setState(() {
-      selectedDate = val.toString();
-      firstDate = DateFormat('dd MMMM yyyy, EEEE')
-          .format(DateTime.parse(selectedDate.toString()));
+      selectedDate =
+          DateFormat('dd MMMM yyyy, EEEE').format(DateTime.parse(val.toString()));
+      eventDateIsoType =
+          DateFormat('yyyy-MM-dd').format(DateTime.parse(val.toString()));
+
+
     });
 
-    if (selectedDate == "2021-08-13 00:00:00.000") {
-      setState(() {
-        selectedDesk == null;
-        listDesks = gun1;
-      });
-    }
-    if (selectedDate == "2021-08-14 00:00:00.000") {
-      setState(() {
-        selectedDesk == "asd";
-        listDesks = gun2;
-      });
-    }
-    if (selectedDate == "2021-08-15 00:00:00.000") {
-      setState(() {
-        selectedDesk == "null";
-
-        listDesks = ["a0", "sasd", "asdasdasd"];
-      });
-    }
-    if (selectedDate == "2021-08-16 00:00:00.000") {
-      setState(() {
-        selectedDesk == "null";
-        listDesks = gun2;
-      });
-    }
-
-    _showToast(selectedDate);
     Navigator.of(context).pop(_dateRangePickerController);
   }
 
@@ -447,14 +499,19 @@ class _HotdeskScreen extends State {
     Navigator.of(context).pop(_dateRangePickerController);
 
     setState(() {
-      firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now().add(Duration(days: 1)));
+      firstDate = DateFormat('dd MMMM yyyy, EEEE')
+          .format(DateTime.now().add(Duration(days: 1)));
+      selectedDate = firstDate;
+      eventDateIsoType =
+          DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)));
+
     });
-    selectedDate = firstDate;
+
   }
 
   String getTimeString(TimeOfDay date) {
     if (date == null) {
-      return "oömadı";
+      return "olmadı";
     } else {
       final hours = date.hour.toString().padLeft(2, "0");
       final minute = date.minute.toString().padLeft(2, "0");
@@ -580,4 +637,38 @@ class _HotdeskScreen extends State {
       backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
     ));
   }
+
+  void getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      userId = pref.getString("userID").toString();
+      officeId = pref.getInt("officeId").toString();
+      userToken = pref.getString("token").toString();
+    });
+  }
+
+  void setInitialSelectedOffice() {
+    for (int i = 0; i < _officeListModelList!.length; i++) {
+      if (officeId == _officeListModelList![i].id.toString()) {
+        setState(() {
+          selectedOffice = _officeListModelList![i].name.toString();
+        });
+        break;
+      }
+    }
+  }
+
+  void getOfficeIdForSearh() {
+    for (int i = 0; i < _officeListModelList!.length; i++) {
+      if (_officeListModelList![i].name == selectedOffice) {
+        setState(() {
+          selectedOfficeId = _officeListModelList![i].id.toString();
+        });
+        break;
+      }
+    }
+  }
+
+
 }

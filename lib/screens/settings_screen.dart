@@ -1,6 +1,11 @@
+import 'package:bordatech/provider/theme_notifier.dart';
 import 'package:bordatech/screens/login_screen.dart';
+import 'package:bordatech/screens/update_password_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:system_settings/system_settings.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -8,10 +13,20 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool isDarkMode = true;
+  String fullName = "";
+  String email = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    getUserNameAndEmail();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bordaSoftGreen,
       appBar: AppBar(
         leading: TextButton(
             onPressed: () {
@@ -23,31 +38,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
           fit: BoxFit.contain,
           height: 30,
         ),
-        backgroundColor: bordaGreen,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0, bottom: 20),
-              child: Center(
-                child: Container(
-                  width: 130,
-                  height: 90,
-                  child: Image(
-                    image: AssetImage("assets/account.png"),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              height: 120,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                child: Center(
+                  child: Container(
+                    width: 130,
+                    height: 90,
+                    child: Image(
+                      image: AssetImage("assets/account.png"),
+                    ),
                   ),
                 ),
               ),
             ),
             Container(
-              width: 320,
-              height: 45,
+              width: MediaQuery.of(context).size.width - 40,
+              height: 40,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
               ),
-              margin: EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.only(top: 16, bottom: 4),
               //width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: bordaGreen,
@@ -56,22 +74,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               //padding: const EdgeInsets.only(bottom: 5),
               child: Center(
                 child: Text(
-                  'Mehmet Baran Nakipoğlu',
+                  fullName,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 15,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
             Container(
-              width: 320,
-              height: 45,
+              width: MediaQuery.of(context).size.width - 40,
+              height: 40,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
               ),
-              margin: EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.symmetric(vertical: 4),
               //width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: bordaGreen,
@@ -80,109 +98,120 @@ class _SettingsScreenState extends State<SettingsScreen> {
               //padding: const EdgeInsets.only(bottom: 5),
               child: Center(
                 child: Text(
-                  'mehmet.nakipoglu@bordatech.com',
+                  email,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 15,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
             Container(
-              width: 320,
-              height: 95,
-
-              //width: MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width - 40,
+              height: 40,
+              padding: EdgeInsets.symmetric(
+                vertical: 4,
+              ),
+              margin: EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
                 color: bordaGreen,
                 borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  //fit: BoxFit.fill,
-                  image: AssetImage("assets/piggybank.png"),
-                  alignment: Alignment(-0.6, -0.4),
+              ),
+              child: Container(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Light Mode',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Switch(
+                          value: Provider.of<ThemeColorData>(context,
+                                  listen: false)
+                              .isDark,
+                          onChanged: (_) {
+                            Provider.of<ThemeColorData>(context, listen: false)
+                                .toggleTheme();
+                          })
+                    ],
+                  ),
                 ),
               ),
-              //padding: const EdgeInsets.only(bottom: 5),
-              padding: EdgeInsets.only(
-                top: 30,
-                left: 80,
-              ),
-              margin: EdgeInsets.only(bottom: 10),
-              child: Text(
-                'Borda Coin: 45',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
+            ),
+            Center(
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 20),
+                width: 28,
+                height: 28,
+                decoration: new BoxDecoration(
+                  color: bordaOrange,
+                  shape: BoxShape.circle,
                 ),
               ),
             ),
             Container(
-              width: 320,
-              height: 45,
+              width: MediaQuery.of(context).size.width - 40,
+              height: 40,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
               ),
-              margin: EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
                 color: bordaGreen,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
-                child: Text(
-                  'Allow Notifications',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+                child: GestureDetector(
+                  onTap: () {
+                    SystemSettings.app();
+                  },
+                  child: Text(
+                    'Change Notification Settings',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ),
             Container(
-              width: 320,
-              height: 45,
+              width: MediaQuery.of(context).size.width - 40,
+              height: 40,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
               ),
-              margin: EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(
-                color: bordaGreen,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Text(
-                  'Light Mode',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            Container(
-              width: 320,
-              height: 45,
-              padding: EdgeInsets.symmetric(
-                vertical: 4,
-              ),
-              margin: EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
                 color: bordaGreen,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UpdatePasswordScreen()));
                 },
                 child: Center(
                   child: Text(
                     'Change Password',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -190,18 +219,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Container(
-              width: 320,
-              height: 45,
+              width: MediaQuery.of(context).size.width - 40,
+              height: 40,
               padding: EdgeInsets.symmetric(
                 vertical: 4,
               ),
-              margin: EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
                 color: bordaGreen,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  final SharedPreferences shPref =
+                      await SharedPreferences.getInstance();
+                  shPref.remove("email");
                   Navigator.push(context,
                       MaterialPageRoute(builder: (_) => LoginScreen()));
                 },
@@ -210,16 +242,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'Sign Out',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
             ),
+            SizedBox(height: 10),
           ],
         ),
       ),
     );
+  }
+
+  void getUserNameAndEmail() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    fullName = pref.getString("name").toString();
+    email = pref.getString("email").toString();
+    setState(() {});
   }
 }

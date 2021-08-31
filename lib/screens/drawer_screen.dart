@@ -1,10 +1,16 @@
+import 'package:bordatech/main.dart';
 import 'package:bordatech/screens/event_and_calendar_screen.dart';
+import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
+import 'package:bordatech/screens/tabbarcalendar.dart';
 import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_info.dart';
+import 'package:bordatech/utils/user_simple_preferences.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 
 import 'meeting_search_employee.dart';
@@ -17,10 +23,21 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
+  String fullName = "";
+  String email = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getuserName();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
+      child:
+
+      Column(
         children: <Widget>[
           Container(
             width: double.infinity,
@@ -43,7 +60,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 6),
                     child: Text(
-                      "Engin Yağmur",
+                      fullName,
                       style: TextStyle(fontSize: 22, color: Colors.white),
                     ),
                   ),
@@ -53,11 +70,16 @@ class _DrawerScreenState extends State<DrawerScreen> {
           ),
           Column(
             children: [
+
               ListTile(
                 leading: Icon(Icons.calendar_today),
                 title: Text(
-                  "Events and Calendar",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  "Calendars",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   // TODO: why did you add both the pop and push?
@@ -65,14 +87,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EventCalendarScreen()));
+                          builder: (context) => TabBarLayoutCalendar()));
                 },
               ),
               ListTile(
                 leading: Icon(Icons.wb_sunny_outlined),
                 title: Text(
-                  "Weather",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  "Weather & Forecast",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -85,8 +111,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 },
               ),
               InkWell(
-                onTap: (){
-                },
+                onTap: () {},
                 child: ListTile(
                   leading: Icon(Icons.food_bank_outlined),
                   title: RichText(
@@ -95,7 +120,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       style: new TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: bordaGreen,
+                        color: Colors.black,
                       ),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () {
@@ -106,11 +131,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   ),
                 ),
               ),
-              /* 
+              /*
               Text(
                   "Baklava",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ), 
+                ),
               onTap: () {
                   Navigator.push(
                     context,
@@ -118,14 +143,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       builder: (context) => TermsPrivacyPolicy(),
                     ),
                   );
-                }, 
+                },
               ),
               */
               ListTile(
                 leading: Icon(Icons.settings),
                 title: Text(
                   "Settings",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -140,7 +169,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
       ),
     );
   }
+
   void _showToast(S) {
     Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
+  }
+
+  void getuserName() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    fullName = pref.getString("name").toString();
+    email = pref.getString("email").toString();
+    setState(() {});
   }
 }

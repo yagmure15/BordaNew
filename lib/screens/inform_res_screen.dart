@@ -1,21 +1,73 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:bordatech/httprequests/notify/notify_of_arrical_model.dart';
+import 'package:bordatech/httprequests/offices/office_list_model.dart';
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:bordatech/utils/user_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as cnv;
 
 class InformResScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _InformResScreen();
   }
 }
 
+String userId = "";
+String officeId = "";
+String? userToken;
+String? selectedOfficeId;
+void _showToast(S) {
+  Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
+}
+
+Future<void> postNotifyRequest(
+    BuildContext context,
+    int officeId,
+    String userId,
+    bool petPresence,
+    List dateOfArrival,
+    int numberOfGuests) async {
+  final String apiUrl =
+      Constants.HTTPURL + "/api/offices/notification-of-arrivals";
+
+  final response = await http.post(Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        "officeId": officeId,
+        "userId": userId,
+        "petPresence": petPresence,
+        "numberOfGuests": numberOfGuests,
+        "dateOfArrival": dateOfArrival
+      }));
+
+  if (response.statusCode == 201) {
+    final String responsString = response.body;
+    print("BODY : " + response.body);
+    Navigator.of(context).pop();
+    _showSnackBar(context, "Reservation Created");
+  } else {}
+
+  // print("STATUS CODE " + response.statusCode.toString());
+}
+
 class _InformResScreen extends State {
+  List<OfficeListModel>? _officeListModelList;
+
   String? selectedOffice;
-  List listOffice = ["İTÜ Arı 3 -  İstanbul", "IYTE Campus, Teknopark - Izmir"];
+
   DateTime _startDate = DateTime.now();
   int guestCount = 0;
   DateTime? neyDateformat;
@@ -29,10 +81,55 @@ class _InformResScreen extends State {
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office";
 
+  Future<void> getOffices() async {
+
+    final String apiUrl = Constants.HTTPURL + "/api/offices";
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken"
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final String responsString = response.body;
+
+      print("BODY : " + response.body);
+
+      List<dynamic> body = cnv.jsonDecode(responsString);
+      _officeListModelList =
+          body.map((dynamic item) => OfficeListModel.fromJson(item)).toList();
+      setState(() {});
+
+      setInitialSelectedOffice();
+    } else {
+      // hata mesajı gösterebilirsin
+    }
+
+    print("STATUS CODE FOR OFFICE LIST " + response.statusCode.toString());
+    // print(userToken);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getuserInfo();
+    Timer(Duration(milliseconds: 200), () {
+      getOffices();
+
+
+
+    });
+
+
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    selectedOffice = listOffice[0].toString();
-
     return Scaffold(
       backgroundColor: bordaSoftGreen,
       appBar: AppBar(
@@ -45,31 +142,32 @@ class _InformResScreen extends State {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(height: 460, width: 350, child: _getBooking()),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                      child: Image(
-                    image: AssetImage("assets/informbg.png"),
-                    height: 80,
-                    width: 80,
-                  )),
-                ],
-              ),
-            ],
-          )),
-    );
-  }
+      body: _officeListModelList == null ? Center(
+        child: CircularProgressIndicator(),
+      ) :
 
-  void _showToast(S) {
-    Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
+      Container(
+                height: double.infinity,
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(height: 460, width: 350, child: _getBooking()),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                            child: Image(
+                              image: AssetImage("assets/informbg.png"),
+                              height: 80,
+                              width: 80,
+                            )),
+                      ],
+                    ),
+                  ],
+                )),
+
+    );
   }
 
   Widget _ReservationSearhButton() {
@@ -77,7 +175,6 @@ class _InformResScreen extends State {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
       child: MaterialButton(
-
         color: Color(HexColor.toHexCode("#ff5a00")),
         child: Text("Search",
             style: const TextStyle(
@@ -218,11 +315,11 @@ class _InformResScreen extends State {
             style: TextStyle(color: Colors.grey, fontSize: 10),
           ),
           DropdownButton(
-            items: listOffice.map((valueItem) {
+            items: _officeListModelList!.map((valueItem) {
               return DropdownMenuItem(
-                  value: valueItem,
+                  value: valueItem.name,
                   child: Container(
-                    child: Text(valueItem,
+                    child: Text(valueItem.name,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w500)),
                   ));
@@ -239,6 +336,7 @@ class _InformResScreen extends State {
               setState(() {
                 selectedOffice = newValue as String?;
               });
+              getOfficeIdForSearh();
             },
           ),
         ],
@@ -362,34 +460,23 @@ class _InformResScreen extends State {
         width: 350,
         child: Column(
           children: <Widget>[
-            /* Image.asset(
-              'assets/temperature.png',
-              height: 50,
-              width: 50,
-            ), */
             _DatePicker(),
           ],
         ),
       );
 
   void _SentInformRequest() {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
     if (selectedOffice == null) {
       _showSnackBar(context, chooseAnOffice);
     } else {
-      final DateFormat formatter = DateFormat('yyyy-MM-dd');
-
-      if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
-        _showSnackBar(context, chooseOnlyOneDay);
+      if (dateArr.length == 0) {
+        final String formatted = formatter.format(DateTime.now());
+        dateArr.add(formatted);
       }
-
       if (dateArr.length == 1) {
         final String formatted =
             formatter.format(DateTime.parse(dateArr[0].toString()));
-        // _showToast(formatted);
-      }
-      if (dateArr.length == 0) {
-        final String formatted = formatter.format(DateTime.now());
-        //_showToast(formatted);
       }
       if (dateArr.length > 1) {
         for (int i = 0; i < dateArr.length; i++) {
@@ -398,15 +485,25 @@ class _InformResScreen extends State {
           }
           dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
         }
-        //_showToast(dateArr.toString());
-
       }
+      if ((isPetBrought || guestCount > 0) && dateArr.length > 1) {
+        _showSnackBar(context, chooseOnlyOneDay);
+      } else {
+        List liste = [];
 
-      /*
+        for (int i = 0; i < dateArr.length; i++) {
+          dateArr[i] = formatter.format(DateTime.parse(dateArr[i].toString()));
+          liste.add(dateArr[i]);
+        }
+        if(selectedOfficeId == null){
+          setState(() {
+            selectedOfficeId = officeId;
+          });
 
-      //verileri gönderme işlemini burada yap!
-
-      */
+        }
+        postNotifyRequest(context, int.parse(selectedOfficeId!) , userId,
+            isPetBrought, liste, guestCount);
+      }
     }
   }
 
@@ -459,23 +556,59 @@ class _InformResScreen extends State {
     });
   }
 
-  _showSnackBar(BuildContext context, String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        msg,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-        textAlign: TextAlign.left,
-      ),
-      action: SnackBarAction(
-        label: "OK",
-        textColor: Colors.white,
-        disabledTextColor: Colors.deepPurple,
-        onPressed: () {},
-      ),
-      backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
-    ));
+ void getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      userId = pref.getString("userID").toString();
+      officeId = pref.getInt("officeId").toString();
+      userToken = pref.getString("token").toString();
+
+    });
+
+
+
   }
+
+  void setInitialSelectedOffice() {
+    for (int i = 0; i < _officeListModelList!.length; i++) {
+      if (officeId == _officeListModelList![i].id.toString()) {
+        setState(() {
+          selectedOffice = _officeListModelList![i].name.toString();
+        });
+        break;
+      }
+    }
+  }
+
+  void getOfficeIdForSearh() {
+    for (int i = 0; i < _officeListModelList!.length; i++) {
+      if (_officeListModelList![i].name == selectedOffice) {
+        setState(() {
+          selectedOfficeId = _officeListModelList![i].id.toString();
+        });
+        break;
+      }
+    }
+  }
+}
+
+_showSnackBar(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      msg,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      textAlign: TextAlign.left,
+    ),
+    action: SnackBarAction(
+      label: "OK",
+      textColor: Colors.white,
+      disabledTextColor: Colors.deepPurple,
+      onPressed: () {},
+    ),
+    backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+  ));
 }

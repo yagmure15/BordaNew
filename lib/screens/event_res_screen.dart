@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as cnv;
 
 class CreateEvent extends StatefulWidget {
   @override
@@ -12,33 +18,82 @@ class CreateEvent extends StatefulWidget {
   }
 }
 
+String userId = "";
+String officeId = "";
+String? userToken;
+int? selectedEventTypeId;
+String? eventStart, eventEnd;
+
+Future<void> postEventRequest(BuildContext context, String applicationUserId,
+    int eventType, String startDate, String endDate, String description) async {
+  final String apiUrl = Constants.HTTPURL + "/api/Events/CreateEvent";
+
+  final response = await http.post(Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        "applicationUserId": applicationUserId,
+        "eventType": eventType,
+        "startDate": startDate,
+        "endDate": endDate,
+        "description": description
+      }));
+
+  if (response.statusCode == 201) {
+    final String responsString = response.body;
+    print("BODY : " + response.body);
+    Navigator.of(context).pop();
+    _showSnackBar(context,"Congrat! Event is created");
+    print("OLDU : ");
+  } else {}
+
+  print("STATUS CODE FOR EVENT : " + response.statusCode.toString());
+}
+
+
+
 class _CreateEvent extends State {
   TextEditingController titleController = new TextEditingController();
 
-  String? _eventTitle;
   TimeOfDay _dateTimeStart = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour + 1,
+    hour: TimeOfDay.now().hour,
   );
+
   TimeOfDay _dateTimeEnd = TimeOfDay.now().replacing(
     minute: 0,
-    hour: TimeOfDay.now().hour + 2,
+    hour: TimeOfDay.now().hour,
   );
   String? selectedTitle;
-  String? selectedDate;
+  String selectedDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
 
-  List listTitle = ["Competition", "Meeting", "Celebration"];
+  List listTitle = [
+
+    "Competition \u{1F3C6}",
+    "Meeting \u{1F37A}",
+    "Celebration \u{1F381} ",
+  ];
 
   int guestCount = 0;
-  DateTime? neyDateformat;
   DateRangePickerController _dateRangePickerController =
-      DateRangePickerController();
+  DateRangePickerController();
   bool isPetBrought = false;
   String firstDate = DateFormat('dd MMMM yyyy, EEEE').format(DateTime.now());
 
   String chooseOnlyOneDay =
       "If you are bringing guests or pets to the office, you should make an appointment for only that day.";
   String chooseAnOffice = "Please, Choose an Office!";
+
+  @override
+  void initState() {
+    super.initState();
+    getuserInfo();
+
+    selectedDate = DateTime.now().toString();
+    selectedTitle = listTitle[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,10 +164,14 @@ class _CreateEvent extends State {
             items: listTitle.map((valueItem) {
               return DropdownMenuItem(
                   value: valueItem,
-                  child: Container(
-                    child: Text(valueItem,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  child: Row(
+                    children: [
+                      Container(
+                        child: Text(valueItem,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500)),
+                      ),
+                    ],
                   ));
             }).toList(),
             isExpanded: true,
@@ -120,7 +179,7 @@ class _CreateEvent extends State {
                 padding: EdgeInsets.only(left: 0),
                 child: Text("Choose a Title",
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
             itemHeight: 48,
             value: selectedTitle,
             onChanged: (newValue) {
@@ -245,7 +304,7 @@ class _CreateEvent extends State {
 
   String getTimeString(TimeOfDay date) {
     if (date == null) {
-      return "oömadı";
+      return "Olmadı";
     } else {
       final hours = date.hour.toString().padLeft(2, "0");
       final minute = date.minute.toString().padLeft(2, "0");
@@ -261,7 +320,7 @@ class _CreateEvent extends State {
         builder: (context, Widget? child) {
           return MediaQuery(
               data:
-                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
               child: child!);
         });
     if (t != null) {
@@ -278,7 +337,7 @@ class _CreateEvent extends State {
         builder: (context, Widget? child) {
           return MediaQuery(
               data:
-                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
               child: child!);
         });
     if (t != null) {
@@ -322,7 +381,7 @@ class _CreateEvent extends State {
 
   void _onSelectionChanged(
       DateRangePickerSelectionChangedArgs
-          dateRangePickerSelectionChangedArgs) {}
+      dateRangePickerSelectionChangedArgs) {}
 
   Widget _getBooking() {
     return Card(
@@ -361,31 +420,36 @@ class _CreateEvent extends State {
     return showDialog(
         context: context,
         builder: (context) => Dialog(
-              backgroundColor: Colors.deepPurple,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              child: _buildDateDialogChild(context),
-            ));
+          backgroundColor: Colors.deepPurple,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16)),
+          child: _buildDateDialogChild(context),
+        ));
   }
 
   _buildDateDialogChild(BuildContext context) => Container(
-        color: Colors.white,
-        height: 350,
-        width: 350,
-        child: Column(
-          children: <Widget>[
-            /* Image.asset(
+    color: Colors.white,
+    height: 350,
+    width: 350,
+    child: Column(
+      children: <Widget>[
+        /* Image.asset(
               'assets/temperature.png',
               height: 50,
               width: 50,
             ), */
-            _DatePicker(),
-          ],
-        ),
-      );
+        _DatePicker(),
+      ],
+    ),
+  );
 
-  void _SentInformRequest() {}
+  void _SentInformRequest() {
+    getEventIdFromList(selectedTitle);
+    convertStringToDateIso();
+    postEventRequest(context, userId, selectedEventTypeId!, eventStart!,
+        eventEnd!, titleController.text.toString());
+  }
 
   void _onSubmitController(Object val) {
     setState(() {
@@ -394,8 +458,6 @@ class _CreateEvent extends State {
           .format(DateTime.parse(selectedDate.toString()));
     });
 
-    _showToast(selectedDate);
-    print(selectedDate);
     Navigator.of(context).pop(_dateRangePickerController);
   }
 
@@ -408,78 +470,133 @@ class _CreateEvent extends State {
     selectedDate = firstDate;
   }
 
-  _showSnackBar(BuildContext context, String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        msg,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-        textAlign: TextAlign.left,
-      ),
-      action: SnackBarAction(
-        label: "OK",
-        textColor: Colors.white,
-        disabledTextColor: Colors.deepPurple,
-        onPressed: () {},
-      ),
-      backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
-    ));
-  }
+
 
   Widget _Body() {
     return SingleChildScrollView(
         child: Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-              padding: EdgeInsets.all(20),
-              margin: EdgeInsets.only(top: 50, left: 50, right: 50),
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: Text(
-                      'Book a Place',
-                      style: TextStyle(
-                          color: Colors.black87,
-                          backgroundColor: Colors.transparent,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20),
-                    ),
-                  ),
-                  _SelectEventTitleArea(),
-                  _DateArea(),
-                  _Divider(),
-                  _HoursArea(),
-                  _Divider(),
-                  _EventDescriptionArea(),
-                  _ReservationSearhButton(),
-                ],
-              )),
-          Column(
-            mainAxisSize: MainAxisSize.max,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                margin: EdgeInsets.only(top: 55),
-                alignment: FractionalOffset.bottomCenter,
-                child: Image(
-                  image: AssetImage("assets/event2.png"),
-                ),
-                height: 80,
-                width: 80,
-              ),
+                  padding: EdgeInsets.all(20),
+                  margin: EdgeInsets.only(top: 50, left: 50, right: 50),
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          'Book a Place',
+                          style: TextStyle(
+                              color: Colors.black87,
+                              backgroundColor: Colors.transparent,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20),
+                        ),
+                      ),
+                      _SelectEventTitleArea(),
+                      _DateArea(),
+                      _Divider(),
+                      _HoursArea(),
+                      _Divider(),
+                      _EventDescriptionArea(),
+                      _ReservationSearhButton(),
+                    ],
+                  )),
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 55),
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Image(
+                      image: AssetImage("assets/event2.png"),
+                    ),
+                    height: 80,
+                    width: 80,
+                  ),
+                ],
+              )
             ],
-          )
-        ],
-      ),
-    ));
+          ),
+        ));
   }
+
+  void getEventIdFromList(name) {
+    if (name == listTitle[0]) {
+      setState(() {
+        selectedEventTypeId = 0;
+      });
+    } else if (name == listTitle[1]) {
+      setState(() {
+        selectedEventTypeId = 1;
+      });
+    } else if (name == listTitle[2]) {
+      setState(() {
+        selectedEventTypeId = 2;
+      });
+    }
+  }
+
+  void getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    userId = pref.getString("userID").toString();
+    officeId = pref.getInt("officeId").toString();
+    userToken = pref.getString("token").toString();
+    setState(() {});
+  }
+
+  void convertStringToDateIso() {
+    setState(() {
+      String date = DateFormat('yyyy-MM-dd')
+          .format(DateTime.parse(selectedDate.toString()));
+
+      setState(() {
+        eventStart = date +
+            "T" +
+            _dateTimeStart.hour.toString().padLeft(2, "0") +
+            ":" +
+            _dateTimeStart.minute.toString().padLeft(2, "0") +
+            ":00.000Z";
+
+        eventEnd = date +
+            "T" +
+            _dateTimeEnd.hour.toString().padLeft(2, "0") +
+            ":" +
+            _dateTimeEnd.minute.toString().padLeft(2, "0") +
+            ":00.000Z";
+        //1951-11-04T19:35:37.116Z
+      });
+
+      // "$y-$m-${d}T$h:$min:$sec.$ms${us}Z"
+    });
+  }
+
+
+
 }
+_showSnackBar(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      "\u{1F389}  " + msg,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      textAlign: TextAlign.left,
+    ),
+    action: SnackBarAction(
+      label: "OK",
+      textColor: Colors.white,
+      disabledTextColor: Colors.deepPurple,
+      onPressed: () {},
+    ),
+    backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+  ));
+}
+

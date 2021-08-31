@@ -1,0 +1,93 @@
+APP PRIVACY POLICY
+
+We respects the privacy of our users. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application. Please read this Privacy Policy carefully.
+IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.
+
+We reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy. You are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy by your continued use of the Application after the date such revised Privacy Policy is posted.
+
+This Privacy Policy does not apply to the third-party online/mobile store from which you install the Application or make payments, including any in-game virtual items, which may also collect and use data about you. We are not responsible for any of the data collected by any such third party.
+
+COLLECTION OF YOUR INFORMATION
+
+We may collect information about you in a variety of ways. The information we may collect via the Application depends on the content and materials you use, and includes:
+
+Personal Data
+Demographic and other personally identifiable information (such as your name and email address) that you voluntarily give to us when choosing to participate in various activities related to the Application, such as chat, posting messages in comment sections or in our forums, liking posts, sending feedback, and responding to surveys. If you choose to share data about yourself via your profile, online chat, or other interactive areas of the Application, please be advised that all data you disclose in these areas is public and your data will be accessible to anyone who accesses the Application.
+
+Derivative Data
+Information our servers automatically collect when you access the Application, such as your native actions that are integral to the Application, including liking, re-blogging, or replying to a post, as well as other interactions with the Application and other users via server log files.
+
+Geo-Location Information
+We may request access or permission to and track location-based information from your mobile device, either continuously or while you are using the Application, to provide location-based services. If you wish to change our access or permissions, you may do so in your device’s settings.
+
+Mobile Device Access
+We may request access or permission to certain features from your mobile device, including your mobile device’s . If you wish to change our access or permissions, you may do so in your device’s settings.
+
+Mobile Device Data
+Device information such as your mobile device ID number, model, and manufacturer, version of your operating system, phone number, country, location, and any other data you choose to provide.
+
+Push Notifications
+We may request to send you push notifications regarding your account or the Application. If you wish to opt-out from receiving these types of communications, you may turn them off in your device’s settings.
+
+Third-Party Data
+Information from third parties, such as personal information or network friends, if you connect your account to the third party and grant the Application permission to access this information.
+
+Data From Contests, Giveaways, and Surveys
+Personal and other information you may provide when entering contests or giveaways and/or responding to surveys.
+
+
+TRANSFER OF PERSONAL DATA
+
+Your processed personal data within the framework of the above articles and the conditions determined by the KVKK:
+
+•   To the relevant independent audit firms, financial advisor/accounting firms, law firms for the purpose of fulfilling our obligations pursuant to the provisions of the relevant legislation and auditing our commercial activities,
+•   Legally authorized public institutions and organizations in line with the demands of the relevant public institutions and organizations and limited to the purpose of the request,
+•   Occupational health and safety companies, hospitals and health institutions in order to fulfill their obligations for emergency medical interventions and occupational health and safety,
+•   Banking and finance to ensure the realization of banking and financial transactions,
+•   We can transfer it to legally authorized public institutions and organizations and judicial bodies in line with the requests of the relevant public institutions and organizations and limited to the purpose of the request.
+
+
+USE OF YOUR INFORMATION
+
+Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the 
+
+1.	Administer sweepstakes, promotions, and contests.
+2.	Assist law enforcement and respond to subpoena.
+3.	Compile anonymous statistical data and analysis for use internally or with third parties.
+4.	Create and manage your account.
+5.	Deliver targeted advertising, coupons, newsletters, and other information regarding promotions and the Application to you.
+6.	Email you regarding your account or order.
+7.	Enable user-to-user communications.
+8.	Fulfill and manage purchases, orders, payments, and other transactions related to the Application.
+9.	Generate a personal profile about you to make future visits to the Application more personalized.
+10.	Increase the efficiency and operation of the Application.
+11.	Monitor and analyze usage and trends to improve your experience with the Application.
+12.	Notify you of updates to the Application.
+13.	Offer new products, services, mobile applications, and/or recommendations to you.
+14.	Perform other business activities as needed.
+15.	Prevent fraudulent transactions, monitor against theft, and protect against criminal activity.
+16.	Process payments and refunds.
+17.	Request feedback and contact you about your use of the Application.
+18.	Resolve disputes and troubleshoot problems.
+19.	Respond to product and customer service requests.
+20.	Send you a newsletter.
+21.	Solicit support for the Application.
+
+STORAGE, DISPOSAL AND ANONYMIZATION OF PERSONAL DATA
+
+Our company stores personal data in a proportionate manner for the purpose of processing personal data. Personal data is stored until the end of the period required by the relevant legislation, if the purpose and/or reason for processing has disappeared. When the purpose and reason for the processing of personal data ceases, personal data will be destroyed or anonymized when the statute of limitations required to meet our legal obligations is completed.
+
+
+RIGHTS OF THE RELEVANT PERSON
+
+Real persons whose personal data are processed within our company have the following rights in accordance with 11. Article of the KVKK:
+
+•   Learning whether personal data is processed or not,
+•   If personal data has been processed, requesting information about it,
+•   To learn the purpose of processing personal data and whether they are used in accordance with the purpose,
+•   Knowing the third parties to whom personal data is transferred in the country or abroad,
+•   Requesting correction of personal data in case of incomplete or incorrect processing and requesting notification of the transaction made within this scope to the third parties to whom the personal data has been transferred,
+•   Requesting the deletion or destruction of personal data in the event that the reasons requiring its processing disappear despite being processed in accordance with the provisions of the KVKK and other relevant laws, and requesting the notification of the transaction made within this scope to the third parties to whom the personal data has been transferred,
+•   Objecting to the emergence of a result against the person himself by analyzing the processed data exclusively through automated systems,
+•   Requesting the price of the damage in case of loss due to unlawful processing of personal data.
+
