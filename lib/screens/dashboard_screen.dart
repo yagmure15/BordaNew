@@ -24,6 +24,7 @@ String officeId = "";
 String? userToken;
 bool _shouldIgnore = false;
 String name = "";
+String lastPressed = "";
 
 class _DashboardScreenState extends State<DashboardScreen> {
 
@@ -42,6 +43,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       officeId = pref.getInt("officeId").toString();
       userToken = pref.getString("token").toString();
       name = pref.getString("name").toString();
+      lastPressed = pref.getString("lastPressed").toString();
+      print(lastPressed);
     });
   }
 
@@ -58,15 +61,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     //DateTime.parse because you can only save Strings locally.
     // .add Adds 12h to the date when the button was last pressed.
     var clickedDate = prefs.getString('lastPressed');
-    var _date= DateTime.parse(clickedDate!);
-    var currentDate = DateTime.now();
-    var nextDate = DateTime(_date.year ,_date.month, _date.day + 1);
-    if(currentDate.isBefore(nextDate)){
-      setState((){ _shouldIgnore = true; });
+    if(clickedDate != null) {
+      var _date= DateTime.parse(clickedDate);
+      var currentDate = DateTime.now();
+      var nextDate = DateTime(_date.year ,_date.month, _date.day + 1);
+      if(currentDate.isBefore(nextDate)){
+        setState((){ _shouldIgnore = true; });
+      }
+      else {
+        setState((){ _shouldIgnore = false; });
+      }
     }
-    else {
+    else
       setState((){ _shouldIgnore = false; });
-    }
+
     print(_shouldIgnore);
   }
 
@@ -334,24 +342,60 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       onTap: () {
                         HttpServiceForNotification httpreq = new HttpServiceForNotification();
                         httpreq.sendNotificationToAllUsers('Noise Alert', 'Someone has requested to reduce noise!', userToken!);
-                         },
+                      },
+                    child: Visibility(
+                      visible: _shouldIgnore ? true : false,
                       child: CircleAvatar(
                         backgroundColor: Colors.orangeAccent,
                         radius: 25.0,
                         child:Icon(
                             Icons.volume_off,
-                          color: Colors.white
+                            color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Visibility(
+                      visible: _shouldIgnore ? true : false,
+                      child: Text(
+                        "Reduce Noise",
+                        style: TextStyle(
+                          color: Colors.white54,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        HttpServiceForNotification httpreq = new HttpServiceForNotification();
+                        httpreq.sendNotificationToAllUsers('Noise Alert', 'Someone has requested to reduce noise!', userToken!);
+                         },
+                      child: Visibility(
+                        visible: _shouldIgnore ? false : true,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.orangeAccent,
+                          radius: 25.0,
+                          child:Icon(
+                              Icons.volume_off,
+                            color: Colors.white
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(
                       height: 5,
                     ),
-                    Text(
-                      "Reduce Noise",
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 15,
+                    Visibility(
+                      visible: _shouldIgnore ? false : true,
+                      child: Text(
+                        "Reduce Noise",
+                        style: TextStyle(
+                          color: Colors.white54,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ],
