@@ -2,6 +2,7 @@ import 'package:bordatech/main.dart';
 import 'package:bordatech/screens/event_and_calendar_screen.dart';
 import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/screens/settings_screen.dart';
+import 'package:bordatech/screens/tabbarcalendar.dart';
 import 'package:bordatech/screens/weather_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:bordatech/utils/user_info.dart';
@@ -34,7 +35,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
+      child:
+
+      Column(
         children: <Widget>[
           Container(
             width: double.infinity,
@@ -67,11 +70,16 @@ class _DrawerScreenState extends State<DrawerScreen> {
           ),
           Column(
             children: [
+
               ListTile(
                 leading: Icon(Icons.calendar_today),
                 title: Text(
                   "Calendars",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   // TODO: why did you add both the pop and push?
@@ -79,14 +87,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EventCalendarScreen()));
+                          builder: (context) => TabBarLayoutCalendar()));
                 },
               ),
               ListTile(
                 leading: Icon(Icons.wb_sunny_outlined),
                 title: Text(
                   "Weather & Forecast",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -108,7 +120,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       style: new TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: bordaGreen,
+                        color: Colors.black,
                       ),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () {
@@ -138,7 +150,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 leading: Icon(Icons.settings),
                 title: Text(
                   "Settings",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   Navigator.push(

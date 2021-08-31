@@ -129,7 +129,7 @@ class _HotdeskScreen extends State {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(height: 430, width: 350, child: _getBooking()),
+                  Container(height: 380, width: 350, child: _getBooking()),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -247,6 +247,10 @@ class _HotdeskScreen extends State {
               _SentInformRequest();
             },
           ),
+
+
+          /*
+
           OutlinedButton(
             style: OutlinedButton.styleFrom(
                 side: BorderSide(color: bordaOrange),
@@ -259,6 +263,9 @@ class _HotdeskScreen extends State {
                   fontWeight: FontWeight.w500,
                 )),
           ),
+
+          */
+
         ],
       ),
     );

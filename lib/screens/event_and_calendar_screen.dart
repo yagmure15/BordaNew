@@ -1,14 +1,29 @@
-import 'package:bordatech/models/event_model.dart';
+import 'dart:async';
+
+import 'package:bordatech/httprequests/events/event_model.dart';
 import 'package:bordatech/models/user_model.dart';
 import 'package:bordatech/screens/birthday_calendar_screen.dart';
 import 'package:bordatech/screens/my_calendar_screen.dart';
 import 'package:bordatech/screens/office_res_calendar_screen.dart';
+import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as cnv;
+
 
 final Random random = Random();
+String? _subjectText = '',
+    _startTimeText = '',
+    _endTimeText = '',
+    _dateText = '',
+    _timeDetails = '';
+Color? _headerColor, _viewHeaderColor, _calendarColor;
 
 final List<Color> colorCollection = <Color>[
   Color(0xFFa31449),
@@ -22,6 +37,11 @@ final List<Color> colorCollection = <Color>[
   Color(0xFFFC571D)
 ];
 
+
+
+final CalendarController _calendarController = CalendarController();
+List<EventOrganizationModel>? _eventList;
+
 class EventCalendarScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -30,6 +50,65 @@ class EventCalendarScreen extends StatefulWidget {
 }
 
 class _EventCalendarScreenState extends State<EventCalendarScreen> {
+  String userId = "";
+  String officeId = "";
+  String? userToken;
+  Future? kullanicilar;
+  Future? api;
+
+  Future<void> getAllEvents() async {
+    setState(() {});
+
+    final String apiUrl = Constants.HTTPURL + "/getAll";
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+    if (response.statusCode == 200) {
+      final String responsString = response.body;
+      List<dynamic> body = cnv.jsonDecode(responsString);
+
+
+
+      setState(() {
+        _eventList =
+            body.map((dynamic item) => EventOrganizationModel.fromJson(item)).toList();
+      });
+
+
+    } else {
+      return null;
+    }
+
+    print("STATUS CODE FOR EVENTS " + response.statusCode.toString());
+  }
+  Future<void> getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    userId = pref.getString("userID").toString();
+    officeId = pref.getInt("officeId").toString();
+    userToken = pref.getString("token").toString();
+    setState(() {});
+  }
+  @override
+  void initState() {
+    super.initState();
+    _calendarController.view = CalendarView.timelineWeek;
+
+    getuserInfo();
+    Timer(Duration(milliseconds: 500), () {
+      getAllEvents();
+
+
+
+    });
+
+
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,23 +230,100 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
               padding: EdgeInsets.all(8),
               width: MediaQuery.of(context).size.width,
               height: (MediaQuery.of(context).size.height) * 0.8,
-              child: getCalendar(reservations: _getEvents()),
+              child: getCalendar(
+                  context: context,
+                  reservations: _getAppointmentDetails()),
             ),
           ],
         ),
-      ),
-    );
+      ) ,
+      );
+
+
   }
 }
 
-SfCalendar getCalendar({DataSource? reservations, dynamic scheduleViewBuider}) {
+SfCalendar getCalendar({required BuildContext context, DataSource? reservations, dynamic scheduleViewBuider}) {
   List<CalendarView> _allowedViews = <CalendarView>[
     CalendarView.day,
     CalendarView.week,
     CalendarView.month,
   ];
 
+  void calendarTapped(CalendarTapDetails details) {
+    if (details.targetElement == CalendarElement.appointment ||
+        details.targetElement == CalendarElement.agenda) {
+      final Appointment appointmentDetails = details.appointments![0];
+      _subjectText = appointmentDetails.subject;
+      _dateText = DateFormat('MMMM dd, yyyy')
+          .format(appointmentDetails.startTime)
+          .toString();
+      _startTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.startTime).toString();
+      _endTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.endTime).toString();
+      if (appointmentDetails.isAllDay) {
+        _timeDetails = 'All day';
+      } else {
+        _timeDetails = '$_startTimeText - $_endTimeText';
+      }
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Container(child: new Text('$_subjectText')),
+              content: Container(
+                height: 80,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          '$_dateText',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(''),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(_timeDetails!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15)),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(appointmentDetails.notes.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15)),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: new Text('close'))
+              ],
+            );
+          });
+    }
+  }
+
+
   return SfCalendar(
+    controller: _calendarController,
     allowedViews: _allowedViews,
     monthViewSettings: MonthViewSettings(
       showAgenda: true,
@@ -179,6 +335,7 @@ SfCalendar getCalendar({DataSource? reservations, dynamic scheduleViewBuider}) {
       dayFormat: 'EEE',
     ),
     view: CalendarView.month,
+    onTap: calendarTapped,
     dataSource: reservations,
     showDatePickerButton: true,
     timeSlotViewSettings: TimeSlotViewSettings(
@@ -195,45 +352,38 @@ class DataSource extends CalendarDataSource {
   }
 }
 
-DataSource _getEvents() {
-  final List<EventModel> subjectCollection = <EventModel>[
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-24T18:30:37.773Z",
-        endDay: "2021-08-24T20:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{1F3C6}"),
-    EventModel(
-        eventType: "Celebration \u{1F37A}",
-        startDay: "2021-08-29T18:30:37.773Z",
-        endDay: "2021-08-29T20:30:37.773Z",
-        note: "Let's celebrate the Milestone! \{u1F451 }"),
-    EventModel(
-        eventType: "Meeting \u{1F37A}",
-        startDay: "2021-08-20T14:30:37.773Z",
-        endDay: "2021-08-20T15:45:37.773Z",
-        note: "Coffee Time \u{1F37A}"),
-    EventModel(
-        eventType: "Competition \u{1F3C6}",
-        startDay: "2021-08-28T10:30:37.773Z",
-        endDay: "2021-08-28T13:30:37.773Z",
-        note: "join the frisbee! May be the best team win! \{u1F451 }"),
-  ];
+DataSource _getAppointmentDetails() {
+
 
   final List<Appointment> events = <Appointment>[];
 
-  for (int i = 0; i < subjectCollection.length; i++) {
-    DateTime start = DateTime.parse(subjectCollection[i].startDay);
-    DateTime end = DateTime.parse(subjectCollection[i].endDay);
+  for (int i = 0; i < _eventList!.length; i++) {
+    DateTime start = DateTime.parse(_eventList![i].startDate.toIso8601String());
+    DateTime end = DateTime.parse(_eventList![i].endDate.toIso8601String());
     // added recurrence appointment
+
     events.add(
       Appointment(
-        subject: subjectCollection[i].eventType,
+
+        subject: _sbj(_eventList![i].eventType) ,
         startTime: start,
         endTime: end,
         color: colorCollection[random.nextInt(9)],
-        notes: subjectCollection[i].note,
+        notes: _eventList![i].organizer.toString() + "  \n" + _eventList![i].toString() ,
+
       ),
     );
   }
   return DataSource(events);
+}
+
+_sbj(int i) {
+  if (i == 0){
+    return "Competition";
+  }else  if (i == 1){
+    return "Meeting";
+  }else {
+    return "Celebration";
+  }
+
 }

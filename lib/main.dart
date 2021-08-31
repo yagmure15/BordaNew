@@ -1,17 +1,22 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:bordatech/provider/theme_notifier.dart';
-import 'package:bordatech/screens/deneme.dart';
+import 'package:bordatech/screens/dashboard_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
-import 'package:bordatech/utils/user_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/terms_privacy_screen.dart';
 import 'package:bordatech/screens/login_screen.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:async';
+import 'package:after_layout/after_layout.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String finalEmail = "null";
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
     "high_important_channel", "High Important Channel", "description",
@@ -24,8 +29,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
 
-
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  /* final SharedPreferences prefs = await SharedPreferences.getInstance();
+  @override
+  var x = (prefs.getBool('isLoggedIn') == null)
+      ? false
+      : prefs.getBool('isLoggedIn');
+  isLoggedin = x; */
+  SystemChrome.setEnabledSystemUIOverlays(
+      [SystemUiOverlay.bottom, SystemUiOverlay.top]);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -50,28 +63,36 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ThemeColorData>(
-        create: (BuildContext context) => ThemeColorData(),
-        builder: (context, _ ) {
-          Provider.of<ThemeColorData>(context).loadThemeFromSharedPref();
-          return MaterialApp(
-
-            theme: Provider.of<ThemeColorData>(context).themeColor,
-            debugShowCheckedModeBanner: false,
-            home: WelcomeScreen(),
-          );
-        });
+      create: (BuildContext context) => ThemeColorData(),
+      builder: (context, _) {
+        Provider.of<ThemeColorData>(context).loadThemeFromSharedPref();
+        return MaterialApp(
+          theme: Provider.of<ThemeColorData>(context).themeColor,
+          debugShowCheckedModeBanner: false,
+          home: AnimatedSplashScreen(
+            splash: Image.asset("assets/bordaiot.png"),
+            nextScreen: Splash(),
+            splashTransition: SplashTransition.rotationTransition,
+            backgroundColor: bordaSoftGreen,
+            duration: 800,
+            animationDuration: Duration(milliseconds: 1500),
+          ),
+        );
+      },
+    );
   }
 }
 
-class WelcomeScreen extends StatefulWidget {
+class Splash extends StatefulWidget {
   @override
-  _WelcomeScreenState createState() => _WelcomeScreenState();
+  SplashState createState() => new SplashState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
   @override
   void initState() {
     super.initState();
+    getuserInfo();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -112,9 +133,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             });
       }
     });
+  }
 
+  void getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
 
-
+    setState(() {
+      finalEmail = pref.getString("email").toString();
+    });
+    print(finalEmail);
   }
 
   void showNotification() {
@@ -131,6 +158,55 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 icon: "@mipmap/ic_launcher")));
   }
 
+  Future<void> _handleStartScreen() async {
+    if (finalEmail == "null") {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    } else {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => DashboardScreen()));
+    }
+  }
+
+  Future checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('seen') ?? false);
+    //String userId = prefs.getString("userID").toString();
+    //bool isLoggedin = (userId == "userID") ? false : true;
+    //print(isLoggedin);
+    // isLoggedin = true;
+
+    if (_seen) {
+      _handleStartScreen();
+    } else {
+      await prefs.setBool('seen', true);
+      Navigator.of(context).pushReplacement(
+          new MaterialPageRoute(builder: (context) => new IntroScreen()));
+    }
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) =>
+      Timer(Duration(milliseconds: 300), checkFirstSeen);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Center(
+        /* child: Text(
+          "Loading...",
+          style: TextStyle(
+            fontSize: 24,
+            color: bordaOrange,
+          ),
+        ), */
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,11 +215,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+              padding: const EdgeInsets.only(
+                  right: 30, left: 30, bottom: 40, top: 60),
               child: Center(
                 child: Container(
-                  width: 140,
-                  height: 100,
+                  width: MediaQuery.of(context).size.width,
+                  height: 60,
                   child: Image(
                     image: AssetImage("assets/bordaiot.png"),
                   ),
@@ -182,10 +259,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               padding: const EdgeInsets.only(
                   left: 80, right: 80, top: 30, bottom: 0),
               child: ElevatedButton(
-
                 child: Container(
-                  margin:
-                      EdgeInsets.only(top: 10, bottom: 10, right: 40, left: 40),
+                  /* margin:
+                      EdgeInsets.only(top: 10, bottom: 10, right: 40, left: 40), */
+                  width: MediaQuery.of(context).size.width - 80,
                   child: Text(
                     "Continue",
                     style: TextStyle(
@@ -197,7 +274,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
                 style: ButtonStyle(
-
                   backgroundColor: MaterialStateProperty.all(Colors.white),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
@@ -223,7 +299,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 left: 90,
                 right: 90,
                 top: 30,
-                bottom: 0,
+                bottom: 40,
               ),
               child: RichText(
                 text: TextSpan(

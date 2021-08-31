@@ -10,6 +10,7 @@ import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +30,15 @@ enum allMonths {
   december
 }
 
+String? _subjectText = '',
+    _startTimeText = '',
+    _endTimeText = '',
+    _dateText = '',
+    _timeDetails = '';
+Color? _headerColor, _viewHeaderColor, _calendarColor;
+
 List<Birthdays>? _birthdaysList;
+final CalendarController _calendarController = CalendarController();
 
 String _getMonthDate(int month) {
   var enumMonth = allMonths.values[month - 1];
@@ -93,8 +102,8 @@ class _BirthdayCalendarScreenState extends State<BirthdayCalendarScreen> {
   void initState() {
     super.initState();
 
-    getuserInfo();
-    Timer(Duration(milliseconds: 200), () {
+      getuserInfo();
+    Timer(Duration(milliseconds: 500), () {
       getBirthdaysForAllEmplooyes();
 
       _showToast(_birthdaysList![1].fullName.toString());
@@ -228,7 +237,7 @@ class _BirthdayCalendarScreenState extends State<BirthdayCalendarScreen> {
                         padding: EdgeInsets.all(8),
                         width: MediaQuery.of(context).size.width,
                         height: (MediaQuery.of(context).size.height) * 0.8,
-                        child: getScheduleViewCalendar(reservations: _getBirthdays()),
+                        child: getScheduleViewCalendar(context: context ,reservations: _getBirthdays()),
                       ),
                     ],
                   ),
@@ -236,19 +245,91 @@ class _BirthdayCalendarScreenState extends State<BirthdayCalendarScreen> {
 
     );
   }
+
+
 }
 
-SfCalendar getScheduleViewCalendar({DataSource? reservations, dynamic scheduleViewBuilder}) {
+SfCalendar getScheduleViewCalendar({required BuildContext context, DataSource? reservations, dynamic scheduleViewBuilder}) {
   List<CalendarView> _allowedViews = <CalendarView>[
     CalendarView.month,
     CalendarView.schedule
   ];
+
+  void calendarTapped(CalendarTapDetails details) {
+    if (details.targetElement == CalendarElement.appointment ||
+        details.targetElement == CalendarElement.agenda) {
+      final Appointment appointmentDetails = details.appointments![0];
+      _subjectText = appointmentDetails.subject;
+      _dateText = DateFormat('MMMM dd, yyyy')
+          .format(appointmentDetails.startTime)
+          .toString();
+      _startTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.startTime).toString();
+      _endTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.endTime).toString();
+      if (appointmentDetails.isAllDay) {
+        _timeDetails = 'All day';
+      } else {
+        _timeDetails = '$_startTimeText - $_endTimeText';
+      }
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Container(child: new Text('$_subjectText')),
+              content: Container(
+                height: 80,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          '$_dateText',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(''),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(_timeDetails!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15)),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: new Text('close'))
+              ],
+            );
+          });
+    }
+  }
+
+
+
+
   return SfCalendar(
+    controller: _calendarController,
     allowedViews: _allowedViews,
     monthViewSettings: MonthViewSettings(
       showAgenda: true,
       agendaViewHeight: 200,
       agendaItemHeight: 50,
+
       appointmentDisplayCount: 10,
       showTrailingAndLeadingDates: false,
       numberOfWeeksInView: 5,
@@ -257,6 +338,7 @@ SfCalendar getScheduleViewCalendar({DataSource? reservations, dynamic scheduleVi
     view: CalendarView.schedule,
     dataSource: reservations,
     showDatePickerButton: true,
+    onTap: calendarTapped,
     /* scheduleViewSettings: ScheduleViewSettings(
       hideEmptyScheduleWeek: true,
     ), */
@@ -296,7 +378,6 @@ SfCalendar getScheduleViewCalendar({DataSource? reservations, dynamic scheduleVi
 
 
 
-
 }
 
 class DataSource extends CalendarDataSource {
@@ -331,3 +412,41 @@ DataSource _getBirthdays() {
 void _showToast(S) {
   Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
 }
+void _showEventDetails(BuildContext context, String str) {
+
+  showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: Material(
+            type: MaterialType.transparency,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                padding: EdgeInsets.all(0),
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: MediaQuery.of(context).size.height * 0.85,
+                child: Container(
+                    child: InteractiveViewer(
+                      maxScale: 100.2,
+                      minScale: 0.2,
+                      child: Text(str,style: TextStyle(fontSize: 20),),
+
+                    )
+
+
+
+
+
+                ),
+              ),
+            ),
+          ),
+        );
+      });
+}
+
