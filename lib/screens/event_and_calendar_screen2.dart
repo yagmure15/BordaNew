@@ -16,7 +16,6 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as cnv;
 
-
 final Random random = Random();
 String? _subjectText = '',
     _startTimeText = '',
@@ -37,26 +36,24 @@ final List<Color> colorCollection = <Color>[
   Color(0xFFFC571D)
 ];
 
-
-
 final CalendarController _calendarController = CalendarController();
 List<EventOrganizationModel>? _eventList;
 
-class EventCalendarScreen extends StatefulWidget {
+class EventCalendarScreen2 extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _EventCalendarScreenState();
+    return _EventCalendarScreenState2();
   }
 }
 
-class _EventCalendarScreenState extends State<EventCalendarScreen> {
+class _EventCalendarScreenState2 extends State<EventCalendarScreen2> {
   String userId = "";
   String officeId = "";
   String? userToken;
-  Future? kullanicilar;
-  Future? api;
+  Future? allEvents;
 
   Future<void> getAllEvents() async {
+    await getuserInfo();
     setState(() {});
 
     final String apiUrl = Constants.HTTPURL + "/getAll";
@@ -72,20 +69,18 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
       final String responsString = response.body;
       List<dynamic> body = cnv.jsonDecode(responsString);
 
-
-
       setState(() {
-        _eventList =
-            body.map((dynamic item) => EventOrganizationModel.fromJson(item)).toList();
+        _eventList = body
+            .map((dynamic item) => EventOrganizationModel.fromJson(item))
+            .toList();
       });
-
-
     } else {
       return null;
     }
 
     print("STATUS CODE FOR EVENTS " + response.statusCode.toString());
   }
+
   Future<void> getuserInfo() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     userId = pref.getString("userID").toString();
@@ -93,157 +88,47 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
     userToken = pref.getString("token").toString();
     setState(() {});
   }
+
   @override
   void initState() {
     super.initState();
-    _calendarController.view = CalendarView.timelineWeek;
+    _calendarController.view = CalendarView.month;
 
-    getuserInfo();
-    Timer(Duration(milliseconds: 500), () {
-      getAllEvents();
-
-
-
-    });
-
-
-
+    allEvents = getAllEvents();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bordaSoftGreen,
-      appBar: AppBar(
-        leading: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Image.asset('assets/return.png')),
-        title: Text('Calendars'),
-        backgroundColor: bordaGreen,
-        centerTitle: true,
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height / 70,
-              ),
-              height: MediaQuery.of(context).size.height / 15,
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EventCalendarScreen()));
-                    },
-                    child: Column(
-                      children: [
-                        Text(
-                          "Events",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: bordaOrange),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 1),
-                          height: 2,
-                          width: 45,
-                          color: Colors.orange[800],
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BirthdayCalendarScreen()));
-                    },
-                    child: Column(
-                      children: [
-                        Text(
-                          "Birthdays",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white30),
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyCalendarScreen()));
-                    },
-                    child: Column(
-                      children: [
-                        Text(
-                          "My Calendar",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white30),
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => OfficeCalendarScreen()));
-                    },
-                    child: Column(
-                      children: [
-                        Text(
-                          "Office Calendar",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white30),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
+      body: FutureBuilder(
+        future: allEvents,
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+
+          if(snapshot.connectionState != ConnectionState.done){
+
+            return Center(child: CircularProgressIndicator(),);
+          }else {
+            return Container(
               padding: EdgeInsets.all(8),
               width: MediaQuery.of(context).size.width,
-              height: (MediaQuery.of(context).size.height) * 0.8,
+              height: (MediaQuery.of(context).size.height) * 0.80,
               child: getCalendar(
-                  context: context,
-                  reservations: _getAppointmentDetails()),
-            ),
-          ],
-        ),
-      ) ,
-      );
+                  context: context, reservations: _getAppointmentDetails()),
+            );
+          }
 
 
+        },
+      ),
+    );
   }
 }
 
-SfCalendar getCalendar({required BuildContext context, DataSource? reservations, dynamic scheduleViewBuider}) {
+SfCalendar getCalendar(
+    {required BuildContext context,
+    DataSource? reservations,
+    dynamic scheduleViewBuider}) {
   List<CalendarView> _allowedViews = <CalendarView>[
     CalendarView.day,
     CalendarView.week,
@@ -273,7 +158,7 @@ SfCalendar getCalendar({required BuildContext context, DataSource? reservations,
             return AlertDialog(
               title: Container(child: new Text('$_subjectText')),
               content: Container(
-                height: 80,
+                height: MediaQuery.of(context).size.height/3,
                 child: Column(
                   children: <Widget>[
                     Row(
@@ -321,7 +206,6 @@ SfCalendar getCalendar({required BuildContext context, DataSource? reservations,
     }
   }
 
-
   return SfCalendar(
     controller: _calendarController,
     allowedViews: _allowedViews,
@@ -353,8 +237,6 @@ class DataSource extends CalendarDataSource {
 }
 
 DataSource _getAppointmentDetails() {
-
-
   final List<Appointment> events = <Appointment>[];
 
   for (int i = 0; i < _eventList!.length; i++) {
@@ -364,13 +246,11 @@ DataSource _getAppointmentDetails() {
 
     events.add(
       Appointment(
-
-        subject: _sbj(_eventList![i].eventType) ,
+        subject: _sbj(_eventList![i].eventType),
         startTime: start,
         endTime: end,
         color: colorCollection[random.nextInt(9)],
-        notes: _eventList![i].organizer.toString() + "  \n" + _eventList![i].toString() ,
-
+        notes: _eventList![i].organizer.toString(),
       ),
     );
   }
@@ -378,12 +258,11 @@ DataSource _getAppointmentDetails() {
 }
 
 _sbj(int i) {
-  if (i == 0){
+  if (i == 0) {
     return "Competition";
-  }else  if (i == 1){
+  } else if (i == 1) {
     return "Meeting";
-  }else {
+  } else {
     return "Celebration";
   }
-
 }

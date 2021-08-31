@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as cnv;
+
 enum allMonths {
   january,
   february,
@@ -36,6 +37,7 @@ String? _subjectText = '',
     _dateText = '',
     _timeDetails = '';
 Color? _headerColor, _viewHeaderColor, _calendarColor;
+Future? getAllBirthdays;
 
 List<Birthdays>? _birthdaysList;
 final CalendarController _calendarController = CalendarController();
@@ -46,23 +48,23 @@ String _getMonthDate(int month) {
   return monthName;
 }
 
-class BirthdayCalendarScreen extends StatefulWidget {
+class BirthdayCalendarScreen2 extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _BirthdayCalendarScreenState();
+    return _BirthdayCalendarScreenState2();
   }
 }
 
-class _BirthdayCalendarScreenState extends State<BirthdayCalendarScreen> {
-
+class _BirthdayCalendarScreenState2 extends State<BirthdayCalendarScreen2> {
   String userId = "";
   String officeId = "";
   String? userToken;
   Future? kullanicilar;
-  Future?  api;
-
+  Future? api;
 
   Future<void> getBirthdaysForAllEmplooyes() async {
+    await getuserInfo();
+
     setState(() {});
 
     final String apiUrl = Constants.HTTPURL + "/api/Birthday/getAll";
@@ -80,176 +82,58 @@ class _BirthdayCalendarScreenState extends State<BirthdayCalendarScreen> {
 
       _birthdaysList =
           body.map((dynamic item) => Birthdays.fromJson(item)).toList();
-
-
-      _showToast("liste sayısı " + _birthdaysList!.length.toString());
-
     } else {
       return null;
     }
 
     print("STATUS CODE FOR BIRTHDAYS " + response.statusCode.toString());
-
   }
-  Future <void> getuserInfo() async {
+
+  Future<void> getuserInfo() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     userId = pref.getString("userID").toString();
     officeId = pref.getInt("officeId").toString();
     userToken = pref.getString("token").toString();
     setState(() {});
   }
-@override
+
+  @override
   void initState() {
     super.initState();
 
-      getuserInfo();
-    Timer(Duration(milliseconds: 500), () {
-      getBirthdaysForAllEmplooyes();
-
-      _showToast(_birthdaysList![1].fullName.toString());
-    });
-
-
-
-
-
+    getAllBirthdays = getBirthdaysForAllEmplooyes();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bordaSoftGreen,
-      appBar: AppBar(
-        leading: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Image.asset('assets/return.png')),
-        title: Text('Calendars'),
-        backgroundColor: bordaGreen,
-        centerTitle: true,
+      body: FutureBuilder(
+        future: getAllBirthdays,
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return Container(
+              padding: EdgeInsets.all(8),
+              width: MediaQuery.of(context).size.width,
+              height: (MediaQuery.of(context).size.height) * 0.8,
+              child: getScheduleViewCalendar(
+                  context: context, reservations: _getBirthdays()),
+            );
+          }
+        },
       ),
-      body: Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height / 70,
-                        ),
-                        height: MediaQuery.of(context).size.height / 15,
-                        width: MediaQuery.of(context).size.width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          //crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EventCalendarScreen()));
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Events",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white30),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => BirthdayCalendarScreen()));
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Birthdays",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                        color: bordaOrange),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 1),
-                                    height: 2,
-                                    width: 45,
-                                    color: Colors.orange[800],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MyCalendarScreen()));
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "My Calendar",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white30),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => OfficeCalendarScreen()));
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Office Calendar",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white30),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        width: MediaQuery.of(context).size.width,
-                        height: (MediaQuery.of(context).size.height) * 0.8,
-                        child: getScheduleViewCalendar(context: context ,reservations: _getBirthdays()),
-                      ),
-                    ],
-                  ),
-                ),
-
     );
   }
-
-
 }
 
-SfCalendar getScheduleViewCalendar({required BuildContext context, DataSource? reservations, dynamic scheduleViewBuilder}) {
+SfCalendar getScheduleViewCalendar(
+    {required BuildContext context,
+    DataSource? reservations,
+    dynamic scheduleViewBuilder}) {
   List<CalendarView> _allowedViews = <CalendarView>[
     CalendarView.month,
     CalendarView.schedule
@@ -319,9 +203,6 @@ SfCalendar getScheduleViewCalendar({required BuildContext context, DataSource? r
     }
   }
 
-
-
-
   return SfCalendar(
     controller: _calendarController,
     allowedViews: _allowedViews,
@@ -329,7 +210,6 @@ SfCalendar getScheduleViewCalendar({required BuildContext context, DataSource? r
       showAgenda: true,
       agendaViewHeight: 200,
       agendaItemHeight: 50,
-
       appointmentDisplayCount: 10,
       showTrailingAndLeadingDates: false,
       numberOfWeeksInView: 5,
@@ -374,10 +254,6 @@ SfCalendar getScheduleViewCalendar({required BuildContext context, DataSource? r
       );
     },
   );
-
-
-
-
 }
 
 class DataSource extends CalendarDataSource {
@@ -387,14 +263,13 @@ class DataSource extends CalendarDataSource {
 }
 
 DataSource _getBirthdays() {
-
   final List<Appointment> birthdays = <Appointment>[];
 
   for (int i = 0; i < _birthdaysList!.length; i++) {
-    DateTime bDay = DateTime.parse(_birthdaysList![i].birthday.toIso8601String());
+    DateTime bDay =
+        DateTime.parse(_birthdaysList![i].birthday.toIso8601String());
 
     String subject = "Today is ${_birthdaysList![i].fullName}'s birthday!";
-
 
     // added recurrence appointment
     birthdays.add(Appointment(
@@ -412,8 +287,8 @@ DataSource _getBirthdays() {
 void _showToast(S) {
   Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
 }
-void _showEventDetails(BuildContext context, String str) {
 
+void _showEventDetails(BuildContext context, String str) {
   showDialog(
       context: context,
       builder: (context) {
@@ -432,21 +307,16 @@ void _showEventDetails(BuildContext context, String str) {
                 height: MediaQuery.of(context).size.height * 0.85,
                 child: Container(
                     child: InteractiveViewer(
-                      maxScale: 100.2,
-                      minScale: 0.2,
-                      child: Text(str,style: TextStyle(fontSize: 20),),
-
-                    )
-
-
-
-
-
-                ),
+                  maxScale: 100.2,
+                  minScale: 0.2,
+                  child: Text(
+                    str,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                )),
               ),
             ),
           ),
         );
       });
 }
-
