@@ -26,7 +26,6 @@ bool _shouldIgnore = false;
 String name = "";
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
   _lockButton() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -45,7 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-@override
+  @override
   void initState() {
     super.initState();
     getuserInfo();
@@ -58,14 +57,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     //DateTime.parse because you can only save Strings locally.
     // .add Adds 12h to the date when the button was last pressed.
     var clickedDate = prefs.getString('lastPressed');
-    var _date= DateTime.parse(clickedDate!);
+    print(clickedDate);
+    var _date = DateTime.parse(clickedDate!);
     var currentDate = DateTime.now();
-    var nextDate = DateTime(_date.year ,_date.month, _date.day + 1);
-    if(currentDate.isBefore(nextDate)){
-      setState((){ _shouldIgnore = true; });
-    }
-    else {
-      setState((){ _shouldIgnore = false; });
+    var nextDate = DateTime(_date.year, _date.month, _date.day + 1);
+    if (currentDate.isBefore(nextDate)) {
+      setState(() {
+        _shouldIgnore = true;
+      });
+    } else {
+      setState(() {
+        _shouldIgnore = false;
+      });
     }
     print(_shouldIgnore);
   }
@@ -83,7 +86,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -97,22 +99,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               )),
         ),
-
         actions: <Widget>[
           IconButton(
-
             padding: EdgeInsets.only(right: 16, left: 16),
             icon: const Icon(Icons.notifications),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen()));
-
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NotificationScreen()));
             },
           ),
           // TODO: delete the pop up
         ],
       ),
       drawer: DrawerScreen(),
-
       body: _dashboardBody(),
       floatingActionButton: _animatedFloatingButton(),
     );
@@ -332,16 +333,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: <Widget>[
                     GestureDetector(
                       onTap: () {
-                        HttpServiceForNotification httpreq = new HttpServiceForNotification();
-                        httpreq.sendNotificationToAllUsers('Noise Alert', 'Someone has requested to reduce noise!', userToken!);
-                         },
+                        HttpServiceForNotification httpreq =
+                            new HttpServiceForNotification();
+                        httpreq.sendNotificationToAllUsers(
+                            'Noise Alert',
+                            'Someone has requested to reduce noise!',
+                            userToken!);
+                      },
                       child: CircleAvatar(
                         backgroundColor: Colors.orangeAccent,
                         radius: 25.0,
-                        child:Icon(
-                            Icons.volume_off,
-                          color: Colors.white
-                        ),
+                        child: Icon(Icons.volume_off, color: Colors.white),
                       ),
                     ),
                     SizedBox(
@@ -360,21 +362,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: <Widget>[
                     GestureDetector(
                       onTap: () {
-                        HttpServiceForNotification httpreq = new HttpServiceForNotification();
-                        httpreq.sendNotificationToAllUsers('Happy Hour', '$name has requested for a happy hour! Would you like to join $name?', userToken!);
+                        HttpServiceForNotification httpreq =
+                            new HttpServiceForNotification();
+                        httpreq.sendNotificationToAllUsers(
+                            'Happy Hour',
+                            '$name has requested for a happy hour! Would you like to join $name?',
+                            userToken!);
                         _lockButton();
                         checkShouldIgnore();
                         print(_shouldIgnore);
-                        },
+                      },
                       child: Visibility(
                         visible: _shouldIgnore ? false : true,
                         child: CircleAvatar(
                           backgroundColor: Colors.yellow,
                           radius: 25.0,
-                          child:Icon(
-                              Icons.wb_sunny_outlined,
-                            color: Colors.white
-                          ),
+                          child: Icon(Icons.wb_sunny_outlined,
+                              color: Colors.white),
                         ),
                       ),
                     ),
@@ -396,18 +400,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Column(
                   children: <Widget>[
                     GestureDetector(
-                      onTap: (){
-                        _showToast("You have already requested happy hour today!");
+                      onTap: () {
+                        _showToast(
+                            "You have already requested happy hour today!");
                       },
                       child: Visibility(
                         visible: _shouldIgnore ? true : false,
                         child: CircleAvatar(
                           backgroundColor: Colors.white38,
                           radius: 25.0,
-                          child:Icon(
-                              Icons.wb_sunny_outlined,
-                              color: Colors.black
-                          ),
+                          child: Icon(Icons.wb_sunny_outlined,
+                              color: Colors.black),
                         ),
                       ),
                     ),

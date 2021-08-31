@@ -3,56 +3,57 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeColorData extends ChangeNotifier{
+class ThemeColorData extends ChangeNotifier {
   SharedPreferences? _pref;
 
   bool _isDark = false;
 
-  bool get isDark => _isDark;
+  bool get isDark {
+    return _isDark;
+  }
+
   ThemeData get themeColor {
     return _isDark ? lightTheme : darkTheme;
   }
 
-  void toggleTheme(){
-
+  void toggleTheme() {
     _isDark = !_isDark;
     saveThemeToSharedPref(_isDark);
-      notifyListeners();
+    notifyListeners();
+  }
+
+  void decideCard() {
+    if (_isDark == true) {
+      changeTColor();
+    } else {
+      backToNormal();
+    }
   }
 
   Future<void> createSharedPredObject() async {
     _pref = await SharedPreferences.getInstance();
   }
 
-  void saveThemeToSharedPref(bool value){
+  void saveThemeToSharedPref(bool value) {
     _pref!.setBool("theme", value);
   }
 
-  Future<void> loadThemeFromSharedPref() async{
- await createSharedPredObject();
-if(_pref!.getBool("theme") == null){
-
-  _isDark = true;
-
-}else {
-  _isDark = _pref!.getBool("theme")!;
+  Future<void> loadThemeFromSharedPref() async {
+    await createSharedPredObject();
+    if (_pref!.getBool("theme") == null) {
+      _isDark = true;
+    } else {
+      _isDark = _pref!.getBool("theme")!;
+    }
+  }
 }
-
-}
-
-
-
-}
-
-
 
 ThemeData darkTheme = ThemeData(
   scaffoldBackgroundColor: bordaSoftGreen,
   appBarTheme: AppBarTheme(backgroundColor: bordaGreen),
 );
 ThemeData lightTheme = ThemeData(
-  scaffoldBackgroundColor: Colors.green,
-  appBarTheme: AppBarTheme(backgroundColor: Colors.redAccent),
-
-
+  scaffoldBackgroundColor: Color(HexColor.toHexCode("#d3a9a3")),
+  appBarTheme:
+      AppBarTheme(backgroundColor: Color(HexColor.toHexCode("#bbc688"))),
 );

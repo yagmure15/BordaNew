@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:bordatech/provider/theme_notifier.dart';
 import 'package:flutter/material.dart';
 
 class HexColor {
@@ -11,12 +11,19 @@ class HexColor {
   }
 }
 
-
-
-
 var bordaGreen = Color(HexColor.toHexCode("#24343b"));
 var bordaOrange = Color(HexColor.toHexCode("#f0542d"));
 var bordaSoftGreen = Color(HexColor.toHexCode("#2a4449"));
 var yesil = Color(HexColor.toHexCode("#2a9d8f"));
 var sari = Color(HexColor.toHexCode("#e9c46a"));
 var turuncu = Color(HexColor.toHexCode("#6a4c93"));
+
+@override
+void changeTColor() {
+  bordaOrange = Color(HexColor.toHexCode("#d3a9a3"));
+}
+
+@override
+void backToNormal() {
+  bordaOrange = Color(HexColor.toHexCode("#f0542d"));
+}

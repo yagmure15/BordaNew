@@ -71,7 +71,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 leading: Icon(Icons.calendar_today),
                 title: Text(
                   "Calendars",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   // TODO: why did you add both the pop and push?
@@ -86,7 +90,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 leading: Icon(Icons.wb_sunny_outlined),
                 title: Text(
                   "Weather & Forecast",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -108,7 +116,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       style: new TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: bordaGreen,
+                        color: Colors.black,
                       ),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () {
@@ -138,7 +146,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 leading: Icon(Icons.settings),
                 title: Text(
                   "Settings",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 onTap: () {
                   Navigator.push(

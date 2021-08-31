@@ -13,7 +13,7 @@ class UpdatePasswordScreen extends StatefulWidget {
   _UpdatePasswordScreenState createState() => _UpdatePasswordScreenState();
 }
 
-String? userID, url , userToken;
+String? userID, url, userToken;
 
 class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   TextEditingController newPasswordController1 = TextEditingController();
@@ -45,7 +45,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
     } else {
       _showToast("You entered incorrectly");
     }
-
   }
 
   @override
@@ -62,22 +61,30 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
         backgroundColor: bordaGreen,
         centerTitle: true,
       ),
-      body: _passwordTextArea(),
+      body: SingleChildScrollView(
+        child: _passwordTextArea(),
+      ),
     );
   }
 
   Widget _passwordTextArea() {
     return Container(
-      margin: EdgeInsets.only(top: 10, right: 20, left: 20),
+      margin: EdgeInsets.symmetric(
+        vertical: 30,
+        horizontal: 20,
+      ),
       child: Column(
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Old Password",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 5),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Old Password",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
               ),
             ),
           ),
@@ -91,22 +98,25 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
               fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
               ),
               //labelText: 'Password',
               hintText: 'Enter your password!',
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 26,
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "New Password",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 5),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "New Password",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
               ),
             ),
           ),
@@ -120,14 +130,14 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
               fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
               ),
               //labelText: 'Password',
               hintText: 'Enter your new password!',
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 13,
           ),
           TextField(
             controller: newPasswordController2,
@@ -139,14 +149,14 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
               fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
               ),
               //labelText: 'Password',
               hintText: 'Enter your new password again!',
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 16,
           ),
           Container(
             child: MaterialButton(
@@ -154,22 +164,20 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
               color: Color(HexColor.toHexCode("#ff5a00")),
               child: Text("Change Password",
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     color: Colors.white,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                   )),
               onPressed: () {
+                if (newPasswordController1.text ==
+                    newPasswordController2.text) {
+                  postData(
+                      newPasswordController1.text, oldPasswordController.text);
 
-               if(newPasswordController1.text == newPasswordController2.text){
-                 postData(
-                     newPasswordController1.text, oldPasswordController.text);
-
-                 setState(() {}); 
-               }else{
-                 _showToast("your passwords do not match");
-               }
-               
-               
+                  setState(() {});
+                } else {
+                  _showToast("Your passwords do not match!");
+                }
               },
             ),
           ),

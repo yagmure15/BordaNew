@@ -1,11 +1,8 @@
 import 'dart:convert';
 
-
 import 'package:bordatech/httprequests/login/user_login_model.dart';
 import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
-import 'package:bordatech/utils/user_info.dart';
-import 'package:bordatech/utils/user_simple_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:bordatech/screens/dashboard_screen.dart';
@@ -22,28 +19,24 @@ void _showToast(S) {
   Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
 }
 
-Future<UserLoginModel?> postData(String email, String password, String fcmToken) async {
-
-  final String apiUrl = Constants.HTTPURL+"/api/users/login";
+Future<UserLoginModel?> postData(
+    String email, String password, String fcmToken) async {
+  final String apiUrl = Constants.HTTPURL + "/api/users/login";
 
   final response = await http.post(Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password, "FcmToken": fcmToken}));
-print(response.statusCode);
+      body: jsonEncode(
+          {"email": email, "password": password, "FcmToken": fcmToken}));
+  print(response.statusCode);
   if (response.statusCode == 201) {
     final String responsString = response.body;
     return userLoginModelFromJson(responsString);
   } else {
     return null;
   }
-
-  print("BODY : " + response.body);
-
-  print("STATUS CODE " + response.statusCode.toString());
 }
 
 class _LoginScreenScreenState extends State<LoginScreen> {
-  String _email = "";
   String _password = "";
   String? fcmToken;
 
@@ -139,11 +132,11 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                     String password = passwordController.text;
 
                     if (email.isEmpty && _password.isEmpty) {
-                      _showToast("Email ve Parola aralnı boş olamaz!");
+                      _showToast("Email and password cannot be empty!");
                     } else if (email.isEmpty) {
-                      _showToast("Email alanı boş olamaz!");
+                      _showToast("Email cannot be empty!!");
                     } else if (password.isEmpty) {
-                      _showToast("parola alanı boş olamaz!");
+                      _showToast("Password cannot be empty!");
                     } else {
                       final UserLoginModel? user =
                           await postData(email, password, fcmToken!);
@@ -153,21 +146,8 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                       });
 
                       if (_user == null) {
-                        _showToast("Kullanıcı adı veya Parola Geçersiz");
+                        _showToast("Email amd/or password is not correct!");
                       } else {
-
-                        /*
-                        UserInfo userinfo = UserInfo();
-                        userinfo.setAuthToken(_user!.token.toString());
-                        userinfo.setName(_user!.userResource.fullName);
-                        userinfo.setEmail(_user!.userResource.email);
-                        userinfo.setUserId(_user!.id);
-                        userinfo.setOfficeId(_user!.userResource.officeId);
-                        userinfo.setDepartmentId(_user!.userResource.departmentId);
-
-                        UserInfo.setuserName(" aa "+ _user!.userResource.fullName.toString());
-                        //
-                          */
                         setUserValues(
                           officeId: _user!.userResource.officeId,
                           ID: _user!.id.toString(),
@@ -178,9 +158,10 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         );
 
                         Navigator.of(context).pop();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardScreen()));
-
-
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DashboardScreen()));
                       }
                     }
                   },
@@ -194,44 +175,43 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 25,
-                      height: 25,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/fish.png"),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(bottom: 50),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 25,
+                        height: 25,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/fish.png"),
+                          ),
                         ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DashboardScreen()));
-                      },
-                      child: Text(
-                        'Forget Password',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 16,
+                      TextButton(
+                        onPressed: () {
+                          _showToast(
+                              "This feature is currently inactivated. Please contact with your IT Manager!");
+                        },
+                        child: Text(
+                          'Forget Password',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
-                    ),
-                  ]),
+                    ]),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
-
 
   Future<void> setUserValues({
     required String ID,
@@ -249,8 +229,4 @@ class _LoginScreenScreenState extends State<LoginScreen> {
     pref.setString("email", email);
     pref.setInt("officeId", officeId);
   }
-
-
-
-
 }
