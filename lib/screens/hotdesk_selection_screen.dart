@@ -220,7 +220,7 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                             height: 10,
                           ),
                           Text(
-                            "Rezervasyon Sahibi",
+                            "Reserved by",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,
@@ -240,7 +240,7 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                             height: 15,
                           ),
                           Text(
-                            "Rezervason Bilgileri",
+                            "Reservation Info",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,

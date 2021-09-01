@@ -76,7 +76,7 @@ class _MyCalendarScreenState2 extends State<MyCalendarScreen2> {
     setState(() { });
 
 
-    final String apiUrl = Constants.HTTPURL + "/api/users/$userId/reservations";
+    final String apiUrl = Constants.HTTPURL + "api/users/$userId/reservations";
 
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -94,7 +94,6 @@ class _MyCalendarScreenState2 extends State<MyCalendarScreen2> {
       });
 
 
-      print(_myCalendar!.hotDeskReservations[5].id.toString());
 
 
 
@@ -121,18 +120,12 @@ class _MyCalendarScreenState2 extends State<MyCalendarScreen2> {
     super.initState();
     getuserInfo();
 
-    Timer(Duration(milliseconds: 500), () {
+    Timer(Duration(milliseconds: 500), () {});
 
-
-    });
-
-getAllRes = getMyAllReservations();
-
+    getAllRes = getMyAllReservations();
 
 
   }
-
-
 
 
 
@@ -163,7 +156,6 @@ getAllRes = getMyAllReservations();
       ),
     );
   }
-
   SfCalendar getCalendar({required BuildContext context, DataSource? reservations, dynamic scheduleViewBuider}) {
     List<CalendarView> _allowedViews = <CalendarView>[
       CalendarView.day,
@@ -228,16 +220,12 @@ getAllRes = getMyAllReservations();
                         // Navigator.of(context).pop();
 
                         String str ="";
-                        ;
                         if(_subjectText == "Hotdesk Reservation"){
-
-
                           str = "/api/hotdesks/reservations/${appointmentDetails.id}/cancel";
                         }
                         removeBySelectedId(str);
                         Navigator.pop(context);
                         final String apiUrl = Constants.HTTPURL + "/api/users/$userId/reservations";
-
                         final response = await http.get(
                           Uri.parse(apiUrl),
                           headers: {
@@ -286,8 +274,6 @@ getAllRes = getMyAllReservations();
           timeRulerSize: 40),
     );
   }
-
-
   DataSource _getMyReservations() {
 
     final List<Appointment> myReservations = <Appointment>[];
@@ -352,7 +338,6 @@ getAllRes = getMyAllReservations();
   }
 
 }
-
 
 class DataSource extends CalendarDataSource {
   DataSource(List<Appointment> source) {

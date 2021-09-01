@@ -72,18 +72,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     print(_shouldIgnore);
   }
-
-/*
-
-    var deneme;
-  override
-  void initState() {
-    bool isDark = true;
-    isDark == true ? deneme = bordaOrange: deneme = bordaGreen;
-    super.initState();
-  }
-*/
-
+  
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

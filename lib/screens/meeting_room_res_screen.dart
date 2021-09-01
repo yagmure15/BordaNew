@@ -70,8 +70,11 @@ class _MeetingRoomScreen extends State {
     setState(() {});
 
     final String apiUrl = Constants.HTTPURL +
-        "/api/rooms/?officeId=" +
-        selectedOfficeId.toString();
+        "api/rooms?officeId=${selectedOfficeId.toString()}&roomType=0";
+
+    //VERİYİ ÇEKMEK İÇİN ALTTAKİ LİNK KULLANILACAK
+    //yUKARIDAKİ LİNK TÜM ODALARI GETİRİYOR AMA BİZE SADECE MEETING ROOM OLANLAR LAZIM
+    // "api/rooms?officeId=${selectedOfficeId.toString()}&roomType=0";
 
     final response = await http.get(
       Uri.parse(apiUrl),
