@@ -2,10 +2,7 @@
 
 
 import 'package:bordatech/httprequests/events/sf_calendar_example.dart';
-import 'package:bordatech/screens/birthday_calendar_screen.dart';
 import 'package:bordatech/screens/dashboard_screen.dart';
-import 'package:bordatech/screens/my_calendar_screen.dart';
-import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 

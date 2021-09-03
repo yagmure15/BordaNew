@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:bordatech/httprequests/events/event_model.dart';
 import 'package:bordatech/models/user_model.dart';
-import 'package:bordatech/screens/birthday_calendar_screen.dart';
-import 'package:bordatech/screens/my_calendar_screen.dart';
-import 'package:bordatech/screens/office_res_calendar_screen.dart';
+
 import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/cupertino.dart';

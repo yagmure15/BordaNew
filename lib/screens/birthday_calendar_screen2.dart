@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:bordatech/httprequests/birthdays/birthdays.dart';
 import 'package:bordatech/httprequests/meetingroom/all_emplooyes.dart';
 import 'package:bordatech/models/birthday_model.dart';
-import 'package:bordatech/screens/event_and_calendar_screen.dart';
-import 'package:bordatech/screens/my_calendar_screen.dart';
-import 'package:bordatech/screens/office_res_calendar_screen.dart';
 import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as cnv;
+
+import 'event_and_calendar_screen2.dart';
 
 enum allMonths {
   january,
