@@ -1,9 +1,9 @@
-import 'package:bordatech/screens/birthday_calendar_screen.dart';
-import 'package:bordatech/screens/event_and_calendar_screen.dart';
-import 'package:bordatech/screens/my_calendar_screen.dart';
+
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import 'event_and_calendar_screen2.dart';
 
 class OfficeCalendarScreen2 extends StatefulWidget {
   @override

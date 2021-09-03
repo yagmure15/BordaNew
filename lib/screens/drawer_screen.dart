@@ -1,6 +1,5 @@
 import 'package:bordatech/main.dart';
-import 'package:bordatech/screens/event_and_calendar_screen.dart';
-import 'package:bordatech/screens/office_res_calendar_screen.dart';
+
 import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/screens/tabbarcalendar.dart';
 import 'package:bordatech/screens/weather_screen.dart';
@@ -165,3 +164,23 @@ class _DrawerScreenState extends State<DrawerScreen> {
     setState(() {});
   }
 }
+_showSnackBar(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      "\u{1F389}  " + msg,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      textAlign: TextAlign.left,
+    ),
+    action: SnackBarAction(
+      label: "OK",
+      textColor: Colors.white,
+      disabledTextColor: Colors.deepPurple,
+      onPressed: () {},
+    ),
+    backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+  ));
+}
+

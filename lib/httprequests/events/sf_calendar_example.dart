@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:bordatech/models/user_model.dart';
-import 'package:bordatech/screens/birthday_calendar_screen.dart';
-import 'package:bordatech/screens/my_calendar_screen.dart';
-import 'package:bordatech/screens/office_res_calendar_screen.dart';
+import 'package:bordatech/screens/birthday_calendar_screen2.dart';
 import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/material.dart';
@@ -161,7 +159,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => BirthdayCalendarScreen()));
+                              builder: (context) => BirthdayCalendarScreen2()));
                     },
                     child: Column(
                       children: [
@@ -181,7 +179,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MyCalendarScreen()));
+                              builder: (context) => BirthdayCalendarScreen2()));
                     },
                     child: Column(
                       children: [
@@ -201,7 +199,7 @@ class _EventCalendarScreenState extends State<EventCalendarScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => OfficeCalendarScreen()));
+                              builder: (context) => BirthdayCalendarScreen2()));
                     },
                     child: Column(
                       children: [
