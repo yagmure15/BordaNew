@@ -1,6 +1,7 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:bordatech/provider/theme_notifier.dart';
 import 'package:bordatech/screens/dashboard_screen.dart';
+import 'package:bordatech/screens/register.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -31,12 +32,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  /* final SharedPreferences prefs = await SharedPreferences.getInstance();
-  @override
-  var x = (prefs.getBool('isLoggedIn') == null)
-      ? false
-      : prefs.getBool('isLoggedIn');
-  isLoggedin = x; */
   SystemChrome.setEnabledSystemUIOverlays(
       [SystemUiOverlay.bottom, SystemUiOverlay.top]);
   WidgetsFlutterBinding.ensureInitialized();
@@ -231,7 +226,7 @@ class IntroScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: Container(
                 child: Text(
-                  'Welcome to Borda Smart App',
+                  'Welcome to Fora',
                   style: TextStyle(
                     color: bordaOrange,
                     fontSize: 30,
@@ -288,6 +283,7 @@ class IntroScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
+                      //builder: (context) => RegisterScreen(),
                       builder: (context) => LoginScreen(),
                     ),
                   );

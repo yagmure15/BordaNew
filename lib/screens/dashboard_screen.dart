@@ -86,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     print(_shouldIgnore);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

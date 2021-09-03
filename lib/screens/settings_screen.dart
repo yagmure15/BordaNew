@@ -107,6 +107,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
+            Center(
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 20),
+                width: 28,
+                height: 28,
+                decoration: new BoxDecoration(
+                  color: bordaOrange,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
             Container(
               width: MediaQuery.of(context).size.width - 40,
               height: 40,
@@ -149,17 +160,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            Center(
-              child: Container(
-                margin: EdgeInsets.symmetric(vertical: 20),
-                width: 28,
-                height: 28,
-                decoration: new BoxDecoration(
-                  color: bordaOrange,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
             Container(
               width: MediaQuery.of(context).size.width - 40,
               height: 40,
@@ -188,7 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            Container(
+            /* Container(
               width: MediaQuery.of(context).size.width - 40,
               height: 40,
               padding: EdgeInsets.symmetric(
@@ -217,7 +217,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
               ),
-            ),
+            ), */
             Container(
               width: MediaQuery.of(context).size.width - 40,
               height: 40,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bordatech/httprequests/login/user_login_model.dart';
+import 'package:bordatech/screens/register.dart';
 import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -37,6 +38,16 @@ Future<UserLoginModel?> postData(
 }
 
 class _LoginScreenScreenState extends State<LoginScreen> {
+  var userToken;
+  void getuserInfo() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      userToken = pref.getString("token").toString();
+    });
+    print(userToken);
+  }
+
   String _password = "";
   String? fcmToken;
 
@@ -53,6 +64,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     getToken();
+    getuserInfo();
   }
 
   @override
@@ -146,7 +158,14 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                       });
 
                       if (_user == null) {
-                        _showToast("Email amd/or password is not correct!");
+                        _showToast("Email or password is not correct!");
+                      } else if (userToken == null) {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    RegisterScreen(email, password)));
                       } else {
                         setUserValues(
                           officeId: _user!.userResource.officeId,
@@ -157,7 +176,6 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                           expiration: _user!.expiration.toString(),
                         );
 
-                        Navigator.of(context).pop();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -175,7 +193,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              Container(
+              /* Container(
                 width: MediaQuery.of(context).size.width,
                 margin: EdgeInsets.only(bottom: 50),
                 child: Row(
@@ -205,7 +223,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ]),
-              ),
+              ), */
             ],
           ),
         ),
