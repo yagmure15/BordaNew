@@ -234,6 +234,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   final SharedPreferences shPref =
                       await SharedPreferences.getInstance();
                   shPref.remove("email");
+                  shPref.remove("token");
                   Navigator.push(context,
                       MaterialPageRoute(builder: (_) => LoginScreen()));
                 },

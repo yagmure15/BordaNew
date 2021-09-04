@@ -20,36 +20,47 @@ void _showToast(S) {
   Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
 }
 
-Future<UserLoginModel?> postData(
-    String email, String password, String fcmToken) async {
-  final String apiUrl = Constants.HTTPURL + "/api/users/login";
-
-  final response = await http.post(Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(
-          {"email": email, "password": password, "FcmToken": fcmToken}));
-  print(response.statusCode);
-  if (response.statusCode == 201) {
-    final String responsString = response.body;
-    return userLoginModelFromJson(responsString);
-  } else {
-    return null;
-  }
-}
-
 class _LoginScreenScreenState extends State<LoginScreen> {
-  var userToken;
-  void getuserInfo() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-
-    setState(() {
-      userToken = pref.getString("token").toString();
-    });
-    print(userToken);
-  }
-
   String _password = "";
   String? fcmToken;
+  var isHaveEmail;
+
+  Future<UserLoginModel?> postData(
+      String email, String password, String fcmToken) async {
+    final String apiUrl = Constants.HTTPURL + "/api/users/login";
+
+    final response = await http.post(Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(
+            {"email": email, "password": password, "FcmToken": fcmToken}));
+    print(response.statusCode);
+    if (response.statusCode > 199 && response.statusCode < 300) {
+      final String results = response.body;
+      return userLoginModelFromJson(results);
+    } else {
+
+      return null;
+    }
+  }
+
+  Future<void> postData2(
+      String email, String password, String fcmToken) async {
+    final String apiUrl = Constants.HTTPURL + "/api/users/login";
+
+    final response = await http.post(Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(
+            {"email": email, "password": password, "FcmToken": fcmToken}));
+    print(response.statusCode);
+    if (response.statusCode > 199 && response.statusCode < 300) {
+      var res = jsonDecode(response.body);
+
+      isHaveEmail = res["email"].toString();
+
+    } else {
+
+    }
+  }
 
   getToken() async {
     this.fcmToken = await FirebaseMessaging.instance.getToken();
@@ -64,7 +75,6 @@ class _LoginScreenScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     getToken();
-    getuserInfo();
   }
 
   @override
@@ -158,15 +168,10 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                       });
 
                       if (_user == null) {
-                        _showToast("Email or password is not correct!");
-                      } else if (userToken == null) {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    RegisterScreen(email, password)));
+                        _showToast("Email amd/or password is not correct!");
                       } else {
+
+                        print("USERSSSS" + _user!.expiration.toString());
                         setUserValues(
                           officeId: _user!.userResource.officeId,
                           ID: _user!.id.toString(),
@@ -176,6 +181,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                           expiration: _user!.expiration.toString(),
                         );
 
+                        Navigator.of(context).pop();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -193,7 +199,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              /* Container(
+              Container(
                 width: MediaQuery.of(context).size.width,
                 margin: EdgeInsets.only(bottom: 50),
                 child: Row(
@@ -223,7 +229,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ]),
-              ), */
+              ),
             ],
           ),
         ),

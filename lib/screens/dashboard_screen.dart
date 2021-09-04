@@ -118,8 +118,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
 
     var results = jsonDecode(response.body);
-    this.totalNumberOfHotDesks = results["totalNumberOfHotDesks"];
-    this.availableHotDesks = results["availableHotDesks"];
+    setState(() {
+      this.totalNumberOfHotDesks = results["totalNumberOfHotDesks"];
+      this.availableHotDesks = results["availableHotDesks"];
+    });
+
 
   }
 
@@ -141,8 +144,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       getMyAllReservations();
     });
-
-    print(str + "SİLİNDİ");
   }
 
   Future<void> getMyAllReservations() async {
@@ -164,7 +165,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
     } else {}
 
-    print("OOOOOOOOOOO" + response.statusCode.toString());
   }
 
   void checkOutTapped(BuildContext context, int id, String date) {
@@ -240,6 +240,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               backgroundColor: bordaOrange,
                               child: Icon(Icons.cancel),
                               onPressed: () async {
+
+                                setState(() {
+                                  totalNumberOfHotDesks;
+                                  availableHotDesks;
+                                });
                                 await removeBySelectedId(id.toString());
                                 Navigator.pop(context);
                               },
@@ -295,7 +300,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             "${element.numberOfPeoplePresent}/${element.capacity}",
             style: TextStyle(
                 fontSize: 16,
-                color: element.numberOfPeoplePresent == element.capacity
+                color: element.numberOfPeoplePresent >= element.capacity
                     ? Colors.red
                     : Colors.lightGreen),
           ));
@@ -339,6 +344,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     checkShouldIgnore();
     getOfficeInfo();
+
     getHotdeskInfo();
     officeFuture = getOfficeInfo();
     MeetingFuture = getMeetingRooms();
@@ -601,7 +607,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     SizedBox(height: 3),
                                     Text(
-                                      totalNumberOfHotDesks.toString() +"/" +availableHotDesks.toString() ,
+                                        (totalNumberOfHotDesks - availableHotDesks).toString() +"/" +totalNumberOfHotDesks.toString() ,
                                       style: TextStyle(
                                         color: totalNumberOfHotDesks == availableHotDesks ? Colors.red: Colors.lightGreen,
                                         fontSize: 17,
