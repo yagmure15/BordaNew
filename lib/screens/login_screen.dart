@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bordatech/httprequests/login/user_login_model.dart';
+import 'package:bordatech/screens/register.dart';
 import 'package:bordatech/utils/constants.dart';
 import 'package:bordatech/utils/hex_color.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -19,26 +20,47 @@ void _showToast(S) {
   Fluttertoast.showToast(msg: S.toString(), toastLength: Toast.LENGTH_SHORT);
 }
 
-Future<UserLoginModel?> postData(
-    String email, String password, String fcmToken) async {
-  final String apiUrl = Constants.HTTPURL + "/api/users/login";
-
-  final response = await http.post(Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(
-          {"email": email, "password": password, "FcmToken": fcmToken}));
-  print(response.statusCode);
-  if (response.statusCode == 201) {
-    final String responsString = response.body;
-    return userLoginModelFromJson(responsString);
-  } else {
-    return null;
-  }
-}
-
 class _LoginScreenScreenState extends State<LoginScreen> {
   String _password = "";
   String? fcmToken;
+  var isHaveEmail;
+
+  Future<UserLoginModel?> postData(
+      String email, String password, String fcmToken) async {
+    final String apiUrl = Constants.HTTPURL + "/api/users/login";
+
+    final response = await http.post(Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(
+            {"email": email, "password": password, "FcmToken": fcmToken}));
+    print(response.statusCode);
+    if (response.statusCode > 199 && response.statusCode < 300) {
+      final String results = response.body;
+      return userLoginModelFromJson(results);
+    } else {
+
+      return null;
+    }
+  }
+
+  Future<void> postData2(
+      String email, String password, String fcmToken) async {
+    final String apiUrl = Constants.HTTPURL + "/api/users/login";
+
+    final response = await http.post(Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(
+            {"email": email, "password": password, "FcmToken": fcmToken}));
+    print(response.statusCode);
+    if (response.statusCode > 199 && response.statusCode < 300) {
+      var res = jsonDecode(response.body);
+
+      isHaveEmail = res["email"].toString();
+
+    } else {
+
+    }
+  }
 
   getToken() async {
     this.fcmToken = await FirebaseMessaging.instance.getToken();
@@ -138,8 +160,9 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                     } else if (password.isEmpty) {
                       _showToast("Password cannot be empty!");
                     } else {
-                      final UserLoginModel? user =
-                          await postData(email, password, fcmToken!);
+                      var results = await postData(email, password, fcmToken!);
+                      /* final UserLoginModel? user =
+                          await postData(email, password, fcmToken!); */
 
                       setState(() {
                         _user = user;
@@ -148,6 +171,8 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                       if (_user == null) {
                         _showToast("Email amd/or password is not correct!");
                       } else {
+
+                        print("USERSSSS" + _user!.expiration.toString());
                         setUserValues(
                           officeId: _user!.userResource.officeId,
                           ID: _user!.id.toString(),
@@ -161,7 +186,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DashboardScreen()));
+                                builder: (context) => DashboardScreen())); */
                       }
                     }
                   },

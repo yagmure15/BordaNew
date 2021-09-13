@@ -58,7 +58,9 @@ Future<void> postNotifyRequest(
     print("BODY : " + response.body);
     Navigator.of(context).pop();
     _showSnackBar(context, "Reservation Created");
-  } else {}
+  } else if(response.statusCode == 400){
+    _showSnackBar(context, "Capacity is exceeded!");
+  }
 
   // print("STATUS CODE " + response.statusCode.toString());
 }

@@ -30,7 +30,7 @@ String officeId = "";
 String? userToken;
 int? selectedEventTypeId;
 String? eventStart, eventEnd;
-
+int requestCount = 0;
 class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
   Future<List<HotdeskModel>?> _getHotdesks() async {
     final String apiUrl = Constants.HTTPURL +
@@ -79,13 +79,19 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
       final String responsString = response.body;
       print("BODY : " + response.body);
       Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
 
+      _showSnackBar(context, "\u{1F389} Hotdesk Reservation is Succes!");
       setState(() {
         _allDataOrEmptyData = "All Desks";
+        requestCount = 0;
       });
 
       print("OLDU : ");
-    } else {}
+    } else {
+
+    }
 
     print("STATUS CODE FOR EVENT : " + response.statusCode.toString());
   }
@@ -220,7 +226,7 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                             height: 10,
                           ),
                           Text(
-                            "Rezervasyon Sahibi",
+                            "Reserved by",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,
@@ -240,7 +246,7 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                             height: 15,
                           ),
                           Text(
-                            "Rezervason Bilgileri",
+                            "Reservation Info",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,
@@ -274,10 +280,24 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
                             )),
                         onPressed: () {
                           if (isShowable) {
-                            print("DOLUU");
+                            _showSnackBar(context,"Desk is not available!");
+                            Navigator.of(context).pop();
+
                           } else {
-                            postHotdeskRequest(context, userId, something,
-                                snapshot.data[index].id.toString());
+
+                            if(requestCount == 0){
+                                setState(() {
+                                  requestCount = 1;
+                                });
+                              _showIndicatorWidget();
+                              postHotdeskRequest(context, userId, something,
+                                  snapshot.data[index].id.toString());
+                            }else{
+                              _showSnackBar(context, "Your Request already sent");
+                            }
+
+
+
                           }
                         },
                       ),
@@ -483,4 +503,32 @@ class _HotDeskSelectionScreenState extends State<HotDeskSelectionScreen> {
           );
         });
   }
+
+  Widget _showIndicatorWidget() {
+
+    return Center(child: CircularProgressIndicator(),);
+
+
+
+
+  }
+}
+_showSnackBar(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      "\u{1F389}  " + msg,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      textAlign: TextAlign.left,
+    ),
+    action: SnackBarAction(
+      label: "OK",
+      textColor: Colors.white,
+      disabledTextColor: Colors.deepPurple,
+      onPressed: () {},
+    ),
+    backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+  ));
 }

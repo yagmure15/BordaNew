@@ -1,6 +1,5 @@
 import 'package:bordatech/main.dart';
-import 'package:bordatech/screens/event_and_calendar_screen.dart';
-import 'package:bordatech/screens/office_res_calendar_screen.dart';
+
 import 'package:bordatech/screens/settings_screen.dart';
 import 'package:bordatech/screens/tabbarcalendar.dart';
 import 'package:bordatech/screens/weather_screen.dart';
@@ -35,137 +34,121 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child:
-
-      Column(
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(40),
-            color: bordaGreen,
-            child: Center(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 30, bottom: 20),
-                    width: 120,
-                    height: 110,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                "https://images6.alphacoders.com/337/337780.jpg"),
-                            fit: BoxFit.fill)),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 6),
-                    child: Text(
-                      fullName,
-                      style: TextStyle(fontSize: 22, color: Colors.white),
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(40),
+              color: bordaGreen,
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 30, bottom: 20),
+                      width: 120,
+                      height: 110,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                  "https://images6.alphacoders.com/337/337780.jpg"),
+                              fit: BoxFit.fill)),
                     ),
-                  ),
-                ],
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 6),
+                      child: Text(
+                        fullName,
+                        style: TextStyle(fontSize: 22, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Column(
-            children: [
-
-              ListTile(
-                leading: Icon(Icons.calendar_today),
-                title: Text(
-                  "Calendars",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
+            Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.calendar_today),
+                  title: Text(
+                    "Calendars",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
                   ),
+                  onTap: () {
+                    // TODO: why did you add both the pop and push?
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TabBarLayoutCalendar()));
+                  },
                 ),
-                onTap: () {
-                  // TODO: why did you add both the pop and push?
-                  Navigator.of(context).pop();
-                  Navigator.push(
+                ListTile(
+                  leading: Icon(Icons.wb_sunny_outlined),
+                  title: Text(
+                    "Weather & Forecast",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TabBarLayoutCalendar()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.wb_sunny_outlined),
-                title: Text(
-                  "Weather & Forecast",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WeatherScreen(),
-                    ),
-                  );
-                },
-              ),
-              InkWell(
-                onTap: () {},
-                child: ListTile(
-                  leading: Icon(Icons.food_bank_outlined),
-                  title: RichText(
-                    text: new TextSpan(
-                      text: 'Baklava',
-                      style: new TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
+                        builder: (context) => WeatherScreen(),
                       ),
-                      recognizer: new TapGestureRecognizer()
-                        ..onTap = () {
-                          launch(
-                              'https://www.yemeksepeti.com/gaziantepli-baklavaci-samet-usta-kagithane-sultan-selim-sanayi-mah-istanbul');
-                        },
+                    );
+                  },
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: ListTile(
+                    leading: Icon(Icons.food_bank_outlined),
+                    title: RichText(
+                      text: new TextSpan(
+                        text: 'Baklava',
+                        style: new TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
+                        recognizer: new TapGestureRecognizer()
+                          ..onTap = () {
+                            launch(
+                                'https://www.yemeksepeti.com/gaziantepli-baklavaci-samet-usta-kagithane-sultan-selim-sanayi-mah-istanbul');
+                          },
+                      ),
                     ),
                   ),
                 ),
-              ),
-              /*
-              Text(
-                  "Baklava",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
-              onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TermsPrivacyPolicy(),
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text(
+                    "Settings",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
                     ),
-                  );
-                },
-              ),
-              */
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text(
-                  "Settings",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
                   ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsScreen()));
+                  },
                 ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SettingsScreen()));
-                },
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -181,3 +164,23 @@ class _DrawerScreenState extends State<DrawerScreen> {
     setState(() {});
   }
 }
+_showSnackBar(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      "\u{1F389}  " + msg,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      textAlign: TextAlign.left,
+    ),
+    action: SnackBarAction(
+      label: "OK",
+      textColor: Colors.white,
+      disabledTextColor: Colors.deepPurple,
+      onPressed: () {},
+    ),
+    backgroundColor: Color(HexColor.toHexCode("#ff5a00")),
+  ));
+}
+

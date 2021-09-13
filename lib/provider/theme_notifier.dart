@@ -49,6 +49,7 @@ class ThemeColorData extends ChangeNotifier {
 }
 
 ThemeData darkTheme = ThemeData(
+  primaryColor: Colors.red,
   scaffoldBackgroundColor: bordaSoftGreen,
   appBarTheme: AppBarTheme(backgroundColor: bordaGreen),
 );
@@ -56,4 +57,7 @@ ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: Color(HexColor.toHexCode("#d3a9a3")),
   appBarTheme:
       AppBarTheme(backgroundColor: Color(HexColor.toHexCode("#bbc688"))),
+  primaryColor: Colors.lightGreen,
+
+
 );

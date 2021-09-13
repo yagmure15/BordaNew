@@ -246,7 +246,7 @@ class _SearchEmployeeState extends State<SearchEmployee> {
             child: MaterialButton(
               minWidth: MediaQuery.of(context).size.width,
               color: bordaOrange,
-              child: Text("Ara",
+              child: Text("BOOK NOW",
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,

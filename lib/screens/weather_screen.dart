@@ -493,6 +493,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       ),
                     ),
                   ),
+                  /* Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    //crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Icon(
+                        Icons.navigate_next_outlined,
+                        size: 30.0,
+                        color: bordaOrange,
+                      )
+                    ],
+                  ), */
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
