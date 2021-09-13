@@ -160,8 +160,9 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                     } else if (password.isEmpty) {
                       _showToast("Password cannot be empty!");
                     } else {
-                      final UserLoginModel? user =
-                          await postData(email, password, fcmToken!);
+                      var results = await postData(email, password, fcmToken!);
+                      /* final UserLoginModel? user =
+                          await postData(email, password, fcmToken!); */
 
                       setState(() {
                         _user = user;
@@ -185,7 +186,7 @@ class _LoginScreenScreenState extends State<LoginScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DashboardScreen()));
+                                builder: (context) => DashboardScreen())); */
                       }
                     }
                   },

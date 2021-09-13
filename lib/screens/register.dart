@@ -68,7 +68,7 @@ class _RegisterScreenScreenState extends State<RegisterScreen> {
   TextEditingController fullNameController = TextEditingController();
   String upEmail;
   String upPassword;
-  var _selectedDate;
+  var _selectedDate = DateTime.parse("1969-07-20 20:18:04Z");
   var officeID;
   var departmentID;
   TextEditingController beaconMacAddressController = TextEditingController();
@@ -310,13 +310,15 @@ class _RegisterScreenScreenState extends State<RegisterScreen> {
 
                     if (fullName.isEmpty) {
                       _showToast("Name field cannot be empty!");
-                    } else if (_selectedDate.isEmpty) {
+                    } /* else if (_selectedDate.isEmpty) {
                       _showToast("Birthday field cannot be empty!");
-                    } else if (officeID.isEmpty) {
+                    } */
+                    else if (officeID.isEmpty) {
                       _showToast("Office field cannot be empty!");
                     } else if (departmentID.isEmpty) {
                       _showToast("Department field cannot be empty!");
                     } else {
+                      print(_selectedDate);
                       final RegisterModel? user = await postData(
                           fullName,
                           _selectedDate,
@@ -348,7 +350,7 @@ class _RegisterScreenScreenState extends State<RegisterScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DashboardScreen()));
+                              builder: (context) => LoginScreen()));
                     }
                   },
                   child: FaIcon(FontAwesomeIcons.arrowCircleRight,
